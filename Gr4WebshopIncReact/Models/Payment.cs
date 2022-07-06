@@ -7,8 +7,8 @@ namespace Gr4WebshopIncReact.Models
 {
     public class Payment
     {
-        public Guid id { get; set; }
-        public Order order { get; set; }
-        public PaymentMethod method { get; set; }
+        public Guid Id { get; set; }
+        public Order Order { get; set; }
+        public PaymentMethod Method { get; set; }
     }
 }

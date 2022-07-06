@@ -7,18 +7,18 @@ namespace Gr4WebshopIncReact.Models
 {
     public class Order
     {
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public Customer customer { get; set; }
-        public List<Product> products { get; set; }
-        public double totalCost { get; set; }
+        public Customer Customer { get; set; }
+        public List<Product> Products { get; set; }
+        public double TotalCost { get; set; }
 
-        public string shippingAddress { get; set; }
-        public DateTime orderDate { get; set; }
+        public string ShippingAddress { get; set; }
+        public DateTime OrderDate { get; set; }
 
-        public string status { get; set; }
+        public string Status { get; set; }
 
-        public PaymentMethod paymentMethod { get; set; }
-        public Coupon coupon { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public Coupon Coupon { get; set; }
     }
 }

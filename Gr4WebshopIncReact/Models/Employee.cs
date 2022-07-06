@@ -8,6 +8,6 @@ namespace Gr4WebshopIncReact.Models
 {
     public class Employee
     {
-        public IdentityRole role { get; set; }
+        public IdentityRole Role { get; set; }
     }
 }

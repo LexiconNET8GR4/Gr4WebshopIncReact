@@ -7,7 +7,7 @@ namespace Gr4WebshopIncReact.Models
 {
     public class CartProduct
     {
-        public Product product { get; set; }
-        public double amount { get; set; }
+        public Product Product { get; set; }
+        public double Amount { get; set; }
     }
 }

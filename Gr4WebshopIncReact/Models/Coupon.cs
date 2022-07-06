@@ -7,7 +7,7 @@ namespace Gr4WebshopIncReact.Models
 {
     public class Coupon
     {
-        public Guid id { get; set; }
-        public double amount { get; set; }
+        public Guid Id { get; set; }
+        public double Amount { get; set; }
     }
 }
