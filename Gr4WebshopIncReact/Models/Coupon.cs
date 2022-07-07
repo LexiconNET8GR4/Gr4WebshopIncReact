@@ -9,5 +9,6 @@ namespace Gr4WebshopIncReact.Models
     {
         public Guid Id { get; set; }
         public double Amount { get; set; }
+        public DateTime ExpirationDate { get; set; }
     }
 }

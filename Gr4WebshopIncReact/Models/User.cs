@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Gr4WebshopIncReact.Models
 {
+
     public class User
     {
         public Guid Id { get; set; }

@@ -32,6 +32,15 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20220707094020_initial-structure-and-seeding.cs" />
+    <Compile Remove="Data\Migrations\20220707094020_initial-structure-and-seeding.Designer.cs" />
+    <Compile Remove="Data\Migrations\20220707095333_initial-structure-and-seeding.cs" />
+    <Compile Remove="Data\Migrations\20220707095333_initial-structure-and-seeding.Designer.cs" />
+    <Compile Remove="Data\Migrations\20220707095622_initial-structure-and-seeding.cs" />
+    <Compile Remove="Data\Migrations\20220707095622_initial-structure-and-seeding.Designer.cs" />
+  </ItemGroup>
+
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
