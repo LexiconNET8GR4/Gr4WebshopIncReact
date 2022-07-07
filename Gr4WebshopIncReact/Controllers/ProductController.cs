@@ -55,7 +55,7 @@ namespace Gr4WebshopIncReact.Controllers
             [Required] string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<string> ImagesDestination,
+            [FromQuery] List<ImageDesitination> ImagesDestination,
             string Type,
             string Details,
             double Price,
@@ -71,7 +71,6 @@ namespace Gr4WebshopIncReact.Controllers
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
             if (ImagesDestination != null) product.ImagesDestination = ImagesDestination;
-            if (Type != null) product.Type = Type;
             if (Details != null) product.Details.Data = Details;
             if (Price != 0) product.Price = Price;
             if (CurrentPrice != 0) product.CurrentPrice = CurrentPrice;
@@ -90,7 +89,7 @@ namespace Gr4WebshopIncReact.Controllers
             string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<string> ImagesDestination,
+            [FromQuery] List<ImageDesitination> ImagesDestination,
             string Type,
             string Details,
             double Price,
@@ -108,7 +107,6 @@ namespace Gr4WebshopIncReact.Controllers
             productToModify.Description = Description;
             productToModify.CoverImageDestination = CoverImageDestination;
             productToModify.ImagesDestination = ImagesDestination;
-            productToModify.Type = Type;
             productToModify.Details.Data = Details;
             productToModify.Price = Price;
             productToModify.CurrentPrice = CurrentPrice;

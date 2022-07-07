@@ -13,13 +13,11 @@ namespace Gr4WebshopIncReact.Services
             Product product = new Product() {
             Id=Guid.NewGuid(),
             Name=name,
-            Type="Type",
             Price= 10,
             CurrentPrice=11,
             SaleAmount=12,
             SalePercentage=0,
             Storage=0,
-            DateStocked="Today",
             Brand="Brand"
             };
             

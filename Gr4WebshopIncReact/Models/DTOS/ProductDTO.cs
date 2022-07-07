@@ -16,7 +16,6 @@ namespace Gr4WebshopIncReact.Models.DTOS
             Description = product.Description;
             CoverImageDestination = product.CoverImageDestination;
             ImagesDestination = product.ImagesDestination;
-            Type = product.Type;
             Details =new DetailsDTO(product.Details);
             Price = product.Price;
             CurrentPrice = product.CurrentPrice;
