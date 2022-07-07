@@ -14,7 +14,6 @@ namespace Gr4WebshopIncReact.Services
             Id=Guid.NewGuid(),
             Name=name,
             Price= 10,
-            CurrentPrice=11,
             SaleAmount=12,
             SalePercentage=0,
             Storage=0,

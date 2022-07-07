@@ -5,18 +5,12 @@ using System.Threading.Tasks;
 
 namespace Gr4WebshopIncReact.Models.DTOS
 {
-    public class DetailsDTO:Details
+    public class ProductCatergoryDTO:ProductCategory
     {
-        public DetailsDTO()
+        public ProductCatergoryDTO(ProductCategory productCategory)
         {
             ProductKey = Guid.Empty;
             Product = null;
-            
-        }
-        public DetailsDTO(Details details) : this()
-        {
-            Id = details.Id;
-            Data = details.Data;
         }
     }
 }

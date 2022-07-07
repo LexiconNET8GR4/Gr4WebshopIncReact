@@ -4,14 +4,16 @@ using Gr4WebshopIncReact.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gr4WebshopIncReact.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220707121836_Changed-How-CurrentPrice-Is-Accessed")]
+    partial class ChangedHowCurrentPriceIsAccessed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,10 +100,10 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "76c10141-8753-4e20-b617-3acc01e0aec2",
+                            Id = "06403ec9-f4e3-4855-ab78-4a441e031b43",
                             AccessFailedCount = 0,
                             Adress = "AdminTown 1A",
-                            ConcurrencyStamp = "a66629c9-2a9d-4100-a58c-5ae5dcebfef3",
+                            ConcurrencyStamp = "c943e778-8c81-4fda-9ff7-1985b26074be",
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
@@ -109,9 +111,9 @@ namespace Gr4WebshopIncReact.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@ADMIN.COM",
                             NormalizedUserName = "ADMIN@ADMIN.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBVkpS8ePBHdKpBqWbowTW4Tw3WXJAB8RZIrP8MpnB9Pkfo9aZQu/YggrzQJazkXYQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJ/e2cwCdyt8uezGDUGHXzUSu+FifVXWGPv1Nv2gNuXiHcoGinEXaab1v5RA/uPlbw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b88c120f-b1d6-4bdc-a1c2-58b61a13fb45",
+                            SecurityStamp = "4adecc26-683b-4988-9137-aa96eb8b030b",
                             TwoFactorEnabled = false,
                             UserName = "admin@admin.com"
                         });
@@ -137,13 +139,13 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("aae108dd-930e-478d-b929-97ff5b301ec2"),
+                            Id = new Guid("752d7b13-d78f-4d0c-9c05-f3d678cc450b"),
                             Name = "Kitchen",
                             isMainCateGory = true
                         },
                         new
                         {
-                            Id = new Guid("41355b91-3a64-4f77-82bd-8fafb0f4be3d"),
+                            Id = new Guid("9682d401-9410-4c90-baec-84885d8ef870"),
                             Name = "Chairs",
                             isMainCateGory = false
                         });
@@ -230,19 +232,19 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("52f5be8a-f163-4e33-8287-7b4a70b5d2d0"),
+                            Id = new Guid("a9831f8c-8527-4784-8b9f-15e2a3735b9b"),
                             Data = "Height: 1.3m, Width: 0.7m, Depth: 0.7m",
-                            ProductKey = new Guid("b32c8754-a351-4dce-b729-34b8aa7dd1a5")
+                            ProductKey = new Guid("37e9d6f2-3b17-4bde-b64e-e0baec728504")
                         });
                 });
 
-            modelBuilder.Entity("Gr4WebshopIncReact.Models.ImageDestination", b =>
+            modelBuilder.Entity("Gr4WebshopIncReact.Models.ImageDesitination", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("ImageDestination")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductKey")
@@ -252,7 +254,7 @@ namespace Gr4WebshopIncReact.Data.Migrations
 
                     b.HasIndex("ProductKey");
 
-                    b.ToTable("ImageDestination");
+                    b.ToTable("ImageDesitination");
                 });
 
             modelBuilder.Entity("Gr4WebshopIncReact.Models.Order", b =>
@@ -409,12 +411,12 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b32c8754-a351-4dce-b729-34b8aa7dd1a5"),
+                            Id = new Guid("37e9d6f2-3b17-4bde-b64e-e0baec728504"),
                             Brand = "GR4Inc",
                             CoverImageDestination = "/404.png",
                             DateStocked = new DateTime(2022, 7, 7, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "Low hanging fruit chair.",
-                            DetailsKey = new Guid("52f5be8a-f163-4e33-8287-7b4a70b5d2d0"),
+                            DetailsKey = new Guid("a9831f8c-8527-4784-8b9f-15e2a3735b9b"),
                             Name = "Stolencius",
                             Price = 500.0,
                             SaleAmount = 50.0,
@@ -440,13 +442,13 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            ProductKey = new Guid("b32c8754-a351-4dce-b729-34b8aa7dd1a5"),
-                            CategoryKey = new Guid("41355b91-3a64-4f77-82bd-8fafb0f4be3d")
+                            ProductKey = new Guid("37e9d6f2-3b17-4bde-b64e-e0baec728504"),
+                            CategoryKey = new Guid("9682d401-9410-4c90-baec-84885d8ef870")
                         },
                         new
                         {
-                            ProductKey = new Guid("b32c8754-a351-4dce-b729-34b8aa7dd1a5"),
-                            CategoryKey = new Guid("aae108dd-930e-478d-b929-97ff5b301ec2")
+                            ProductKey = new Guid("37e9d6f2-3b17-4bde-b64e-e0baec728504"),
+                            CategoryKey = new Guid("752d7b13-d78f-4d0c-9c05-f3d678cc450b")
                         });
                 });
 
@@ -489,8 +491,8 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            MainKey = new Guid("aae108dd-930e-478d-b929-97ff5b301ec2"),
-                            SubKey = new Guid("41355b91-3a64-4f77-82bd-8fafb0f4be3d")
+                            MainKey = new Guid("752d7b13-d78f-4d0c-9c05-f3d678cc450b"),
+                            SubKey = new Guid("9682d401-9410-4c90-baec-84885d8ef870")
                         });
                 });
 
@@ -605,22 +607,22 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1df6b271-ce04-4523-8525-d889f008e9f6",
-                            ConcurrencyStamp = "b2fe2e13-1c54-4fa6-bf53-99913843445e",
+                            Id = "03962af2-82fd-4ea0-86f9-fc94b2097de2",
+                            ConcurrencyStamp = "56f24ea1-7cb0-4124-a50e-d7f08a56872a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "0d9c2ba5-23c2-4c4e-a377-8ae56d8cb409",
-                            ConcurrencyStamp = "4c3c7d8f-e00c-4288-b83e-d531df93f85a",
+                            Id = "992ebb90-3cfe-4215-b67e-d6971d230b79",
+                            ConcurrencyStamp = "d4ef478b-07fd-4e0e-8107-d6526061fd57",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "c4a6cbb9-3d80-4251-a892-818ae6de53c9",
-                            ConcurrencyStamp = "0da76204-bc62-4559-8bd1-9f2dab5384b1",
+                            Id = "1a8e7701-8109-446e-b2eb-1721cb6282f6",
+                            ConcurrencyStamp = "18d4f4e4-aa92-46f8-9b34-5a1f3c7797c1",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });
@@ -713,8 +715,8 @@ namespace Gr4WebshopIncReact.Data.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "76c10141-8753-4e20-b617-3acc01e0aec2",
-                            RoleId = "1df6b271-ce04-4523-8525-d889f008e9f6"
+                            UserId = "06403ec9-f4e3-4855-ab78-4a441e031b43",
+                            RoleId = "03962af2-82fd-4ea0-86f9-fc94b2097de2"
                         });
                 });
 
@@ -750,7 +752,7 @@ namespace Gr4WebshopIncReact.Data.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Gr4WebshopIncReact.Models.ImageDestination", b =>
+            modelBuilder.Entity("Gr4WebshopIncReact.Models.ImageDesitination", b =>
                 {
                     b.HasOne("Gr4WebshopIncReact.Models.Product", "Product")
                         .WithMany("ImagesDestination")

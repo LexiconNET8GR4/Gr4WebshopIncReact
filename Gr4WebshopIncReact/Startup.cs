@@ -51,7 +51,7 @@ namespace Gr4WebshopIncReact
             services.AddTransient<IOrderServices, OrderDummyServices>();
             services.AddTransient<IPaymentMethodServices, PaymentMethodDummyServices>();
             services.AddTransient<IPaymentServices, PaymentDummyServices>();
-            services.AddTransient<IProductServices, ProductDummyServices>();
+            services.AddTransient<IProductServices, ProductServices>();
             services.AddTransient<IShippingMethodServices, ShippingMethodDummyServices>();
             services.AddTransient<IUserServices, UserDummyServices>();
             services.AddRazorPages();

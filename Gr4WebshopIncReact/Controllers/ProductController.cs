@@ -45,8 +45,8 @@ namespace Gr4WebshopIncReact.Controllers
         {
             var idGuid = Guid.Parse(id);
             Product product = _productServices.GetById(idGuid);
-            ProductDTO productDTO = new ProductDTO(product);
-            return Json(productDTO);
+            product = PrepareForJson(product);
+            return Json(product);
         }
 
         [HttpPost]
@@ -55,11 +55,11 @@ namespace Gr4WebshopIncReact.Controllers
             [Required] string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDesitination> ImagesDestination,
+            [FromQuery] List<ImageDestination> ImagesDestination,
             string Type,
-            string Details,
+            [FromQuery] Details Details,
+            [FromQuery] List<ProductCategory> Categories,
             double Price,
-            double CurrentPrice,
             double SaleAmount,
             double SalePercentage,
             double Storage,
@@ -67,19 +67,29 @@ namespace Gr4WebshopIncReact.Controllers
             string Brand
             )
         {
+            ProductDTO productDTO;
             Product product = _productServices.CreateProduct(Name);
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
             if (ImagesDestination != null) product.ImagesDestination = ImagesDestination;
-            if (Details != null) product.Details.Data = Details;
+            if (Details != null) product.Details.Data = Details.Data;
             if (Price != 0) product.Price = Price;
-            if (CurrentPrice != 0) product.CurrentPrice = CurrentPrice;
             if (SaleAmount != 0) product.SaleAmount = SaleAmount;
             if (SalePercentage != 0) product.SalePercentage = SalePercentage;
             if (Storage != 0) product.Storage = (int)Storage;
             if (DateStocked != null) product.DateStocked = DateStocked;
             if (Brand != null) product.Brand = Brand;
-            return Json(product);
+            _productServices.Update(product);
+            if (product.Details != null)
+            {
+                productDTO = new ProductDTO(product);
+            }
+            else 
+            { 
+                productDTO = new ProductDTO(); 
+            }
+
+            return Json(productDTO);
         }
 
         [HttpPost]
@@ -89,9 +99,9 @@ namespace Gr4WebshopIncReact.Controllers
             string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDesitination> ImagesDestination,
+            [FromQuery] List<ImageDestination> ImagesDestination,
             string Type,
-            string Details,
+            [FromQuery] Details Details,
             double Price,
             double CurrentPrice,
             double SaleAmount,
@@ -102,20 +112,24 @@ namespace Gr4WebshopIncReact.Controllers
             )
         {
             Guid guidId = Guid.Parse(id);
+            
             Product productToModify = _productServices.GetById(guidId);
             if(Name!=null)productToModify.Name = Name;
             productToModify.Description = Description;
             productToModify.CoverImageDestination = CoverImageDestination;
             productToModify.ImagesDestination = ImagesDestination;
-            productToModify.Details.Data = Details;
+            productToModify.Details.Data = Details.Data;
             productToModify.Price = Price;
-            productToModify.CurrentPrice = CurrentPrice;
             productToModify.SaleAmount = SaleAmount;
             productToModify.SalePercentage = SalePercentage;
             productToModify.Storage = (int)Storage;
             productToModify.DateStocked = DateStocked;
             productToModify.Brand = Brand;
             Product product = _productServices.Update(productToModify);
+            DetailsDTO detailsDTO = new DetailsDTO(Details);
+            productToModify.Details = detailsDTO;
+            List<ImageDestinationDTO> imageDestinationDTOs = new List<ImageDestinationDTO>();
+            product = PrepareForJson(product);
             return Json(product);
         }
 
@@ -126,6 +140,27 @@ namespace Gr4WebshopIncReact.Controllers
             if (_productServices.Delete(guidId)) 
                 return StatusCode(200);
             else return BadRequest();
+        }
+
+        private Product PrepareForJson (Product product)
+        {
+            foreach (ImageDestination imageDestination in product.ImagesDestination)
+            {
+                imageDestination.ProductKey = Guid.Empty;
+                imageDestination.Product = null;
+
+            }
+            if(product.Categories!=null)foreach(ProductCategory category in product.Categories)
+            {
+                category.ProductKey = Guid.Empty;
+                category.Product = null;
+            }
+            if (product.Details != null) 
+            {
+                product.Details.ProductKey = Guid.Empty;
+                product.Details.Product = null;
+            }
+            return product;
         }
 
         
