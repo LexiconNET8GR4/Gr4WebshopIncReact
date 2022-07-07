@@ -52,13 +52,13 @@ namespace Gr4WebshopIncReact.Data
             modelBuilder.Entity<ProductCategory>()
                 .HasOne(c => c.Product)
                 .WithMany(p => p.Categories)
-                .HasForeignKey(pc => pc.CategoryKey);
+                .HasForeignKey(pc => pc.ProductKey);
 
             // Create one-to-many connection beteween connector and Category
             modelBuilder.Entity<ProductCategory>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
-                .HasForeignKey(pc => pc.ProductKey);
+                .HasForeignKey(pc => pc.CategoryKey);
             #endregion
 
             #region Subcategories
@@ -199,15 +199,6 @@ namespace Gr4WebshopIncReact.Data
             Guid chairCategoryKey = Guid.NewGuid();
             Guid kitchenCategoryKey = Guid.NewGuid();
 
-            // Details for a chair
-            modelBuilder.Entity<Details>().HasData(
-                new Details
-                {
-                    Id = chairDetailsKey,
-                    Data = "Height: 1.3m, Width: 0.7m, Depth: 0.7m",
-                    ProductKey = chairProductKey
-                });
-
             // Chair - currently missing cover image
             modelBuilder.Entity<Product>().HasData(
                 new Product
@@ -224,6 +215,15 @@ namespace Gr4WebshopIncReact.Data
                     Storage = 38,
                     DateStocked = DateTime.Today,
                     Brand = "GR4Inc"
+                });
+
+            // Details for a chair
+            modelBuilder.Entity<Details>().HasData(
+                new Details
+                {
+                    Id = chairDetailsKey,
+                    Data = "Height: 1.3m, Width: 0.7m, Depth: 0.7m",
+                    ProductKey = chairProductKey
                 });
 
             // Main kitchen category and subcategory for chairs
