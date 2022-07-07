@@ -29,7 +29,7 @@ namespace Gr4WebshopIncReact.Models
         public double SalePercentage { get; set; }
 
         public int Storage { get; set; }
-        public string DateStocked { get; set; }
+        public DateTime DateStocked { get; set; }
         [Required]
         public string Brand { get; set; }
     }

@@ -62,7 +62,7 @@ namespace Gr4WebshopIncReact.Data
             #endregion
 
             #region Subcategories
-            // --- Create a selreferential many-to-many connection for categories
+            // --- Create a selfrefrencing many-to-many connection for categories
             // --- Using a connector class named SubCategory
 
             // Denote composite key
@@ -71,7 +71,7 @@ namespace Gr4WebshopIncReact.Data
 
             // Create one-to-many connection beteween connector and Category
             modelBuilder.Entity<SubCategory>()
-                .HasOne(s => s.MainC)
+                .HasOne(s => s.MainCat)
                 .WithMany(m => m.SubCategories)
                 .HasForeignKey(sc => sc.SubKey);
             #endregion
@@ -160,7 +160,7 @@ namespace Gr4WebshopIncReact.Data
                     Id = Guid.NewGuid().ToString(),
                     Name = "Employee",
                     NormalizedName = "EMPLOYEE"
-                });;
+                }); ;
 
             PasswordHasher<ApplicationUser> hasher = new PasswordHasher<ApplicationUser>();
 
@@ -186,20 +186,75 @@ namespace Gr4WebshopIncReact.Data
                 });
             #endregion
 
-            // --- --- Seeding
+            // --- --- Seeding non-identity parts
             #region Seeding
-            Guid detailsKey = Guid.NewGuid();
+            Guid chairDetailsKey = Guid.NewGuid();
+            Guid chairProductKey = Guid.NewGuid();
+            Guid chairCategoryKey = Guid.NewGuid();
+            Guid kitchenCategoryKey = Guid.NewGuid();
 
-            modelBuilder.Entity<Product>().HasData(
-                new Product{ 
-                    Id = Guid.NewGuid(),
-                    Name = "Stolencius",
-                    Description = "Low hanging fruit chair.",
-                    CoverImageDestination = "/404.png"//,
-                    //DetailsKey = detailsKey,
-
+            // Details for a chair
+            modelBuilder.Entity<Details>().HasData(
+                new Details
+                {
+                    Id = chairDetailsKey,
+                    Data = "Height: 1.3m, Width: 0.7m, Depth: 0.7m",
+                    ProductKey = chairProductKey
                 });
 
+            // Chair - currently missing cover image
+            modelBuilder.Entity<Product>().HasData(
+                new Product
+                {
+                    Id = chairProductKey,
+                    Name = "Stolencius",
+                    Description = "Low hanging fruit chair.",
+                    CoverImageDestination = "/404.png",
+                    DetailsKey = chairDetailsKey,
+                    Price = 500,
+                    CurrentPrice = 450,
+                    SaleAmount = 50,
+                    SalePercentage = 10,
+                    Storage = 38,
+                    DateStocked = DateTime.Today,
+                    Brand = "GR4Inc"
+                });
+
+            // Main kitchen category and subcategory for chairs
+            modelBuilder.Entity<Category>().HasData(
+                new Category
+                {
+                    Id = kitchenCategoryKey,
+                    Name = "Kitchen",
+                    isMainCateGory = true
+                },
+                new Category
+                {
+                    Id = chairCategoryKey,
+                    Name = "Chairs",
+                    isMainCateGory = false
+                });
+
+            // Connect main and sub categories
+            modelBuilder.Entity<SubCategory>().HasData(
+                new SubCategory
+                {
+                    MainKey = kitchenCategoryKey,
+                    SubKey = chairCategoryKey
+                });
+
+            // Connect the chair and its appropriate categories
+            modelBuilder.Entity<ProductCategory>().HasData(
+                new ProductCategory
+                {
+                    ProductKey = chairProductKey,
+                    CategoryKey = chairCategoryKey
+                },
+                new ProductCategory
+                {
+                    ProductKey = chairProductKey,
+                    CategoryKey = kitchenCategoryKey
+                });
             #endregion
         }
 
