@@ -11,10 +11,10 @@ namespace Gr4WebshopIncReact.Models
     {
         [Required]
         public Guid MainKey { get; set; }
-        public Category MainC { get; set; }
+        public Category MainCat { get; set; }
 
         [Required]
         public Guid SubKey { get; set; }
-        public Category SubC { get; set; }
+        public Category SubCat { get; set; }
     }
 }

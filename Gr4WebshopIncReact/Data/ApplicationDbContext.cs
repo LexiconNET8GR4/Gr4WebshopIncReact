@@ -129,6 +129,12 @@ namespace Gr4WebshopIncReact.Data
 
             // --- --- One with Many relations
 
+            // Products with image destinations
+            modelBuilder.Entity<ImageDesitination>()
+                .HasOne(id => id.Product)
+                .WithMany(p => p.ImagesDestination)
+                .HasForeignKey(id => id.ProductKey);
+
             // User with Orders
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)

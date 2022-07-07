@@ -15,7 +15,7 @@ namespace Gr4WebshopIncReact.Models
         public Guid CustomerKey { get; set; }
         public Customer Customer { get; set; }
 
-        public Guid UserKey { get; set; }
+        public string UserKey { get; set; } // Scaffolded identity stores the Id as a string, rather than a Guid
         public ApplicationUser User { get; set; }
 
         public List<OrderedProducts> Products { get; set; }
