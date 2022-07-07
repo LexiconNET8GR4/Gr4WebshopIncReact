@@ -10,9 +10,10 @@ namespace Gr4WebshopIncReact.Services
     {
         public Product CreateProduct(string name);
         public Product GetById(Guid id);
+        public List<Product> GetAll();
         public List<Product> Search(string SearchPhrase);
         public Product Update(Product product);
-        public bool Delete(Product product);
+        public bool Delete(Guid id);
     }
 }
 
