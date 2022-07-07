@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,10 +8,17 @@ namespace Gr4WebshopIncReact.Models
 {
     public class Order
     {
+        [Key]
         public Guid Id { get; set; }
 
+        [Required]
+        public Guid CustomerKey { get; set; }
         public Customer Customer { get; set; }
-        public List<Product> Products { get; set; }
+
+        public string UserKey { get; set; } // Scaffolded identity stores the Id as a string, rather than a Guid
+        public ApplicationUser User { get; set; }
+
+        public List<OrderedProducts> Products { get; set; }
         public double TotalCost { get; set; }
 
         public string ShippingAddress { get; set; }
@@ -18,7 +26,12 @@ namespace Gr4WebshopIncReact.Models
 
         public string Status { get; set; }
 
-        public PaymentMethod PaymentMethod { get; set; }
+        [Required]
+        public Guid PaymentKey { get; set; }
+        public Payment Payment { get; set; }
+        [Required]
+        public Guid ShipmentID { get; set; }
+        public ShippingMethod ShippingMethod { get; set; }
         public Coupon Coupon { get; set; }
     }
 }

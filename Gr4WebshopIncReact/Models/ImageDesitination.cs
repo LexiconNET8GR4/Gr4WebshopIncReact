@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Gr4WebshopIncReact.Models
 {
-    public class PaymentMethod
+    public class ImageDesitination
     {
         [Key]
         public Guid Id { get; set; }
-        [Required]
-        public string Type { get; set; }
 
+        public string ImageDestination { get; set; }
+        [Required]
+        public Guid ProductKey { get; set; }
+        public Product Product { get; set; }
     }
 }
