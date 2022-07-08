@@ -31,11 +31,14 @@ namespace Gr4WebshopIncReact.Controllers
             List<Product> products;
             List<ProductDTO> productDTOs = new List<ProductDTO>();
             products = _productServices.GetAll();
+            if (products == null) return null;
             foreach (var product in products)
             {
                 ProductDTO productDTO = new ProductDTO(product);
                 productDTOs.Add(productDTO);
+
             }
+            products = PrepareForJson(products);
             return Json(productDTOs);
         }
 
@@ -45,6 +48,7 @@ namespace Gr4WebshopIncReact.Controllers
         {
             var idGuid = Guid.Parse(id);
             Product product = _productServices.GetById(idGuid);
+            if (product == null) return BadRequest();
             product = PrepareForJson(product);
             return Json(product);
         }
@@ -162,7 +166,30 @@ namespace Gr4WebshopIncReact.Controllers
             }
             return product;
         }
+        private List<Product> PrepareForJson(List<Product> products)
+        {
+            foreach (Product product in products)
+            {
+                foreach (ImageDestination imageDestination in product.ImagesDestination)
+                {
+                    imageDestination.ProductKey = Guid.Empty;
+                    imageDestination.Product = null;
 
-        
+                }
+                if (product.Categories != null) foreach (ProductCategory category in product.Categories)
+                    {
+                        category.ProductKey = Guid.Empty;
+                        category.Product = null;
+                    }
+                if (product.Details != null)
+                {
+                    product.Details.ProductKey = Guid.Empty;
+                    product.Details.Product = null;
+                }
+            }
+            return products;
+        }
+
+
     }
 }

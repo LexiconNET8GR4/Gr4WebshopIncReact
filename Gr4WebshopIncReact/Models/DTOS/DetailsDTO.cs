@@ -15,8 +15,11 @@ namespace Gr4WebshopIncReact.Models.DTOS
         }
         public DetailsDTO(Details details) : this()
         {
-            Id = details.Id;
-            Data = details.Data;
+            if (details != null) 
+            { 
+                Id = details.Id;
+                Data = details.Data;
+            }
         }
     }
 }

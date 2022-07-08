@@ -32,17 +32,26 @@ namespace Gr4WebshopIncReact.Services
 
         public bool Delete(Guid id)
         {
-            throw new NotImplementedException();
+            Product product = GetById(id);
+            _context.Products.Remove(product);
+            return _context.SaveChanges() > 0 ? true : false;
         }
 
         public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            List<Product> products = _context.Products.ToList();
+            foreach(Product product in products)
+            {
+                product.Details = _context.Details.Where(d => d.Id == product.DetailsKey).FirstOrDefault();
+                product.ImagesDestination = _context.Set<ImageDestination>().Where(i => i.ProductKey == product.Id).ToList();
+            }
+            return products;
         }
 
         public Product GetById(Guid id)
         {
             Product product=_context.Products.Where(p=>p.Id==id).FirstOrDefault();
+            if (product == null) return null;
             product.Details = _context.Details.Where(d => d.Id == product.DetailsKey).FirstOrDefault();
             product.ImagesDestination = _context.Set<ImageDestination>().Where(i => i.ProductKey == product.Id).ToList();
             return product;
