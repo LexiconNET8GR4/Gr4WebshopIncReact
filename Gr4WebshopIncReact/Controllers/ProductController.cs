@@ -7,6 +7,8 @@ using Gr4WebshopIncReact.Models;
 using System.Text.Json;
 using Gr4WebshopIncReact.Models.DTOS;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -54,13 +56,13 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [Route("createproduct")]
         public ActionResult CreateProduct(
             [Required] string Name,
             string Description,
             string CoverImageDestination,
             [FromQuery] List<ImageDestination> ImagesDestination,
-            string Type,
             [FromQuery] Details Details,
             [FromQuery] List<ProductCategory> Categories,
             double Price,
@@ -98,6 +100,7 @@ namespace Gr4WebshopIncReact.Controllers
 
         [HttpPost]
         [Route("editproduct")]
+        [Authorize(Roles = "Admin")]
         public ActionResult EditProduct(
             [Required] string id,
             string Name,
@@ -118,6 +121,7 @@ namespace Gr4WebshopIncReact.Controllers
             Guid guidId = Guid.Parse(id);
             
             Product productToModify = _productServices.GetById(guidId);
+            if (productToModify == null) return BadRequest();
             if(Name!=null)productToModify.Name = Name;
             productToModify.Description = Description;
             productToModify.CoverImageDestination = CoverImageDestination;
@@ -138,6 +142,7 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [Route("deleteproduct")]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteProduct(string id)
         {
             Guid guidId = Guid.Parse(id);
