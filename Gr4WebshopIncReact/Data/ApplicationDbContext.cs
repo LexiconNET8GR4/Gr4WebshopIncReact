@@ -130,7 +130,7 @@ namespace Gr4WebshopIncReact.Data
             // --- --- One with Many relations
 
             // Products with image destinations
-            modelBuilder.Entity<ImageDesitination>()
+            modelBuilder.Entity<ImageDestination>()
                 .HasOne(id => id.Product)
                 .WithMany(p => p.ImagesDestination)
                 .HasForeignKey(id => id.ProductKey);
@@ -209,10 +209,9 @@ namespace Gr4WebshopIncReact.Data
                     CoverImageDestination = "/404.png",
                     DetailsKey = chairDetailsKey,
                     Price = 500,
-                    CurrentPrice = 450,
                     SaleAmount = 50,
                     SalePercentage = 10,
-                    Storage = 38,
+                    Stock = 38,
                     DateStocked = DateTime.Today,
                     Brand = "GR4Inc"
                 });

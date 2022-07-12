@@ -7,6 +7,8 @@ using Gr4WebshopIncReact.Models;
 using System.Text.Json;
 using Gr4WebshopIncReact.Models.DTOS;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -29,14 +31,9 @@ namespace Gr4WebshopIncReact.Controllers
         public ActionResult GetAllProducts()
         {
             List<Product> products;
-            List<ProductDTO> productDTOs = new List<ProductDTO>();
             products = _productServices.GetAll();
-            foreach (var product in products)
-            {
-                ProductDTO productDTO = new ProductDTO(product);
-                productDTOs.Add(productDTO);
-            }
-            return Json(productDTOs);
+            if (products == null) return null;
+            return Json(PrepareForJson(products));
         }
 
         // GET api/<ProductController>/5
@@ -45,24 +42,25 @@ namespace Gr4WebshopIncReact.Controllers
         {
             var idGuid = Guid.Parse(id);
             Product product = _productServices.GetById(idGuid);
-            ProductDTO productDTO = new ProductDTO(product);
-            return Json(productDTO);
+            if (product == null) return BadRequest();
+            
+            return Json(PrepareForJson(product));
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [Route("createproduct")]
         public ActionResult CreateProduct(
             [Required] string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDesitination> ImagesDestination,
-            string Type,
-            string Details,
+            [FromQuery] List<ImageDestination> ImagesDestination,
+            [FromQuery] Details Details,
+            [FromQuery] List<ProductCategory> Categories,
             double Price,
-            double CurrentPrice,
             double SaleAmount,
             double SalePercentage,
-            double Storage,
+            double Stock,
             DateTime DateStocked,
             string Brand
             )
@@ -71,55 +69,59 @@ namespace Gr4WebshopIncReact.Controllers
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
             if (ImagesDestination != null) product.ImagesDestination = ImagesDestination;
-            if (Details != null) product.Details.Data = Details;
+            if (Details != null) product.Details.Data = Details.Data;
             if (Price != 0) product.Price = Price;
-            if (CurrentPrice != 0) product.CurrentPrice = CurrentPrice;
             if (SaleAmount != 0) product.SaleAmount = SaleAmount;
             if (SalePercentage != 0) product.SalePercentage = SalePercentage;
-            if (Storage != 0) product.Storage = (int)Storage;
+            if (Stock != 0) product.Stock = Stock;
             if (DateStocked != null) product.DateStocked = DateStocked;
             if (Brand != null) product.Brand = Brand;
-            return Json(product);
+            _productServices.Update(product);
+           
+
+            return Json(PrepareForJson(product));
         }
 
         [HttpPost]
         [Route("editproduct")]
+        [Authorize(Roles = "Admin")]
         public ActionResult EditProduct(
             [Required] string id,
             string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDesitination> ImagesDestination,
+            [FromQuery] List<ImageDestination> ImagesDestination,
             string Type,
-            string Details,
+            [FromQuery] Details Details,
             double Price,
-            double CurrentPrice,
             double SaleAmount,
             double SalePercentage,
-            double Storage,
+            double Stock,
             DateTime DateStocked,
             string Brand
             )
         {
             Guid guidId = Guid.Parse(id);
+            
             Product productToModify = _productServices.GetById(guidId);
+            if (productToModify == null) return BadRequest();
             if(Name!=null)productToModify.Name = Name;
             productToModify.Description = Description;
             productToModify.CoverImageDestination = CoverImageDestination;
             productToModify.ImagesDestination = ImagesDestination;
-            productToModify.Details.Data = Details;
+            productToModify.Details.Data = Details.Data;
             productToModify.Price = Price;
-            productToModify.CurrentPrice = CurrentPrice;
             productToModify.SaleAmount = SaleAmount;
             productToModify.SalePercentage = SalePercentage;
-            productToModify.Storage = (int)Storage;
+            productToModify.Stock = Stock;
             productToModify.DateStocked = DateStocked;
             productToModify.Brand = Brand;
             Product product = _productServices.Update(productToModify);
-            return Json(product);
+            return Json(PrepareForJson(product));
         }
 
         [Route("deleteproduct")]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteProduct(string id)
         {
             Guid guidId = Guid.Parse(id);
@@ -128,6 +130,54 @@ namespace Gr4WebshopIncReact.Controllers
             else return BadRequest();
         }
 
-        
+        [Route("findproduct")]
+
+        public ActionResult FindProduct(string searchPhrase)
+        {
+            List<Product> productsByName = _productServices.FindByName(searchPhrase);
+            List<Product> productsByBrand = _productServices.FindByBrand(searchPhrase);
+            List<Product> productsByDescription = _productServices.FindByDescription(searchPhrase);
+            List<Product> productsByDetails = _productServices.FindByDetails(searchPhrase);
+            List<Product> products=productsByName;
+            if(productsByBrand!=null) foreach(Product p in productsByBrand)
+            {
+                if (!products.Contains(p)) products.Add(p);
+            }
+            if (productsByDescription != null) foreach (Product p in productsByDescription)
+            {
+                if (!products.Contains(p)) products.Add(p);
+            }
+            if (productsByDetails != null) foreach (Product p in productsByDetails)
+            {
+                if (!products.Contains(p)) products.Add(p);
+            }
+            if (products == null || products.Count == 0) return Json("");
+            return Json(PrepareForJson(products));
+        }
+
+        [Route("getproductsbycategory")]
+        public ActionResult GetProductsByCategory(Guid CategoryId)
+        {
+            List<Product> products = _productServices.FindByCategory(CategoryId);
+            return Json(PrepareForJson(products));
+        }
+
+        private ProductDTO PrepareForJson (Product product)
+        {
+            ProductDTO productDTO = new ProductDTO(product);
+            return productDTO;
+        }
+        private List<ProductDTO> PrepareForJson(List<Product> products)
+        {
+            List<ProductDTO> productDTOs = new List<ProductDTO>();
+            foreach(Product p in products)
+            {
+                productDTOs.Add(new ProductDTO(p));
+
+            }
+            return productDTOs;
+        }
+
+
     }
 }
