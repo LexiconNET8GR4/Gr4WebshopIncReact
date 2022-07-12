@@ -46,6 +46,7 @@ namespace Gr4WebshopIncReact
             services.AddControllersWithViews();
             services.AddTransient<ICouponServices, CouponDummyServices>();
             services.AddTransient<ICartServices, CartDummyServices>();
+            services.AddTransient<ICategoryServices, CategoryServices>();
             services.AddTransient<ICustomerServices, CustomerDummyServices>();
             services.AddTransient<IEmployeeServices, EmployeeDummyServices>();
             services.AddTransient<IOrderServices, OrderDummyServices>();

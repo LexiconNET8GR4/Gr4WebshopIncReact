@@ -22,16 +22,19 @@ namespace Gr4WebshopIncReact.Models
         public List<ProductCategory> Categories { get; set; }
 
         public double Price { get; set; }
-        public double CurrentPrice { get {
+        public double CurrentPrice { 
+            get {
                 if (SaleAmount > 0) return Price - SaleAmount;
                 if (SalePercentage > 0) return Price * (1 - SalePercentage);
                 return Price;
-            } }
+            } 
+        }
         public double SaleAmount { get; set; }
         public double SalePercentage { get; set; }
 
-        public int Storage { get; set; }
+        public double Stock { get; set; }
         public DateTime DateStocked { get; set; }
         public string Brand { get; set; }
+
     }
 }

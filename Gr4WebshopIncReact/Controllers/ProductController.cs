@@ -31,17 +31,9 @@ namespace Gr4WebshopIncReact.Controllers
         public ActionResult GetAllProducts()
         {
             List<Product> products;
-            List<ProductDTO> productDTOs = new List<ProductDTO>();
             products = _productServices.GetAll();
             if (products == null) return null;
-            foreach (var product in products)
-            {
-                ProductDTO productDTO = new ProductDTO(product);
-                productDTOs.Add(productDTO);
-
-            }
-            products = PrepareForJson(products);
-            return Json(productDTOs);
+            return Json(PrepareForJson(products));
         }
 
         // GET api/<ProductController>/5
@@ -51,8 +43,8 @@ namespace Gr4WebshopIncReact.Controllers
             var idGuid = Guid.Parse(id);
             Product product = _productServices.GetById(idGuid);
             if (product == null) return BadRequest();
-            product = PrepareForJson(product);
-            return Json(product);
+            
+            return Json(PrepareForJson(product));
         }
 
         [HttpPost]
@@ -68,12 +60,11 @@ namespace Gr4WebshopIncReact.Controllers
             double Price,
             double SaleAmount,
             double SalePercentage,
-            double Storage,
+            double Stock,
             DateTime DateStocked,
             string Brand
             )
         {
-            ProductDTO productDTO;
             Product product = _productServices.CreateProduct(Name);
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
@@ -82,20 +73,13 @@ namespace Gr4WebshopIncReact.Controllers
             if (Price != 0) product.Price = Price;
             if (SaleAmount != 0) product.SaleAmount = SaleAmount;
             if (SalePercentage != 0) product.SalePercentage = SalePercentage;
-            if (Storage != 0) product.Storage = (int)Storage;
+            if (Stock != 0) product.Stock = Stock;
             if (DateStocked != null) product.DateStocked = DateStocked;
             if (Brand != null) product.Brand = Brand;
             _productServices.Update(product);
-            if (product.Details != null)
-            {
-                productDTO = new ProductDTO(product);
-            }
-            else 
-            { 
-                productDTO = new ProductDTO(); 
-            }
+           
 
-            return Json(productDTO);
+            return Json(PrepareForJson(product));
         }
 
         [HttpPost]
@@ -110,10 +94,9 @@ namespace Gr4WebshopIncReact.Controllers
             string Type,
             [FromQuery] Details Details,
             double Price,
-            double CurrentPrice,
             double SaleAmount,
             double SalePercentage,
-            double Storage,
+            double Stock,
             DateTime DateStocked,
             string Brand
             )
@@ -130,15 +113,11 @@ namespace Gr4WebshopIncReact.Controllers
             productToModify.Price = Price;
             productToModify.SaleAmount = SaleAmount;
             productToModify.SalePercentage = SalePercentage;
-            productToModify.Storage = (int)Storage;
+            productToModify.Stock = Stock;
             productToModify.DateStocked = DateStocked;
             productToModify.Brand = Brand;
             Product product = _productServices.Update(productToModify);
-            DetailsDTO detailsDTO = new DetailsDTO(Details);
-            productToModify.Details = detailsDTO;
-            List<ImageDestinationDTO> imageDestinationDTOs = new List<ImageDestinationDTO>();
-            product = PrepareForJson(product);
-            return Json(product);
+            return Json(PrepareForJson(product));
         }
 
         [Route("deleteproduct")]
@@ -151,48 +130,52 @@ namespace Gr4WebshopIncReact.Controllers
             else return BadRequest();
         }
 
-        private Product PrepareForJson (Product product)
-        {
-            foreach (ImageDestination imageDestination in product.ImagesDestination)
-            {
-                imageDestination.ProductKey = Guid.Empty;
-                imageDestination.Product = null;
+        [Route("findproduct")]
 
-            }
-            if(product.Categories!=null)foreach(ProductCategory category in product.Categories)
+        public ActionResult FindProduct(string searchPhrase)
+        {
+            List<Product> productsByName = _productServices.FindByName(searchPhrase);
+            List<Product> productsByBrand = _productServices.FindByBrand(searchPhrase);
+            List<Product> productsByDescription = _productServices.FindByDescription(searchPhrase);
+            List<Product> productsByDetails = _productServices.FindByDetails(searchPhrase);
+            List<Product> products=productsByName;
+            if(productsByBrand!=null) foreach(Product p in productsByBrand)
             {
-                category.ProductKey = Guid.Empty;
-                category.Product = null;
+                if (!products.Contains(p)) products.Add(p);
             }
-            if (product.Details != null) 
+            if (productsByDescription != null) foreach (Product p in productsByDescription)
             {
-                product.Details.ProductKey = Guid.Empty;
-                product.Details.Product = null;
+                if (!products.Contains(p)) products.Add(p);
             }
-            return product;
+            if (productsByDetails != null) foreach (Product p in productsByDetails)
+            {
+                if (!products.Contains(p)) products.Add(p);
+            }
+            if (products == null || products.Count == 0) return Json("");
+            return Json(PrepareForJson(products));
         }
-        private List<Product> PrepareForJson(List<Product> products)
-        {
-            foreach (Product product in products)
-            {
-                foreach (ImageDestination imageDestination in product.ImagesDestination)
-                {
-                    imageDestination.ProductKey = Guid.Empty;
-                    imageDestination.Product = null;
 
-                }
-                if (product.Categories != null) foreach (ProductCategory category in product.Categories)
-                    {
-                        category.ProductKey = Guid.Empty;
-                        category.Product = null;
-                    }
-                if (product.Details != null)
-                {
-                    product.Details.ProductKey = Guid.Empty;
-                    product.Details.Product = null;
-                }
+        [Route("getproductsbycategory")]
+        public ActionResult GetProductsByCategory(Guid CategoryId)
+        {
+            List<Product> products = _productServices.FindByCategory(CategoryId);
+            return Json(PrepareForJson(products));
+        }
+
+        private ProductDTO PrepareForJson (Product product)
+        {
+            ProductDTO productDTO = new ProductDTO(product);
+            return productDTO;
+        }
+        private List<ProductDTO> PrepareForJson(List<Product> products)
+        {
+            List<ProductDTO> productDTOs = new List<ProductDTO>();
+            foreach(Product p in products)
+            {
+                productDTOs.Add(new ProductDTO(p));
+
             }
-            return products;
+            return productDTOs;
         }
 
 

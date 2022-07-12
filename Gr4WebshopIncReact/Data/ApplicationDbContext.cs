@@ -211,7 +211,7 @@ namespace Gr4WebshopIncReact.Data
                     Price = 500,
                     SaleAmount = 50,
                     SalePercentage = 10,
-                    Storage = 38,
+                    Stock = 38,
                     DateStocked = DateTime.Today,
                     Brand = "GR4Inc"
                 });
