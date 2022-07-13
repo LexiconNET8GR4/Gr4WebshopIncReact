@@ -9,10 +9,10 @@ namespace Gr4WebshopIncReact.Models
 {
     /// Model used for uploading files
     /// Validation and storage handled by controller
-    public class FileUploadingModel
+    public class FilesUploadingModel
     {
-        [Required(ErrorMessage = "Please choose an image")]
+        [Required(ErrorMessage = "Please choose images")]
         [Display(Name = "Cover Image")]
-        public IFormFile File { get; set; }
+        public IFormFile[] Files { get; set; }
     }
 }
