@@ -1,36 +1,19 @@
 ﻿Fields of Products:
 
-string Name 
-string Description 
+Guid Id
+string Name
+string Description
 string CoverImageDestination
-List<ImageDestination> ImagesDestination 
-Guid DetailsKey  : Internal variable, always shown as empty
-Details Details
-List<ProductCategory> Categories
-double Price 
-double CurrentPrice 
+List<string> ImagesDestination
+string Details 
+List<Guid> Categories 
+double Price
+double CurrentPrice
 double SaleAmount 
-double SalePercentage 
-int Storage 
+double SalePercentage
+double Stock
 DateTime DateStocked
-string Brand 
-
-
-Fields of ImagesDestination:
-
-Guid Id
-string Path 
-Guid ProductKey  : Internal variable, always shown as empty
-Product Product   : Internal variable, always shown as empty
-
-
-Fields of ProductCategory:
-
-Guid Id
-string Name 
-bool isMainCateGory
-List<ProductCategory> Products 
-List<SubCategory> SubCategories 
+string Brand
 
 
 Methods:
@@ -69,7 +52,7 @@ optional data:  string Description,
                 double Price,
                 double SaleAmount,
                 double SalePercentage,
-                double Storage,
+                double Stock,
                 DateTime DateStocked,
                 string Brand
 result: success: JSON of the product
@@ -92,7 +75,7 @@ optional data:  string Name,
                 double CurrentPrice,
                 double SaleAmount,
                 double SalePercentage,
-                double Storage,     changed to int serverside
+                double Stock,
                 DateTime DateStocked,
                 string Brand
 

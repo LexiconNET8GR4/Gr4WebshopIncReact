@@ -1,0 +1,7 @@
+﻿Fields of Category:
+
+Guid Id
+string Name
+bool isMainCateGory 
+List<ProductCategory> Products 
+List<SubCategory> SubCategories 

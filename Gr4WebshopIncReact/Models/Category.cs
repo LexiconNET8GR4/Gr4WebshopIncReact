@@ -13,7 +13,13 @@ namespace Gr4WebshopIncReact.Models
 		[Required]
 		public bool isMainCateGory { get; set; }
 		public List<ProductCategory> Products { get; set; }
-		public List<SubCategory> SubCategories { get; set; }
+		public List<Category> SubCategories { get; set; }
+
+        public Category()
+        {
+			Products = new List<ProductCategory>();
+			SubCategories = new List<Category>();
+        }
 	}
 }
 

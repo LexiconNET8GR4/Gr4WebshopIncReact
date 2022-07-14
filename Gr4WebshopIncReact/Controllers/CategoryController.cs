@@ -47,8 +47,25 @@ namespace Gr4WebshopIncReact.Controllers
             return Json(PrepareForJSON(category));
         }
 
+        [Route("addsubcategory")]
+        [HttpPost]
+        public ActionResult AddSubcategory(Guid parentId, Guid subcatId)
+        {
+            Category category = _categoryServices.FindById(parentId);
+            Category subcat = _categoryServices.FindById(subcatId);
+            if (category == null || subcat == null) return BadRequest();
+            if(!category.SubCategories.Contains(subcat)) category.SubCategories.Add(subcat);
+            category = _categoryServices.Update(category);
+            return Json(PrepareForJSON(category));
+        }
+
         [Route("createcategory")]
-        public ActionResult CreateCategory(Guid ParentId, string Name, bool isMainCateGory, List<Guid> SubCategories)
+        [HttpPost]
+        public ActionResult CreateCategory(
+            Guid ParentId, 
+            string Name, 
+            bool isMainCateGory, 
+            [FromQuery]List<Guid> SubCategories)
         {
             Category category = new Category() {
                 Id=Guid.NewGuid(),
@@ -58,9 +75,7 @@ namespace Gr4WebshopIncReact.Controllers
             if (SubCategories != null && SubCategories.Count > 0)
             {
                 foreach(Guid guid in SubCategories) {
-                    SubCategory subCategory = new SubCategory();
-                    subCategory.MainKey = category.Id;
-                    subCategory.SubKey = guid;
+                    Category subCategory = _categoryServices.FindById(guid);
                     category.SubCategories.Add(subCategory);
                 }
                 
@@ -78,18 +93,10 @@ namespace Gr4WebshopIncReact.Controllers
             if (category == null) return BadRequest();
             category.Name = Name;
             category.isMainCateGory = isMainCateGory;
-            List<SubCategory> subCategories = new List<SubCategory>();
+            List<Category> subCategories = new List<Category>();
             if (SubCategories != null && SubCategories.Count > 0)
             {
-                foreach (Guid id in SubCategories)
-                {
-                    SubCategory subCategory = new SubCategory()
-                    {
-                        MainKey = category.Id,
-                        SubKey = id
-                    };
-                    subCategories.Add(subCategory);
-                }
+               
                 category.SubCategories = subCategories;
             }
             Category returnCat = _categoryServices.Update(category);
@@ -101,11 +108,6 @@ namespace Gr4WebshopIncReact.Controllers
         private CategoryDTO PrepareForJSON(Category c)
         {
             CategoryDTO categoryDTO = new CategoryDTO(c);
-            var subCats = _categoryServices.FindSubCategories(c);
-            if (subCats != null && subCats.Count > 0) foreach (Category cat in subCats)
-                {
-                    categoryDTO.SubCategories.Add(cat.Id);
-                }
             return categoryDTO;
         }
 

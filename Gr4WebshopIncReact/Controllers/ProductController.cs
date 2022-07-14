@@ -20,10 +20,14 @@ namespace Gr4WebshopIncReact.Controllers
     public class ProductController : Controller
     {
         private readonly IProductServices _productServices;
+        private readonly IImageDestinationServices _imageDestinationServices;
+        private readonly ICategoryServices _categoryServices;
 
-        public ProductController(IProductServices productServices)
+        public ProductController(IProductServices productServices,IImageDestinationServices imageDestinationServices,ICategoryServices categoryServices)
         {
             _productServices = productServices;
+            _imageDestinationServices = imageDestinationServices;
+            _categoryServices = categoryServices;
         }
         // GET: api/<ProductController>
         [HttpGet]
@@ -48,15 +52,15 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [Route("createproduct")]
         public ActionResult CreateProduct(
             [Required] string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDestination> ImagesDestination,
-            [FromQuery] Details Details,
-            [FromQuery] List<ProductCategory> Categories,
+            [FromQuery] List<string> ImagesDestination,
+            string Details,
+            [FromQuery] List<Guid> Categories,
             double Price,
             double SaleAmount,
             double SalePercentage,
@@ -68,14 +72,27 @@ namespace Gr4WebshopIncReact.Controllers
             Product product = _productServices.CreateProduct(Name);
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
-            if (ImagesDestination != null) product.ImagesDestination = ImagesDestination;
-            if (Details != null) product.Details.Data = Details.Data;
+            if (ImagesDestination != null&& ImagesDestination.Count>0) {
+                foreach(string i in ImagesDestination)
+                {
+                    product.ImagesDestination.Add(_imageDestinationServices.GetImageDestination(i));
+                }
+            }
+            
+            if (Details != null) product.Details.Data = Details;
             if (Price != 0) product.Price = Price;
             if (SaleAmount != 0) product.SaleAmount = SaleAmount;
             if (SalePercentage != 0) product.SalePercentage = SalePercentage;
             if (Stock != 0) product.Stock = Stock;
             if (DateStocked != null) product.DateStocked = DateStocked;
             if (Brand != null) product.Brand = Brand;
+            if (Categories != null && Categories.Count > 0) {
+                product.Categories = new List<ProductCategory>();
+                foreach(Guid id in Categories)
+                {
+                    _categoryServices.AddProduct(_categoryServices.FindById(id), product);
+                }
+            } 
             _productServices.Update(product);
            
 
