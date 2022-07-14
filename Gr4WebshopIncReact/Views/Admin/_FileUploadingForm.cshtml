@@ -1,0 +1,49 @@
+﻿@using Gr4WebshopIncReact.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model FilesUploadingModel
+
+    <div id="scripts">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+    </div>
+
+
+    <form enctype="multipart/form-data">
+        <input class="custom-file-input" id="customFile" type="file" data-val="true" data-val-required="Please choose images" multiple="multiple" name="Files" />
+        <br />
+        <input type="button" onclick="attemptUpload()" value="Upload files" />
+    </form>
+
+
+    <script>
+        function attemptUpload() {
+
+            // Files squred from form
+            let files = document.getElementById("customFile").files;
+
+            // VALIDATE HERE
+            //
+            //
+            //
+            // VALIDATE HERE
+
+
+            // Create an object of formData 
+            const formData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                formData.append('Files', files[i]); // This generates an array under the name Files
+            }
+
+            // Request made to the backend api 
+            // Send formData object 
+            axios.post('/api/FileUploading/UploadNewImages', formData)
+                .then(res => {
+                    console.log(res);
+                    // Update gallery here?
+                    // Inform user of server response
+                })
+                .catch(error => {
+                    console.error(error.response.data); // Inform user of errors here
+                })
+        }
+    </script>
+  

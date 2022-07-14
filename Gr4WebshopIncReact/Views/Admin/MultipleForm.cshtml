@@ -5,7 +5,40 @@
 }
 
 
-<div class="col-md-10 mx-auto py-4">
+
+
+<div id="copy-pasted">
+
+    <div id="image-upload-form-container">
+        <div class="card-header bg-primary text-uppercase text-white">
+            <h4>Add New </h4>
+        </div>
+        <div class="card-body">
+
+            <form enctype="multipart/form-data" action="/api/FileUploading/UploadNewImages" method="post">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label" for="Files">Cover Image</label>
+                        <div class="custom-file">
+                            <input class="custom-file-input" id="customFile" type="file" data-val="true" data-val-required="Please choose images" multiple="multiple" name="Files">
+                            <label class="custom-file-label" for="customFile">Choose images</label>
+                        </div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Files" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="submit" class="btn btn-sm btn-primary rounded-0 text-uppercase">
+                    <a class="btn btn-sm btn-primary rounded-0 text-uppercase" href="/Admin"><i class="fas fa-fast-backward"></i> Back to List</a>
+                </div>
+                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8LPLqX1DCplMmfam6kG35AbHIfg1dnsycTnTfHTYszWRj-bcA3oaFI5jaluCOb3zb22KQiYCpKV0aP7IuU1_jOmf1y8zzRCnnNS0i2vFqbXRkhSAWJOFaOF51xVeQsc0oKuG-QOf1WWZszDbtwtQoSE">
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@*<div class="col-md-10 mx-auto py-4">
     <div class="card">
         <div class="card-header bg-primary text-uppercase text-white">
             <h4>Add New </h4>
@@ -31,5 +64,5 @@
             </form>
         </div>
     </div>
-</div>
+</div>*@
 
