@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Gr4WebshopIncReact.Services;
 using Gr4WebshopIncReact.Models;
 using Gr4WebshopIncReact.Models.DTOS;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gr4WebshopIncReact.Controllers
 {
@@ -48,6 +49,7 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [Route("addsubcategory")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult AddSubcategory(Guid parentId, Guid subcatId)
         {
@@ -60,6 +62,7 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [Route("createcategory")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult CreateCategory(
             Guid ParentId, 
@@ -86,8 +89,9 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [Route("editcategory")]
+        [Authorize(Roles = "Admin")]
 
-    public ActionResult EditCategory(Guid Id,Guid ParentId, string Name, bool isMainCateGory, List<Guid> SubCategories)
+        public ActionResult EditCategory(Guid Id,Guid ParentId, string Name, bool isMainCateGory, List<Guid> SubCategories)
         {
             Category category = _categoryServices.FindById(Id);
             if (category == null) return BadRequest();

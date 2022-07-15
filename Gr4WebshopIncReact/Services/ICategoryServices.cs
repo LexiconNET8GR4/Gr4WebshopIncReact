@@ -15,7 +15,7 @@ namespace Gr4WebshopIncReact.Services
         public Category Update(Category category);
         public List<Category> FindByProduct(Product product);
         public List<Category> FindByName(string Name);
-        public Category AddProduct(Category category,Product product);
+        public ProductCategory AddProduct(Category category,Product product);
         public Category AddSubCategory(Category parent, Category subCategory);
 
 

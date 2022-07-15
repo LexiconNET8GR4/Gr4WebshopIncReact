@@ -52,7 +52,7 @@ namespace Gr4WebshopIncReact.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("createproduct")]
         public ActionResult CreateProduct(
             [Required] string Name,
@@ -90,7 +90,12 @@ namespace Gr4WebshopIncReact.Controllers
                 product.Categories = new List<ProductCategory>();
                 foreach(Guid id in Categories)
                 {
-                    _categoryServices.AddProduct(_categoryServices.FindById(id), product);
+                    ProductCategory productCategory = new ProductCategory()
+                    {
+                        ProductKey = product.Id,
+                        CategoryKey = id
+                    };
+                    product.Categories.Add(productCategory);
                 }
             } 
             _productServices.Update(product);
@@ -107,9 +112,9 @@ namespace Gr4WebshopIncReact.Controllers
             string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDestination> ImagesDestination,
-            string Type,
-            [FromQuery] Details Details,
+            [FromQuery] List<string> ImagesDestination,
+            string Details,
+            [FromQuery] List<Guid> Categories,
             double Price,
             double SaleAmount,
             double SalePercentage,
@@ -125,24 +130,48 @@ namespace Gr4WebshopIncReact.Controllers
             if(Name!=null)productToModify.Name = Name;
             productToModify.Description = Description;
             productToModify.CoverImageDestination = CoverImageDestination;
-            productToModify.ImagesDestination = ImagesDestination;
-            productToModify.Details.Data = Details.Data;
+            productToModify.Details.Data = Details;
             productToModify.Price = Price;
             productToModify.SaleAmount = SaleAmount;
             productToModify.SalePercentage = SalePercentage;
             productToModify.Stock = Stock;
             productToModify.DateStocked = DateStocked;
             productToModify.Brand = Brand;
+            productToModify.Categories = new List<ProductCategory>();
+            if (Categories != null && Categories.Count > 0)
+            {
+                foreach (Guid catid in Categories)
+                {
+                    ProductCategory productCategory = new ProductCategory()
+                    {
+                        ProductKey = productToModify.Id,
+                        CategoryKey = catid
+                    };
+                    productToModify.Categories.Add(productCategory);
+                }
+            }
+            productToModify.ImagesDestination = new List<ImageDestination>();
+            if (ImagesDestination != null && ImagesDestination.Count > 0)
+            {
+                foreach(string imdes in ImagesDestination)
+                {
+                    var imagedes=_imageDestinationServices.AddImageDestination(productToModify, imdes);
+                    productToModify.ImagesDestination.Add(imagedes);
+                }
+                
+            }
+
+
             Product product = _productServices.Update(productToModify);
+            
             return Json(PrepareForJson(product));
         }
 
         [Route("deleteproduct")]
         [Authorize(Roles = "Admin")]
-        public ActionResult DeleteProduct(string id)
+        public ActionResult DeleteProduct(Guid id)
         {
-            Guid guidId = Guid.Parse(id);
-            if (_productServices.Delete(guidId)) 
+            if (_productServices.Delete(id)) 
                 return StatusCode(200);
             else return BadRequest();
         }

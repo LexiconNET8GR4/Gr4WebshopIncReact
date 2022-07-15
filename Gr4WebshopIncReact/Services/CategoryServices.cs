@@ -20,10 +20,10 @@ namespace Gr4WebshopIncReact.Services
             _productServices = productServices;
         }
 
-        public Category AddProduct(Category category, Product product)
+        public ProductCategory AddProduct(Category category, Product product)
         {
             var AllreadyExists=_context.ProductCategories.Where(pc => pc.CategoryKey == category.Id && pc.ProductKey == product.Id).FirstOrDefault();
-            if (AllreadyExists != null) { return FindById(AllreadyExists.CategoryKey); }
+            if (AllreadyExists != null) { return AllreadyExists; }
             else
             {
                 ProductCategory productCategory = new ProductCategory()
@@ -32,7 +32,7 @@ namespace Gr4WebshopIncReact.Services
                     CategoryKey = category.Id
                 };
                 _context.ProductCategories.Add(productCategory);
-                return _context.SaveChanges() > 0 ? category : null;
+                return _context.SaveChanges() > 0 ? productCategory : null;
             }
         }
 

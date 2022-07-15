@@ -15,6 +15,20 @@ namespace Gr4WebshopIncReact.Services
         {
             _context = context;
         }
+
+        public ImageDestination AddImageDestination(Product product, string path)
+        {
+            ImageDestination imageDestination = new ImageDestination()
+            {
+                Id = Guid.NewGuid(),
+                Path = path,
+                Product = product,
+                ProductKey = product.Id
+            };
+            _context.Add(imageDestination);
+            return _context.SaveChanges() > 0 ? imageDestination : null;
+        }
+
         public ImageDestination GetImageDestination(string path)
         {
             return _context.Set<ImageDestination>().Where(i => i.Path == path).FirstOrDefault();
