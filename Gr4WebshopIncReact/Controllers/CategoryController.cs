@@ -8,6 +8,7 @@ using Gr4WebshopIncReact.Services;
 using Gr4WebshopIncReact.Models;
 using Gr4WebshopIncReact.Models.DTOS;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace Gr4WebshopIncReact.Controllers
 {
@@ -23,7 +24,12 @@ namespace Gr4WebshopIncReact.Controllers
             _categoryServices = categoryServices;
             _productServices = productServices;
         }
-
+        /// <summary>
+        /// Get all categories in the database
+        /// </summary>
+        /// <returns>
+        /// JSON of all categories
+        /// </returns>
         [Route("getallcategories")]
         public ActionResult GetAllCategories()
         {
@@ -31,6 +37,12 @@ namespace Gr4WebshopIncReact.Controllers
             return Json(PrepareForJSON(categories));
         }
 
+
+        /// <summary>
+        /// Get subcategories for a given category id
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns>List of Guid for the subcategories</returns>
         [Route("getsubcategories")]
         public ActionResult GetSubCategories(Guid categoryId)
         {
@@ -41,17 +53,39 @@ namespace Gr4WebshopIncReact.Controllers
             return Json(categoryDTO.SubCategories);
         }
 
+
+        /// <summary>
+        /// Get a category with the given id
+        /// </summary>
+        /// <param name="id">
+        /// Category id
+        /// </param>
+        /// <returns>
+        /// if successful: JSON of the given category<br></br>
+        /// If failed: HTTP 400 Bad Request
+        /// </returns>
         [Route("getcategory")]
-        public ActionResult GetCategory(Guid id)
+        public ActionResult GetCategory([Required]Guid id)
         {
             Category category = _categoryServices.FindById(id);
+            if (category == null) return BadRequest();
             return Json(PrepareForJSON(category));
         }
 
+
+        /// <summary>
+        /// Add a subcategory to a parent category
+        /// </summary>
+        /// <param name="parentId">Parent id</param>
+        /// <param name="subcatId">Subcategory id</param>
+        /// <returns>
+        /// If successful: JSON for the parent category<br></br>
+        /// If failed: HTTP 400 Bad Request
+        /// </returns>
         [Route("addsubcategory")]
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public ActionResult AddSubcategory(Guid parentId, Guid subcatId)
+        public ActionResult AddSubcategory([Required]Guid parentId, [Required]Guid subcatId)
         {
             Category category = _categoryServices.FindById(parentId);
             Category subcat = _categoryServices.FindById(subcatId);
@@ -61,12 +95,24 @@ namespace Gr4WebshopIncReact.Controllers
             return Json(PrepareForJSON(category));
         }
 
+
+        /// <summary>
+        /// Create a new category
+        /// </summary>
+        /// <param name="ParentId">Optional parent category id</param>
+        /// <param name="Name">Required</param>
+        /// <param name="isMainCateGory"></param>
+        /// <param name="SubCategories"></param>
+        /// <returns>
+        /// If successful: JSON for created category<br></br>
+        /// If failed: HTTP 400 Bad Request
+        /// </returns>
         [Route("createcategory")]
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult CreateCategory(
             Guid ParentId, 
-            string Name, 
+            [Required]string Name, 
             bool isMainCateGory, 
             [FromQuery]List<Guid> SubCategories)
         {
@@ -88,10 +134,26 @@ namespace Gr4WebshopIncReact.Controllers
             
         }
 
+
+        /// <summary>
+        /// Edit a category<br></br>
+        /// Optional values not set will be set to null or 0
+        /// </summary>
+        /// <param name="Id">Required</param>
+        /// <param name="Name">Optional</param>
+        /// <param name="isMainCateGory">Optional</param>
+        /// <param name="SubCategories">Optional</param>
+        /// <returns>
+        /// If successful: JSON for the category<br></br>
+        /// If failed: HTTP 400 Bad Request
+        /// </returns>
         [Route("editcategory")]
         [Authorize(Roles = "Admin")]
 
-        public ActionResult EditCategory(Guid Id,Guid ParentId, string Name, bool isMainCateGory, List<Guid> SubCategories)
+        public ActionResult EditCategory([Required] Guid Id, 
+                                            string Name, 
+                                            bool isMainCateGory, 
+                                            List<Guid> SubCategories)
         {
             Category category = _categoryServices.FindById(Id);
             if (category == null) return BadRequest();
@@ -104,6 +166,7 @@ namespace Gr4WebshopIncReact.Controllers
                 category.SubCategories = subCategories;
             }
             Category returnCat = _categoryServices.Update(category);
+            if (returnCat == null) return BadRequest();
             return Json(PrepareForJSON(returnCat));
 
 
