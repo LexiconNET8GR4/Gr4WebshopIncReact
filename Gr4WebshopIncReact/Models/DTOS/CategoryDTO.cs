@@ -8,7 +8,6 @@ namespace Gr4WebshopIncReact.Models.DTOS
     public class CategoryDTO
     {
 		public Guid Id { get; set; }
-		public Guid ParentId { get; set; }
 		public string Name { get; set; }
 		public bool isMainCateGory { get; set; }
 		public List<Guid> SubCategories { get; set; }
@@ -19,9 +18,9 @@ namespace Gr4WebshopIncReact.Models.DTOS
 			isMainCateGory = category.isMainCateGory;
 			SubCategories = new List<Guid>();
 			if(category.SubCategories!=null&&category.SubCategories.Count>0)
-				foreach(SubCategory c in category.SubCategories)
+				foreach(Category c in category.SubCategories)
                 {
-					SubCategories.Add(c.SubKey);
+					SubCategories.Add(c.Id);
                 }
         }
 	}

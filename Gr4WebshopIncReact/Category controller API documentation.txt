@@ -1,0 +1,72 @@
+﻿Fields of Category:
+
+Guid Id
+string Name
+bool isMainCateGory 
+List<Guid> SubCategories 
+
+
+Methods:
+
+GetAllCategories
+
+path: /api/category/getallcategories
+required data:none
+optional data:none
+result: JSON of all categories in the database
+
+example request: https://localhost:44377/api/Category/getallcategories
+
+
+GetSubCategories
+
+path: /api/category/getallsubcategories
+required data: Guid categoryid
+optional data:none
+result: success: JSON of subcategories for the category with the given id
+		failure: HTTP 400 Bad Request
+
+example request: https://localhost:44377/api/Category/getallcategories
+
+
+
+GetCategory
+
+path: /api/category/getcategory
+required data: Guid categoryid
+optional data:none
+result: success: JSON of the category with the given id
+		failure: HTTP 400 Bad Request
+
+
+
+AddSubcategory
+
+path: /api/category/addsubcategory
+required data: Guid parentId, Guid subcatId
+optional data:none
+result: success: JSON of the parent category
+		failure: HTTP 400 Bad Request
+
+
+
+CreateCategory
+
+path: /api/category/createcategory
+required data: string Name
+optional data:	bool isMainCateGory, 
+				List<Guid> SubCategories)
+result: success: JSON of the created category
+		failure: HTTP 400 Bad Request
+
+
+
+EditCategory
+
+path: /api/category/editcategory
+required data: Guid Id
+optional data:	string Name, 
+                bool isMainCateGory, 
+                List<Guid> SubCategories
+result: success: JSON of the modified category
+		failure: HTTP 400 Bad Request

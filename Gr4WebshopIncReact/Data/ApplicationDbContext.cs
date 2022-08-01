@@ -23,7 +23,6 @@ namespace Gr4WebshopIncReact.Data
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
 
         // Composite tables
-        public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<OrderedProducts> OrderedProducts { get; set; }
 
@@ -66,14 +65,11 @@ namespace Gr4WebshopIncReact.Data
             // --- Using a connector class named SubCategory
 
             // Denote composite key
-            modelBuilder.Entity<SubCategory>()
-                .HasKey(sc => new { sc.MainKey, sc.SubKey });
+           // modelBuilder.Entity<SubCategory>()
+             //   .HasKey(sc => new { sc.MainKey, sc.SubKey });
 
-            // Create one-to-many connection beteween connector and Category
-            modelBuilder.Entity<SubCategory>()
-                .HasOne(s => s.MainCat)
-                .WithMany(m => m.SubCategories)
-                .HasForeignKey(sc => sc.SubKey);
+           
+
             #endregion
 
             #region Ordered Products
@@ -241,12 +237,7 @@ namespace Gr4WebshopIncReact.Data
                 });
 
             // Connect main and sub categories
-            modelBuilder.Entity<SubCategory>().HasData(
-                new SubCategory
-                {
-                    MainKey = kitchenCategoryKey,
-                    SubKey = chairCategoryKey
-                });
+           
 
             // Connect the chair and its appropriate categories
             modelBuilder.Entity<ProductCategory>().HasData(

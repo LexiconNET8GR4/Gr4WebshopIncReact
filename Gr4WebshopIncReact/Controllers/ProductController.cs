@@ -20,10 +20,14 @@ namespace Gr4WebshopIncReact.Controllers
     public class ProductController : Controller
     {
         private readonly IProductServices _productServices;
+        private readonly IImageDestinationServices _imageDestinationServices;
+        private readonly ICategoryServices _categoryServices;
 
-        public ProductController(IProductServices productServices)
+        public ProductController(IProductServices productServices,IImageDestinationServices imageDestinationServices,ICategoryServices categoryServices)
         {
             _productServices = productServices;
+            _imageDestinationServices = imageDestinationServices;
+            _categoryServices = categoryServices;
         }
         // GET: api/<ProductController>
         [HttpGet]
@@ -54,9 +58,9 @@ namespace Gr4WebshopIncReact.Controllers
             [Required] string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDestination> ImagesDestination,
-            [FromQuery] Details Details,
-            [FromQuery] List<ProductCategory> Categories,
+            [FromQuery] List<string> ImagesDestination,
+            string Details,
+            [FromQuery] List<Guid> Categories,
             double Price,
             double SaleAmount,
             double SalePercentage,
@@ -68,14 +72,32 @@ namespace Gr4WebshopIncReact.Controllers
             Product product = _productServices.CreateProduct(Name);
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
-            if (ImagesDestination != null) product.ImagesDestination = ImagesDestination;
-            if (Details != null) product.Details.Data = Details.Data;
+            if (ImagesDestination != null&& ImagesDestination.Count>0) {
+                foreach(string i in ImagesDestination)
+                {
+                    product.ImagesDestination.Add(_imageDestinationServices.GetImageDestination(i));
+                }
+            }
+            
+            if (Details != null) product.Details.Data = Details;
             if (Price != 0) product.Price = Price;
             if (SaleAmount != 0) product.SaleAmount = SaleAmount;
             if (SalePercentage != 0) product.SalePercentage = SalePercentage;
             if (Stock != 0) product.Stock = Stock;
             if (DateStocked != null) product.DateStocked = DateStocked;
             if (Brand != null) product.Brand = Brand;
+            if (Categories != null && Categories.Count > 0) {
+                product.Categories = new List<ProductCategory>();
+                foreach(Guid id in Categories)
+                {
+                    ProductCategory productCategory = new ProductCategory()
+                    {
+                        ProductKey = product.Id,
+                        CategoryKey = id
+                    };
+                    product.Categories.Add(productCategory);
+                }
+            } 
             _productServices.Update(product);
            
 
@@ -90,9 +112,9 @@ namespace Gr4WebshopIncReact.Controllers
             string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<ImageDestination> ImagesDestination,
-            string Type,
-            [FromQuery] Details Details,
+            [FromQuery] List<string> ImagesDestination,
+            string Details,
+            [FromQuery] List<Guid> Categories,
             double Price,
             double SaleAmount,
             double SalePercentage,
@@ -108,24 +130,48 @@ namespace Gr4WebshopIncReact.Controllers
             if(Name!=null)productToModify.Name = Name;
             productToModify.Description = Description;
             productToModify.CoverImageDestination = CoverImageDestination;
-            productToModify.ImagesDestination = ImagesDestination;
-            productToModify.Details.Data = Details.Data;
+            productToModify.Details.Data = Details;
             productToModify.Price = Price;
             productToModify.SaleAmount = SaleAmount;
             productToModify.SalePercentage = SalePercentage;
             productToModify.Stock = Stock;
             productToModify.DateStocked = DateStocked;
             productToModify.Brand = Brand;
+            productToModify.Categories = new List<ProductCategory>();
+            if (Categories != null && Categories.Count > 0)
+            {
+                foreach (Guid catid in Categories)
+                {
+                    ProductCategory productCategory = new ProductCategory()
+                    {
+                        ProductKey = productToModify.Id,
+                        CategoryKey = catid
+                    };
+                    productToModify.Categories.Add(productCategory);
+                }
+            }
+            productToModify.ImagesDestination = new List<ImageDestination>();
+            if (ImagesDestination != null && ImagesDestination.Count > 0)
+            {
+                foreach(string imdes in ImagesDestination)
+                {
+                    var imagedes=_imageDestinationServices.AddImageDestination(productToModify, imdes);
+                    productToModify.ImagesDestination.Add(imagedes);
+                }
+                
+            }
+
+
             Product product = _productServices.Update(productToModify);
+            
             return Json(PrepareForJson(product));
         }
 
         [Route("deleteproduct")]
         [Authorize(Roles = "Admin")]
-        public ActionResult DeleteProduct(string id)
+        public ActionResult DeleteProduct(Guid id)
         {
-            Guid guidId = Guid.Parse(id);
-            if (_productServices.Delete(guidId)) 
+            if (_productServices.Delete(id)) 
                 return StatusCode(200);
             else return BadRequest();
         }

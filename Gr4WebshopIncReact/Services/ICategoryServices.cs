@@ -12,11 +12,11 @@ namespace Gr4WebshopIncReact.Services
         public bool Delete(Guid id);
         public List<Category> GetAll();
         public Category FindById(Guid id);
-        public List<Category> FindSubCategories(Category category);
         public Category Update(Category category);
         public List<Category> FindByProduct(Product product);
         public List<Category> FindByName(string Name);
-        public Category AddProduct(Category category,Product product);
+        public ProductCategory AddProduct(Category category,Product product);
+        public Category AddSubCategory(Category parent, Category subCategory);
 
 
 

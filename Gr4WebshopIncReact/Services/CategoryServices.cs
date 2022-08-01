@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gr4WebshopIncReact.Data;
 using Gr4WebshopIncReact.Models.DTOS;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gr4WebshopIncReact.Services
 {
@@ -19,14 +20,30 @@ namespace Gr4WebshopIncReact.Services
             _productServices = productServices;
         }
 
-        public Category AddProduct(Category category, Product product)
+        public ProductCategory AddProduct(Category category, Product product)
+        {
+            var AllreadyExists=_context.ProductCategories.Where(pc => pc.CategoryKey == category.Id && pc.ProductKey == product.Id).FirstOrDefault();
+            if (AllreadyExists != null) { return AllreadyExists; }
+            else
+            {
+                ProductCategory productCategory = new ProductCategory()
+                {
+                    ProductKey = product.Id,
+                    CategoryKey = category.Id
+                };
+                _context.ProductCategories.Add(productCategory);
+                return _context.SaveChanges() > 0 ? productCategory : null;
+            }
+        }
+
+        public Category AddSubCategory(Category parent, Category subCategory)
         {
             return null;
         }
 
         public Category CreateCategory(Category category)
         {
-            _context.Add(category);
+            _context.Categories.Add(category);
             return _context.SaveChanges()>0?category:null;
             
         }
@@ -40,17 +57,18 @@ namespace Gr4WebshopIncReact.Services
         public Category FindById(Guid id)
         {
 
-            Category category = _context.Categories.Where(c => c.Id == id).FirstOrDefault();
-            category.SubCategories = _context.SubCategories.Where(s => s.MainKey == category.Id).ToList();
+            Category category = _context.Categories.Where(c => c.Id == id)
+                .Include(c=>c.SubCategories)
+                .FirstOrDefault();
+            if (category == null) return null;
             return category;
         }
 
         public List<Category> FindByName(string Name)
         {
-            List<Category> categories = _context.Categories.Where(c => c.Name == Name).ToList();
-            foreach(Category category in categories){
-                category.SubCategories = _context.SubCategories.Where(s => s.MainKey == category.Id).ToList(); 
-            }
+            List<Category> categories = _context.Categories.Where(c => c.Name == Name)
+                .Include(c=>c.SubCategories)
+                .ToList();
             
             return categories;
         }
@@ -66,25 +84,12 @@ namespace Gr4WebshopIncReact.Services
             return categories;
         }
 
-        public List<Category> FindSubCategories(Category category)
-        {
-            List<Category> categories = new List<Category>();
-            List<SubCategory> subCategories = _context.SubCategories.Where(s => s.MainKey == category.Id).ToList();
-            if (subCategories == null || subCategories.Count == 0) return null;
-            foreach(SubCategory s in subCategories)
-            {
-                categories.Add(FindById(s.SubKey));
-            }
-            return categories;
-        }
-
         public List<Category> GetAll()
         {
-            List<Category> categories = _context.Categories.ToList();
-            foreach(Category category in categories)
-            {
-                category.SubCategories = _context.SubCategories.Where(s => s.MainKey == category.Id).ToList();
-            }
+            List<Category> categories = _context.Categories
+                .Include(c => c.SubCategories)
+                .ToList();
+            
             return categories;
         }
 

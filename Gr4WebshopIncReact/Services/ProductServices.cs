@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Gr4WebshopIncReact.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gr4WebshopIncReact.Services
 {
@@ -40,33 +41,39 @@ namespace Gr4WebshopIncReact.Services
 
         public List<Product> GetAll()
         {
-            List<Product> products = _context.Products.ToList();
+            List<Product> products = _context.Products
+                .Include(p => p.Details)
+                .Include(p => p.ImagesDestination)
+                .Include(p => p.Categories)
+                .ToList();
             if (products == null || products.Count() == 0) return null;
-            foreach(Product product in products)
-            {
-                product.Details = _context.Details.Where(d => d.Id == product.DetailsKey).FirstOrDefault();
-                product.ImagesDestination = _context.Set<ImageDestination>().Where(i => i.ProductKey == product.Id).ToList();
-            }
+            
             return products;
         }
 
         public Product GetById(Guid id)
         {
-            Product product=_context.Products.Where(p=>p.Id==id).FirstOrDefault();
+            Product product=_context.Products.Where(p=>p.Id==id)
+                .Include(p => p.Details)
+                .Include(p => p.ImagesDestination)
+                .Include(p => p.Categories)
+                .FirstOrDefault();
             if (product == null) return null;
-            product.Details = _context.Details.Where(d => d.Id == product.DetailsKey).FirstOrDefault();
-            product.ImagesDestination = _context.Set<ImageDestination>().Where(i => i.ProductKey == product.Id).ToList();
             return product;
         }
 
         public List<Product> Find(string SearchPhrase)
         {
             List<Product> products = _context.Products.Where(p =>
-            p.Details.Data.Contains(SearchPhrase) ||
-            p.Name.Contains(SearchPhrase) ||
-            p.Description.Contains(SearchPhrase) ||
-            p.Brand.Contains(SearchPhrase)
-            ).ToList();
+                p.Details.Data.Contains(SearchPhrase) ||
+                p.Name.Contains(SearchPhrase) ||
+                p.Description.Contains(SearchPhrase) ||
+                p.Brand.Contains(SearchPhrase)
+                )
+            .Include(p => p.Details)
+            .Include(p => p.ImagesDestination)
+            .Include(p => p.Categories)
+            .ToList();
             return products;
         }
 
@@ -88,7 +95,11 @@ namespace Gr4WebshopIncReact.Services
         {
             List<Product> products = _context.Products.Where(p =>
             p.Brand.Contains(SearchPhrase)
-            ).ToList();
+            )
+            .Include(p => p.Details)
+            .Include(p => p.ImagesDestination)
+            .Include(p => p.Categories)
+            .ToList();
             return products;
         }
 
@@ -103,9 +114,13 @@ namespace Gr4WebshopIncReact.Services
             {
                 productCategories.Add(_context.ProductCategories.Where(p => p.CategoryKey == c.Id).FirstOrDefault());
             }
-            foreach(ProductCategory pc in productCategories)
+            if(productCategories!=null&&productCategories.Count>0) foreach(ProductCategory pc in productCategories)
             {
-                products.Add(_context.Products.Where(p => p.Id == pc.ProductKey).FirstOrDefault());
+                if(pc!=null)products.Add(_context.Products.Where(p => p.Id == pc.ProductKey)
+                .Include(p => p.Details)
+                .Include(p => p.ImagesDestination)
+                .Include(p => p.Categories)
+                .FirstOrDefault());
             }
             return products;
         }
@@ -114,7 +129,11 @@ namespace Gr4WebshopIncReact.Services
         {
             List<Product> products = _context.Products.Where(p =>
             p.Details.Data.Contains(SearchPhrase)
-            ).ToList();
+            )
+                .Include(p => p.Details)
+                .Include(p => p.ImagesDestination)
+                .Include(p => p.Categories)
+                .ToList();
             return products;
         }
 
@@ -122,7 +141,11 @@ namespace Gr4WebshopIncReact.Services
         {
             List<Product> products = _context.Products.Where(p =>
             p.Description.Contains(SearchPhrase)
-            ).ToList();
+            )
+                .Include(p => p.Details)
+                .Include(p => p.ImagesDestination)
+                .Include(p => p.Categories)
+                .ToList();
             return products;
         }
     }
