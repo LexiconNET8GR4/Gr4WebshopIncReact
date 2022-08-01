@@ -1,0 +1,192 @@
+﻿
+<h2>Create product</h2>
+
+@*
+     string Name                                 - text
+     string Description                          - text
+     string CoverImageDestination,               - Dropdown, images
+    ImagesDestination                            - Dropdown, images (multiple?) https://stackoverflow.com/questions/19206919/how-to-create-checkbox-inside-dropdown
+     [FQ] Details Details                        - text?
+     [FQ] List<ProductCategory> Categories       - Dropdown, categories
+     double Price,                               - number
+     double SaleAmount,                          - number
+     double SalePercentage,                      - number
+     double Stock,                               - number
+     DateTime DateStocked,                       - should be automated?
+     string Brand                                - text
+*@
+
+<form id="product-create-form">
+    <table>
+        <thead>
+            <tr>
+                <td>Value</td>
+                <td>Input</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                Name
+            </td>
+            <td>
+                <input type="text" id="p-name" maxlength="20" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description
+            </td>
+            <td>
+                <input type="text" id="p-desc" maxlength="2000" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Cover Image
+            </td>
+            <td>
+                >Dropdown here< (search?)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Additional Images
+            </td>
+            <td>
+                >Dropdown+Checkbox here< (search?)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Details
+            </td>
+            <td>
+                <input type="text" id="p-details" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Categories
+            </td>
+            <td>
+                >Dropdown+Checkbox here< (search?)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Price
+            </td>
+            <td>
+                <input type="number" id="p-price" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Discount amount
+            </td>
+            <td>
+                <input type="number" id="p-sale-a" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Discount percentage
+            </td>
+            <td>
+                <input type="number" id="p-sale-p" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Stock
+            </td>
+            <td>
+                <input type="number" id="p-stock" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Date stocked
+            </td>
+            <td>
+                <input type="date" id="p-date" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Brand
+            </td>
+            <td>
+                <input type="text" id="p-brand" />
+            </td>
+        </tr>
+    </table>
+    <input type="button" onclick="attemptProductCreation()" value="Add Product" />
+</form>
+<p id="results-container">Currently lacking front-end validation</p>
+
+
+<script>
+    function attemptProductCreation() {
+
+        // Files squred from form
+        let pName = document.getElementById("p-name").value;
+        let pDesc = document.getElementById("p-desc").value;
+        //let pCover = document.getElementById("p-name").value;
+        //let pImages[];
+        let pDetails = document.getElementById("p-details").value;
+        //let pCategories[];
+        let pPrice = document.getElementById("p-price").value;
+        let pSaleAmount = document.getElementById("p-sale-a").value;
+        let pSalePercant = document.getElementById("p-sale-p").value;
+        let pStock = document.getElementById("p-stock").value;
+        let pDate = document.getElementById("p-date").value;
+        let pBrand = document.getElementById("p-brand").value;
+
+
+        // VALIDATE HERE
+        //
+        //
+        //
+        // VALIDATE HERE
+
+
+        // Create an object of formData
+        const formData = new FormData();
+        formData.append('Name', pName);
+        console.log(formData.entries('Name'));
+        
+        //formData.append("Description", pDesc);
+        ////formData.append("CoverImageDestination", pCover);
+        //formData.append("CoverImageDestination", null); // -------------- Debug
+        ///*for (var i = 0; i < pImages.length; i++) {
+        //    formData.append("ImagesDestination", pImages[i]);
+        //}*/
+        //formData.append("ImagesDestination", null); // -------------- Debug
+        //formData.append("Details", pDetails);
+        ///*for (var i = 0; i < pCategories.length; i++) {
+        //    formData.append("Categories", pCategories[i]);
+        //}*/
+        //formData.append("Categories", null); // -------------- Debug
+        //formData.append("Price", pPrice);
+        //formData.append("SaleAmount", pSaleAmount);
+        //formData.append("SalePercentage", pSalePercant);
+        //formData.append("Stock", pStock);
+        //formData.append("DateStocked", pDate);
+        //formData.append("Brand", pBrand);
+        
+
+        // Request made to the backend api
+        // Send formData object
+        axios.post('/api/Product/createproduct', formData)
+            .then(res => {
+                console.log(res);
+
+            })
+            .catch(error => {
+                console.error(error.response.data); // Inform user of errors here
+            })
+
+    }
+</script>

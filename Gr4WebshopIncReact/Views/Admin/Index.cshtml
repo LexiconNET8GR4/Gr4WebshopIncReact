@@ -6,23 +6,13 @@
 <h1>Admin view loaded</h1>
 
 
-<ul>
-    <li> <a href='/Admin/UploadSingleImage'>Upload a single image</a> </li>
-    <li> <a href='/Admin/UploadMultipleImages'> Upload multiple images</a> </li>
-</ul>
+@*<partial name="_FileUploadingForm" model="Model" />*@
 
-
-
-<partial name="_FileUploadingForm" model="Model.FilesUploader" />
+<partial name="_ProductCreationForm" />
 
 <h2>Images currently uploaded</h2>
-<div id="content-container">
-    @foreach (string p in Model.ImageLocations)
-    {
-        <img src="/@p"
-             class="rounded-circle"
-             height="200" width="200"
-             asp-append-version="true" />
-    }
+<p>Included for easier development, does not update dynamically</p>
+<div id="gallery-container">
+    <partial name="_Gallery" model="Model.ImageLocations" />
 </div>
 
