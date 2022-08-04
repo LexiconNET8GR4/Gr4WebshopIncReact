@@ -51,12 +51,12 @@
             <td>
       
                 <select id="p-cover" name="Cover Image">
-                        
-                    @for (int i = 0; i < Model.Count; i++)
+                    
+                    @*@for (int i = 0; i < Model.Count; i++)
                     {
                         <option value="@Model[i]"></option>
-                    }
-
+                    }*@
+                    
                 </select>
             </td>
         </tr>
@@ -89,7 +89,7 @@
                 Price
             </td>
             <td>
-                <input type="number" id="p-price" />
+                <input type="text" id="p-price" />
             </td>
         </tr>
         <tr>
@@ -97,7 +97,7 @@
                 Discount amount
             </td>
             <td>
-                <input type="number" id="p-sale-a" />
+                <input type="text" id="p-sale-a" />
             </td>
         </tr>
         <tr>
@@ -105,7 +105,7 @@
                 Discount percentage
             </td>
             <td>
-                <input type="number" id="p-sale-p" />
+                <input type="text" id="p-sale-p" />
             </td>
         </tr>
         <tr>
@@ -113,7 +113,7 @@
                 Stock
             </td>
             <td>
-                <input type="number" id="p-stock" />
+                <input type="text" id="p-stock" />
             </td>
         </tr>
         <tr>
@@ -152,15 +152,21 @@
         //@Model = files;
     }
 
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    }
+
     function attemptProductCreation() {
 
         // Files squred from form
         let pName = document.getElementById("p-name").value;
         let pDesc = document.getElementById("p-desc").value;
         let pCover = document.getElementById("p-cover").value;
-        let pImages = [];
+        let pImages;// = [];
         let pDetails = document.getElementById("p-details").value;
-        let pCategories= [];
+        let pCategories;//= [];
         let pPrice = document.getElementById("p-price").value;
         let pSaleAmount = document.getElementById("p-sale-a").value;
         let pSalePercant = document.getElementById("p-sale-p").value;
@@ -168,7 +174,21 @@
         let pDate = document.getElementById("p-date").value;
         let pBrand = document.getElementById("p-brand").value;
 
-        console.log(pCover);
+        if (!isNumeric(pPrice)) {
+            pPrice = 0;
+        }
+
+        if (!isNumeric(pSaleAmount)) {
+            pSaleAmount = 0;
+        }
+
+        if (!isNumeric(pSalePercant)) {
+            pSalePercant = 0;
+        }
+
+        if (!isNumeric(pStock)) {
+            pStock = 0;
+        }
 
         // VALIDATE HERE
         //
