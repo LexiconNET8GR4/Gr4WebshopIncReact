@@ -13,6 +13,7 @@ namespace Gr4WebshopIncReact.Models
     {
         [Required(ErrorMessage = "Please choose images")]
         [Display(Name = "Cover Image")]
+        [DataType(DataType.Upload)]
         public IFormFile[] Files { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Gr4WebshopIncReact.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,6 +28,7 @@ namespace Gr4WebshopIncReact.Controllers
         /// <param name="model">Wraps the file in a more easily modifibale class</param>
         /// <returns></returns>
         [Route("UploadNewImage")]
+        [Authorize(Roles = "Admin")] // Disabled during testing
         [HttpPost]
         public IActionResult UploadNewImage([FromForm] FileUploadingModel model)
         {
@@ -50,6 +52,7 @@ namespace Gr4WebshopIncReact.Controllers
         /// <param name="model">Wraps the files in a more easily modifibale class</param>
         /// <returns></returns>
         [Route("UploadNewImages")]
+        [Authorize(Roles = "Admin")] // Disabled during testing
         [HttpPost]
         public IActionResult UploadNewImages([FromForm] FilesUploadingModel model)
         {
@@ -74,6 +77,15 @@ namespace Gr4WebshopIncReact.Controllers
                 }
             }
             return Json(rejectionMsg);
+        }
+
+       
+        [Route("GetAllImages")]
+        public async Task<IActionResult> GetAllImages()
+        {
+            string[] imageDestinations = Directory.GetFiles(imageDestination);
+
+            return Json(imageDestinations);
         }
 
         /// <summary>
