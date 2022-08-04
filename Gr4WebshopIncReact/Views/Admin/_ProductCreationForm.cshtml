@@ -1,4 +1,5 @@
-﻿
+﻿@model List<string>
+
 <h2>Create product</h2>
 
 @*
@@ -15,6 +16,8 @@
      DateTime DateStocked,                       - should be automated?
      string Brand                                - text
 *@
+
+<button onclick="loadFiles()">Load files</button>
 
 <form id="product-create-form">
     <table>
@@ -46,7 +49,15 @@
                 Cover Image
             </td>
             <td>
-                >Dropdown here< (search?)
+      
+                <select id="p-cover" name="Cover Image">
+                        
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <option value="@Model[i]"></option>
+                    }
+
+                </select>
             </td>
         </tr>
         <tr>
@@ -128,15 +139,28 @@
 
 
 <script>
+    async function loadFiles() {
+        var files = [];
+        await axios.post('/api/FileUploading/GetAllImages') // Get list  of images for drop-down menu
+            .then(res => {
+                console.log("then")
+                files = res.data;
+            })
+        for (var i = 0; i < files.length; i++) {
+            console.log(files[i]);
+        }
+        //@Model = files;
+    }
+
     function attemptProductCreation() {
 
         // Files squred from form
         let pName = document.getElementById("p-name").value;
         let pDesc = document.getElementById("p-desc").value;
-        //let pCover = document.getElementById("p-name").value;
-        //let pImages[];
+        let pCover = document.getElementById("p-cover").value;
+        let pImages = [];
         let pDetails = document.getElementById("p-details").value;
-        //let pCategories[];
+        let pCategories= [];
         let pPrice = document.getElementById("p-price").value;
         let pSaleAmount = document.getElementById("p-sale-a").value;
         let pSalePercant = document.getElementById("p-sale-p").value;
@@ -144,49 +168,34 @@
         let pDate = document.getElementById("p-date").value;
         let pBrand = document.getElementById("p-brand").value;
 
+        console.log(pCover);
 
         // VALIDATE HERE
         //
         //
         //
         // VALIDATE HERE
-
-
-        // Create an object of formData
-        const formData = new FormData();
-        formData.append('Name', pName);
-        console.log(formData.entries('Name'));
-        
-        //formData.append("Description", pDesc);
-        ////formData.append("CoverImageDestination", pCover);
-        //formData.append("CoverImageDestination", null); // -------------- Debug
-        ///*for (var i = 0; i < pImages.length; i++) {
-        //    formData.append("ImagesDestination", pImages[i]);
-        //}*/
-        //formData.append("ImagesDestination", null); // -------------- Debug
-        //formData.append("Details", pDetails);
-        ///*for (var i = 0; i < pCategories.length; i++) {
-        //    formData.append("Categories", pCategories[i]);
-        //}*/
-        //formData.append("Categories", null); // -------------- Debug
-        //formData.append("Price", pPrice);
-        //formData.append("SaleAmount", pSaleAmount);
-        //formData.append("SalePercentage", pSalePercant);
-        //formData.append("Stock", pStock);
-        //formData.append("DateStocked", pDate);
-        //formData.append("Brand", pBrand);
-        
 
         // Request made to the backend api
         // Send formData object
-        axios.post('/api/Product/createproduct', formData)
-            .then(res => {
-                console.log(res);
+        axios.post('/api/Product/createproduct', null, {
+            params: {
+                Name: pName,
+                Description: pDesc,
+                CoverImageDestination: pCover,
+                ImagesDestination: pImages,
+                Details: pDetails,
+                Categories: pCategories,
+                Price: pPrice,
+                SaleAmount: pSaleAmount,
+                SalePercentage: pSalePercant,
+                Stock: pStock,
+                DateStocked: pDate,
+                Brand: pBrand
+            }
+        }).then(res => {
+            console.log(res);
+        })
 
-            })
-            .catch(error => {
-                console.error(error.response.data); // Inform user of errors here
-            })
-
-    }
+        }
 </script>
