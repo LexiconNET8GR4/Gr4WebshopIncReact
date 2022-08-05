@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Gr4WebshopIncReact.Models
 {
     // Class needed for many-to-many relation
-    public class OrderedProducts
+    public class OrderedProduct
     {
         [Required]
         public Guid OrderKey { get; set; }
@@ -16,5 +16,6 @@ namespace Gr4WebshopIncReact.Models
         [Required]
         public Guid ProductKey { get; set; }
         public Product Product { get; set; }
+        public double Amount { get; set; }
     }
 }

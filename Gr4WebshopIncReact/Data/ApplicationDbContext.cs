@@ -24,7 +24,7 @@ namespace Gr4WebshopIncReact.Data
 
         // Composite tables
         public DbSet<ProductCategory> ProductCategories { get; set; }
-        public DbSet<OrderedProducts> OrderedProducts { get; set; }
+        public DbSet<OrderedProduct> OrderedProducts { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) 
@@ -77,11 +77,11 @@ namespace Gr4WebshopIncReact.Data
             // --- Using a connector class named OrderedProducts
 
             // Denote composite key
-            modelBuilder.Entity<OrderedProducts>()
+            modelBuilder.Entity<OrderedProduct>()
                 .HasKey(op => new { op.OrderKey, op.ProductKey });
 
             // Create one-to-many connection beteween connector and Product
-            modelBuilder.Entity<OrderedProducts>()
+            modelBuilder.Entity<OrderedProduct>()
                 .HasOne(p => p.Order)
                 .WithMany(o => o.Products)
                 .HasForeignKey(op => op.ProductKey);
