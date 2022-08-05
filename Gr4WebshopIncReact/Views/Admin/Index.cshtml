@@ -1,0 +1,24 @@
+﻿@*
+    This page is currently only used for testing admin features
+*@
+@model List<string>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h1>Admin view loaded</h1>
+
+<ul>
+    <li> <a href='/Admin/UploadSingleImage'>Upload a single image</a> </li>
+    <li> <a href='/Admin/UploadMultipleImages'> Upload multiple images</a> </li>
+</ul>
+
+<h2>Images currently uploaded</h2>
+<div id="content-container">
+    @foreach (string p in Model)
+    {
+        <img src="/@p"
+             class="rounded-circle"
+             height="200" width="200"
+             asp-append-version="true" />
+    }
+</div>
+

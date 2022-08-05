@@ -1,0 +1,94 @@
+﻿Fields of Products:
+
+Guid Id
+string Name
+string Description
+string CoverImageDestination
+List<string> ImagesDestination
+string Details 
+List<Guid> Categories 
+double Price
+double CurrentPrice
+double SaleAmount 
+double SalePercentage
+double Stock
+DateTime DateStocked
+string Brand
+
+
+Methods:
+
+GetAllProducts
+
+path: /api/product/getallproducts
+required data:none
+optional data:none
+result: JSON of all products in the database
+
+example request: https://localhost:44377/api/product/getAllProducts
+
+
+
+GetProduct
+
+path: /api/product/getproduct
+required data:  Guid id
+optional data:  none
+result: success: JSON of the product
+		failure: HTTP 400 Bad Request
+
+example request: https://localhost:44377/api/Product/GetProduct?id=23efbfd2-49a5-4218-9254-7aebd4785bcd
+
+
+CreateProduct
+
+path: /api/product/createproduct
+required data:  string Name
+optional data:  string Description,
+                string CoverImageDestination,
+                List<string> ImagesDestination,
+                string Details,
+                List<Guid> Categories,
+                double Price,
+                double SaleAmount,
+                double SalePercentage,
+                double Stock,
+                DateTime DateStocked,
+                string Brand
+result: success: JSON of the product
+		failure: HTTP 400 Bad Request
+
+example request: https://localhost:44377/api/Product/CreateProduct?Name=blabla&ImagesDestination=a&ImagesDestination=b&Details.Data=test
+
+
+EditProduct
+
+path: /api/product/editproduct
+required data:  string id
+optional data:  string Name,
+                string Description,
+                string CoverImageDestination,
+                List<string> ImagesDestination,
+                string Details,
+                List<Guid> Categories,
+                double Price,
+                double SaleAmount,
+                double SalePercentage,
+                double Stock,
+                DateTime DateStocked,
+                string Brand
+
+Any optional data that differ from GetProduct will be changed. Any double value not set will be changed to 0
+
+result: success: JSON of the product
+		failure: HTTP 400 Bad Request
+
+
+DeleteProduct
+
+path: /api/product/deleteproduct
+required data:  string id
+optional data:  none
+
+result: success: HTTP 200 OK
+		failure: HTTP 400 Bad Request
