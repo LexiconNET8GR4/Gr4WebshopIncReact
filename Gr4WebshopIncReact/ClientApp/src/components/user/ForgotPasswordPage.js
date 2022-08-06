@@ -27,7 +27,7 @@ export class ForgotPasswordPage extends Component {
                 <label htmlFor='Email' style={{display: "block"}}>Email</label>
                     <input type='text' name='Email' onChange={handleChange} value={values.Email}/>
                 
-                <button type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Submit</button>
+                <button class="btn btn-primary" type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Submit</button>
             </form>
         )} 
     </Formik>

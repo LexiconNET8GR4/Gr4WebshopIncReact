@@ -31,7 +31,7 @@ export class LoginPage extends Component {
                 <input type="checkbox" value="RememberMe" /> 
                     <label for="RememberMe"> Remember me?</label>
                 
-                <button type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Log in</button>
+                <button class="btn btn-primary" type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Log in</button>
             </form>
         )} 
     </Formik>
@@ -52,6 +52,6 @@ export class LoginPage extends Component {
   }
 
   async sendData(values) {
-    //send post with values
+    //TODO: send post with values
   }
 }

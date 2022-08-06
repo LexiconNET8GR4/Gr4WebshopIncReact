@@ -43,7 +43,7 @@ export class Checkout extends Component {
                     <hr/>
                 <label htmlFor='Provider' style={{display: "block"}}>Shipment Provider</label>
                     <input type='text' name='Provider' onChange={handleChange} value={values.Provider}/>
-                <button type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Place order</button>
+                <button class="btn btn-primary" type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Place order</button>
             </form>
         )} 
     </Formik>

@@ -23,7 +23,7 @@ export class Cart extends Component {
           <tr>
             <th>Name</th>
             <th>Price </th>
-            <th>Amount. (pieces)</th>
+            <th>Amount (pieces)</th>
             <th>In stock (pieces)</th>
           </tr>
         </thead>

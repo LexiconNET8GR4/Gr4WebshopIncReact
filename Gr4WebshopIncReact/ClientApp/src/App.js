@@ -12,6 +12,12 @@ import { Checkout }   from './components/shopping-cart/Checkout';
 import { LoginPage }  from './components/user/LoginPage'; 
 import { ForgotPasswordPage } from './components/user/ForgotPasswordPage'
 import { ForgotPasswordConfirmationPage } from './components/user/ForgotPasswordConfirmationPage';
+import { RegisterPage } from './components/user/RegisterPage';
+import { Manage } from './components/user/manage/Manage';
+import { ManageEmail } from './components/user/manage/ManageEmail';
+import { ManagePassword } from './components/user/manage/ManagePassword';
+import { ManageOrderHistory } from './components/user/manage/ManageOrderHistory';
+
 
 import './custom.css';
 
@@ -30,6 +36,11 @@ export default class App extends Component {
         <Route path='/login' component={LoginPage} />
         <Route path='/forgotPassword' component={ForgotPasswordPage} />
         <Route path='/forgotPasswordConfirmation' component={ForgotPasswordConfirmationPage} />
+        <Route path='/register' component={RegisterPage} />
+        <AuthorizeRoute path='/manage'   component={Manage} />
+        <AuthorizeRoute path='/manageEmail'   component={ManageEmail} />
+        <AuthorizeRoute path='/managePassword'   component={ManagePassword} />
+        <AuthorizeRoute path='/manageOrderHistory'   component={ManageOrderHistory} />
         
       </Layout>
     );
