@@ -24,6 +24,8 @@ namespace Gr4WebshopIncReact.Models
                 }
                 return cost;
             } }
+        public string UserKey { get; set; } // Scaffolded identity stores the Id as a string, rather than a Guid
+        public ApplicationUser User { get; set; }
 
         public string ShippingAddress { get; set; }
         public DateTime OrderDate { get; set; }

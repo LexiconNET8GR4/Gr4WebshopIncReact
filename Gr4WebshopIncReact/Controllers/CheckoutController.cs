@@ -26,7 +26,7 @@ namespace Gr4WebshopIncReact.Controllers
 
         [Route("registered")]
         [Authorize]
-        public ActionResult Registered(List<CheckoutItem> checkoutItems,Guid customerId,string shippingAddress)
+        public ActionResult Registered([FromQuery] List<CheckoutItem> checkoutItems,Guid customerId,string shippingAddress)
         {
             Customer customer = _customerServices.GetById(customerId);
             if (customer == null) return BadRequest();
@@ -37,7 +37,7 @@ namespace Gr4WebshopIncReact.Controllers
 
 
         [Route("anonymous")]
-        public ActionResult Anonymous(List<CheckoutItem> checkoutItems,CustomerDTO customer, string shippingAddress)
+        public ActionResult Anonymous([FromQuery] List<CheckoutItem> checkoutItems,CustomerDTO customer, string shippingAddress)
         {
             Customer newCustomer = _customerServices.CreateCustomer(customer.FirstName, customer.LastName);
             Order order = _orderServices.CreateOrder(newCustomer, checkoutItems, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
