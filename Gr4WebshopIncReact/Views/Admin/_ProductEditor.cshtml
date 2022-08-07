@@ -1,0 +1,252 @@
+﻿@model Gr4WebshopIncReact.Models.viewModels.ProductEditorVM
+
+<h2>Edit Product</h2>
+
+    <select id="product-to-edit">
+        Product to edit:
+        @for (int i = 0; i < Model.Products.Count; i++)
+        {
+            <option value=@Model.Products[i].Id> @Model.Products[i].Name (@Model.Products[i].Id) </option>
+        }
+    </select>
+    <input type="Button" onclick="loadProduct()" value="Load to edit" />
+
+    <form id="product-edit-form">
+        <h3>Currently editing: <b id="pe-id-display"> None </b></h3>
+        <input type="hidden" id="pe-id" value="no id selected"/>
+        <table>
+            <thead>
+                <tr>
+                    <td>Value</td>
+                    <td>Input</td>
+                </tr>
+            </thead>
+            <ln />
+            <tr>
+                <td>
+                    Name
+                </td>
+                <td>
+                    <input type="text" id="pe-name" maxlength="20" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Description
+                </td>
+                <td>
+                    <input type="text" id="pe-desc" maxlength="2000" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Cover Image
+                </td>
+                <td>
+                    <select id="pe-cover" name="Cover Image">
+
+                        @for (int i = 0; i < Model.ImageLocations.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+            <option value="@Model.ImageLocations[i]">@Model.ImageLocations[i].Remove(0, 16)</option>}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Additional Images
+                </td>
+                <td>
+                    <div id="pe-images" class="dropdown-check-list" tabindex="100">
+                        <span class="anchor" onclick="loadList('pe-images')">Additional Images</span>
+                        <ul class="items" id="listed-images">
+                            @for (int i = 0; i < Model.ImageLocations.Count; i++)
+                            {
+                                // Remove the folder name from the dispaly of the image for ease of locating
+                <li><input type="checkbox" id="@Model.ImageLocations[i]" />@Model.ImageLocations[i].Remove(0, 16)</li>}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Details
+                </td>
+                <td>
+                    <input type="text" id="pe-details" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Categories
+                </td>
+                <td>
+                    <div id="pe-categories" class="dropdown-check-list" tabindex="100">
+                        <span class="anchor" onclick="loadList('pe-categories')">Categories</span>
+                        <ul class="items" id="listed-categories">
+                            @for (int i = 0; i < Model.Categories.Count; i++)
+                            {
+                                // Remove the folder name from the dispaly of the image for ease of locating
+                <li><input type="checkbox" id="@Model.Categories[i].Id" />@Model.Categories[i].Name</li>
+}
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Price
+                </td>
+                <td>
+                    <input type="text" id="pe-price" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Discount amount
+                </td>
+                <td>
+                    <input type="text" id="pe-sale-a" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Discount percentage
+                </td>
+                <td>
+                    <input type="text" id="pe-sale-p" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Stock
+                </td>
+                <td>
+                    <input type="text" id="pe-stock" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Date stocked
+                </td>
+                <td>
+                    <input type="date" id="pe-date" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Brand
+                </td>
+                <td>
+                    <input type="text" id="pe-brand" />
+                </td>
+            </tr>
+        </table>
+        <input type="button" onclick="attemptProductEdit()" value="Edit Product" />
+    </form>
+
+    <script>
+
+        function loadList(id) {
+            // The first time the drop down menu is set up,
+            // Give it an event for toggling the options being visible and not
+            var checkList = document.getElementById(id);
+
+            if (!checkList.classList.contains('anchored')) {
+
+                checkList.getElementsByClassName('anchor')[0].onclick =
+                    function (evt) {
+                        if (checkList.classList.contains('visible'))
+                            checkList.classList.remove('visible');
+                        else
+                            checkList.classList.add('visible');
+                    }
+
+                checkList.classList.add('anchored');
+                checkList.classList.add('visible');
+            }
+        }
+
+        async function loadProduct() {
+
+            let peId = document.getElementById('product-to-edit').value;
+            console.log(peId);
+            let peProduct = await axios.get('/api/Product/getproduct', { params: { id: peId } });
+            console.log(JSON.stringify(peProduct.data));
+
+           // Load values of selected product
+            document.getElementById('pe-id-display').innerText = peProduct.data.id;
+            document.getElementById('pe-id').value = peProduct.data.id; 
+            document.getElementById('pe-name').value = peProduct.data.name;
+            document.getElementById('pe-desc').value = peProduct.data.description;
+            document.getElementById('pe-cover').value = peProduct.data.CoverImageDestination;
+            // additionall images load here
+            document.getElementById('pe-details').value = peProduct.data.details;
+            // categories load here
+            document.getElementById('pe-price').value = peProduct.data.price;
+            document.getElementById('pe-sale-a').value = peProduct.data.saleAmount;
+            document.getElementById('pe-sale-p').value = peProduct.data.salePercentage;
+            document.getElementById('pe-stock').value = peProduct.data.stock;
+            let timestamp = Date.parse(peProduct.data.dateStocked)
+            let dateFormated = new Date(timestamp).toISOString().slice(0, 10);
+            document.getElementById('pe-date').value = dateFormated;
+            document.getElementById('pe-brand').value = peProduct.data.brand;
+
+
+            }
+    </script>
+
+    <style>
+        .dropdown-check-list {
+            display: inline-block;
+        }
+
+            .dropdown-check-list .anchor {
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                padding: 5px 50px 5px 10px;
+                border: 1px solid #ccc;
+            }
+
+                .dropdown-check-list .anchor:after {
+                    position: absolute;
+                    content: "";
+                    border-left: 2px solid black;
+                    border-top: 2px solid black;
+                    padding: 5px;
+                    right: 10px;
+                    top: 20%;
+                    -moz-transform: rotate(-135deg);
+                    -ms-transform: rotate(-135deg);
+                    -o-transform: rotate(-135deg);
+                    -webkit-transform: rotate(-135deg);
+                    transform: rotate(-135deg);
+                }
+
+                .dropdown-check-list .anchor:active:after {
+                    right: 8px;
+                    top: 21%;
+                }
+
+            .dropdown-check-list ul.items {
+                padding: 2px;
+                display: none;
+                margin: 0;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+
+                .dropdown-check-list ul.items li {
+                    list-style: none;
+                }
+
+            .dropdown-check-list.visible .anchor {
+                color: #0094ff;
+            }
+
+            .dropdown-check-list.visible .items {
+                display: block;
+            }
+    </style>
+

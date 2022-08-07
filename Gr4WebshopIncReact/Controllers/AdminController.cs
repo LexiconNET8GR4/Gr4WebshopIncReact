@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Gr4WebshopIncReact.Models.viewModels;
+using Gr4WebshopIncReact.Data;
 
 namespace Gr4WebshopIncReact.Controllers
 {
@@ -14,10 +15,13 @@ namespace Gr4WebshopIncReact.Controllers
     //[Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private static AdminIndexVM indexVM;
+        private static AdminIndexVM indexVM; 
+        private readonly ApplicationDbContext _context;
 
-        public AdminController()
+        public AdminController(ApplicationDbContext context)
         {
+            _context = context;
+
             if (indexVM == null)
             {
                 indexVM = new AdminIndexVM();
@@ -27,12 +31,18 @@ namespace Gr4WebshopIncReact.Controllers
 
         public IActionResult Index()
         {
-            List<string> images = Directory.GetFiles("wwwroot/uploaded_images").ToList();
+            /*List<string> images = Directory.GetFiles("wwwroot/uploaded_images").ToList();
             for (int i = 0; i < images.Count; i++)
             {
                 images[i] = images[i].Split("/")[1];
-            }
+            }*/
 
+            return View(indexVM);
+        }
+
+        public IActionResult ProductManagement()
+        {
+            UpdateViewModel();
             return View(indexVM);
         }
 
@@ -47,14 +57,32 @@ namespace Gr4WebshopIncReact.Controllers
             // Create a fresh file uploading container
             indexVM.FilesUploader = new FilesUploadingModel();
 
+            // Get products
+            indexVM.Products = _context.Products.ToList();
+
             // Get the image paths
             List<string> images = Directory.GetFiles("wwwroot/uploaded_images").ToList();
             for (int i = 0; i < images.Count; i++)
             {
                 images[i] = images[i].Split("/")[1];
             }
-
             indexVM.ImageLocations = images;
+
+            // Create a fresh ProductCreation view model
+            indexVM.ProductCreatorVM = new ProductCreationVM
+            {
+                ImageLocations = images,
+                Categories = _context.Categories.ToList()
+            };
+
+            // Create a fresh ProductEditor view model
+            indexVM.ProductEditorVM = new ProductEditorVM
+            {
+                ImageLocations = images,
+                Categories = _context.Categories.ToList(),
+                Products = _context.Products.ToList()
+            };
+
         }
         [HttpPost]
         public IActionResult TestingAxiosInPages()

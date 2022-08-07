@@ -1,6 +1,4 @@
-﻿@model List<string>
-
-
+﻿@model Gr4WebshopIncReact.Models.viewModels.ProductCreationVM
 <h2>Create product</h2>
 
 @*
@@ -55,10 +53,10 @@
             <td>
                 <select id="p-cover" name="Cover Image">
 
-                    @for (int i = 0; i < Model.Count; i++)
+                    @for (int i = 0; i < Model.ImageLocations.Count; i++)
                     {
                         // Remove the folder name from the dispaly of the image for ease of locating
-                        <option value="@Model[i]">@Model[i].Remove(0, 16)</option>
+                        <option value="@Model.ImageLocations[i]">@Model.ImageLocations[i].Remove(0, 16)</option>
                     }
                 </select>
             </td>
@@ -69,12 +67,12 @@
             </td>
             <td>
                 <div id="p-images" class="dropdown-check-list" tabindex="100">
-                    <span class="anchor" onclick="loadImages()">Additional Images</span>
-                    <ul class="items">
-                        @for (int i = 0; i < Model.Count; i++)
+                    <span class="anchor" onclick="loadList('p-images')">Additional Images</span>
+                    <ul class="items" id="listed-images">
+                        @for (int i = 0; i < Model.ImageLocations.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-                            <li><input type="checkbox" id="@Model[i]" />@Model[i].Remove(0, 16)</li>
+                            <li><input type="checkbox" id="@Model.ImageLocations[i]" />@Model.ImageLocations[i].Remove(0, 16)</li>
                         }
                     </ul>
                 </div>
@@ -93,7 +91,15 @@
                 Categories
             </td>
             <td>
-                >Dropdown+Checkbox here< (search?)
+                <div id="p-categories" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('p-categories')">Categories</span>
+                    <ul class="items" id="listed-categories">
+                        @for (int i = 0; i < Model.Categories.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+            <li><input type="checkbox" id="@Model.Categories[i].Id" />@Model.Categories[i].Name</li>}
+                    </ul>
+                </div>
             </td>
         </tr>
         <tr>
@@ -164,19 +170,23 @@
         }
     }
 
-    function loadImages() {
+    function loadList(id) {
         // The first time the drop down menu is set up,
         // Give it an event for toggling the options being visible and not
-        var checkList = document.getElementById('p-images');
-        if (checkList.getElementsByClassName[0] != "ancohred") {
-            checkList.getElementsByClassName('anchor')[0].onclick = function (evt) {
+        var checkList = document.getElementById(id);
+
+
+        if (!checkList.classList.contains('anchored')) {
+
+            checkList.getElementsByClassName('anchor')[0].onclick =
+                function (evt) {
                 if (checkList.classList.contains('visible'))
                     checkList.classList.remove('visible');
                 else
                     checkList.classList.add('visible');
             }
 
-            checkList.getElementsByClassName[0] = "ancohred";
+            checkList.classList.add('anchored');
             checkList.classList.add('visible');
         }
     }
@@ -188,30 +198,33 @@
         return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
             !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
     }
-
+/*
     function attemptProductCreation() {
 
         // Files squred from form
         let pName = document.getElementById("p-name").value;
         let pDesc = document.getElementById("p-desc").value;
         let pCover = document.getElementById("p-cover").value;
+
+        // Get all checked images for the additional images
         let pImages = [];
-        let imageList = document.getElementById("items").children;
+        let imageList = document.getElementById("listed-images").getElementsByTagName("li");
         for (var i = 0; i < imageList.length; i++) {
-            if (imageList[i].children[0].value = "true") {
-                console.log("added")
-                pImages.add(imageList[i].children[0].id.toString());
+            if (imageList[i].children[0].checked == true) {
+                pImages.push(imageList[i].children[0].id.toString());
             }
         }
 
-        // debug
-        console.log("logging pImages content: ");
-        for (var i = 0; i < pImages.length; i++) {
-            console.log(pImages[i]);
+        let pDetails = document.getElementById("p-details").value;
+        // Get all checked categories
+        let pCategories = [];
+        let categoryList = document.getElementById("listed-categories").getElementsByTagName("li");
+        for (var i = 0; i < categoryList.length; i++) {
+            if (categoryList[i].children[0].checked == true) {
+                pCategories.push(categoryList[i].children[0].id.toString());
+            }
         }
 
-        let pDetails = document.getElementById("p-details").value;
-        let pCategories;//= [];
         let pPrice = document.getElementById("p-price").value;
         let pSaleAmount = document.getElementById("p-sale-a").value;
         let pSalePercant = document.getElementById("p-sale-p").value;
@@ -228,6 +241,99 @@
         if (!isNumeric(pSalePercant)) pSalePercant = 0;
         if (!isNumeric(pStock)) pStock = 0;
 
+        console.log("added images: ");
+        for (var i = 0; i < pImages.length; i++) {
+            console.log(pImages[i]);
+        }
+        console.log("added categories: ");
+        for (var i = 0; i < pCategories.length; i++) {
+            console.log(pCategories[i]);
+        }
+
+        // form data
+        const pForm = new FormData();
+        pForm.append("Name", pName);
+        pForm.append("Description", pDesc);
+        pForm.append("CoverImageDestination", pCover);
+        for (var i = 0; i < pImages.length; i++) {
+            pForm.append("ImagesDestination", pImages[i]);
+        }
+        pForm.append("Details", pDesc);
+        for (var i = 0; i < pCategories; i++) {
+            pForm.append("Categories", pImages[i]);
+        }
+        pForm.append("Price", pPrice);
+        pForm.append("SaleAmount", pSaleAmount);
+        pForm.append("SalePercentage", pSalePercant);
+        pForm.append("Stock", pStock);
+        pForm.append("DateStocked", pDate);
+        pForm.append("Brand", pBrand);
+
+        console.log("pForm: ");
+        for (var pair of pForm.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+
+        // Request made to the backend api
+        // Send formData object
+        axios.post('/api/Product/createproduct', pForm)
+            .then(res => {
+            console.log(res);
+        })
+
+    }*/
+
+    // Backup
+    function attemptProductCreation() {
+
+        // Files squred from form
+        let pName = document.getElementById("p-name").value;
+        let pDesc = document.getElementById("p-desc").value;
+        let pCover = document.getElementById("p-cover").value;
+
+            // Get all checked images for the additional images
+        let pImages = [];
+        let imageList = document.getElementById("listed-images").getElementsByTagName("li");
+        for (var i = 0; i < imageList.length; i++) {
+            if (imageList[i].children[0].checked == true) {
+                pImages.push(imageList[i].children[0].id.toString());
+            }
+        }
+
+        let pDetails = document.getElementById("p-details").value;
+            // Get all checked categories
+        let pCategories = [];
+        let categoryList = document.getElementById("listed-categories").getElementsByTagName("li");
+        for (var i = 0; i < categoryList.length; i++) {
+            if (categoryList[i].children[0].checked == true) {
+                pCategories.push(categoryList[i].children[0].id.toString());
+            }
+        }
+
+        let pPrice = document.getElementById("p-price").value;
+        let pSaleAmount = document.getElementById("p-sale-a").value;
+        let pSalePercant = document.getElementById("p-sale-p").value;
+        let pStock = document.getElementById("p-stock").value;
+        let pDate = document.getElementById("p-date").value;
+        let pBrand = document.getElementById("p-brand").value;
+
+        // Validation
+        if (!isNumeric(pPrice)) {
+            pPrice = 0;
+        }
+
+        if (!isNumeric(pSaleAmount)) pSaleAmount = 0;
+        if (!isNumeric(pSalePercant)) pSalePercant = 0;
+        if (!isNumeric(pStock)) pStock = 0;
+
+        console.log("added images: ");
+        for (var i = 0; i < pImages.length; i++) {
+            console.log(pImages[i]);
+        }
+        console.log("added categories: ");
+        for (var i = 0; i < pCategories.length; i++) {
+            console.log(pCategories[i]);
+        }
 
         // Request made to the backend api
         // Send formData object

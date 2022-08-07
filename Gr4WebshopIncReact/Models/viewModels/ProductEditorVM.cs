@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace Gr4WebshopIncReact.Models.viewModels
 {
-    public class ProductCreationVM
+    public class ProductEditorVM
     {
         public List<string> ImageLocations { get; set; }
         public List<Category> Categories { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

@@ -1,0 +1,36 @@
+﻿@model List<Gr4WebshopIncReact.Models.Product>
+
+<h2>Product Removal</h2>
+<form id="product-remove-form">
+    <select id="product-to-remove">
+        Product to remove:
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <option value=@Model[i].Id> @Model[i].Name (@Model[i].Id) </option>
+        }
+    </select>
+    <input type="Button" onclick="removeProduct()" value="Remove" />
+</form>
+
+<script>
+    function removeProduct() {
+
+         let pId = document.getElementById('product-to-remove').value;
+
+        console.log(pId);
+    
+        // Request made to the backend api
+        // Send formData object
+         axios.post('/api/Product/deleteproduct', null, {
+            params: {
+                 id: pId
+            }
+        }).then(res => {
+            console.log(res);
+            // if succsess
+            window.location.href = "/Admin/ProductManagement";
+
+        })
+
+        }
+</script>
