@@ -20,7 +20,8 @@ namespace Gr4WebshopIncReact.Controllers
                                                         "image/jpg",
                                                         "image/jpeg"}; // Are the formats allowed to be uploaded
         // Destination for files
-        private readonly string imageDestination = "wwwroot/uploaded_images"; 
+        private readonly string imageDestination = "wwwroot/uploaded_images";
+
 
         /// <summary>
         /// Post function to be accessed from the frontend, inquires about upload validity before requesting it be saved locally

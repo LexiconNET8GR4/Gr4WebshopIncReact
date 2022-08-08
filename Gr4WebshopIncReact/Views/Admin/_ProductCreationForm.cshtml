@@ -198,7 +198,7 @@
         return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
             !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
     }
-/*
+    /*
     function attemptProductCreation() {
 
         // Files squred from form
@@ -281,8 +281,8 @@
             console.log(res);
         })
 
-    }*/
-
+    }
+    */
     // Backup
     function attemptProductCreation() {
 
@@ -335,6 +335,16 @@
             console.log(pCategories[i]);
         }
 
+
+        axios.interceptors.request.use((config) => {
+            /** In dev, intercepts request and logs it into console for dev */
+            console.log(config.params);
+            return config;
+        }, (error) => {
+            if (DEBUG) { console.error("✉️ ", error); }
+            return Promise.reject(error);
+        });
+
         // Request made to the backend api
         // Send formData object
         axios.post('/api/Product/createproduct', null, {
@@ -342,9 +352,9 @@
                 Name: pName,
                 Description: pDesc,
                 CoverImageDestination: pCover,
-                ImagesDestination: pImages,
+                ImagesDestination: JSON.stringify(pImages),
                 Details: pDetails,
-                Categories: pCategories,
+                Categories: JSON.stringify(pCategories),
                 Price: pPrice,
                 SaleAmount: pSaleAmount,
                 SalePercentage: pSalePercant,
@@ -356,7 +366,7 @@
             console.log(res);
         })
 
-        }
+    } 
 </script>
 
 
