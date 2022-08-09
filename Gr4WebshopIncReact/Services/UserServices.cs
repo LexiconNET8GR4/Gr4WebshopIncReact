@@ -1,24 +1,22 @@
-﻿using Gr4WebshopIncReact.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Gr4WebshopIncReact.Models;
+using Gr4WebshopIncReact.Services;
+using Gr4WebshopIncReact.Data;
 
 namespace Gr4WebshopIncReact.Services
 {
-    public class EmployeeDummyServices : IEmployeeServices
+    public class UserServices : IUserServices
     {
-        public Employee CreateEmployee(string name)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly ApplicationDbContext _context;
 
+        public UserServices(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public ApplicationUser CreateUser(string FirstName, string LastName, string adress, string phoneNumber, string email)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Delete(Employee employee)
         {
             throw new NotImplementedException();
         }
@@ -30,15 +28,12 @@ namespace Gr4WebshopIncReact.Services
 
         public ApplicationUser GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var user = _context.Users.Where(u => u.Id == id.ToString()).FirstOrDefault();
+            if (user != null) return user;
+            return null;
         }
 
         public List<ApplicationUser> Search(string SearchPhrase)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Employee Update(Employee employee)
         {
             throw new NotImplementedException();
         }

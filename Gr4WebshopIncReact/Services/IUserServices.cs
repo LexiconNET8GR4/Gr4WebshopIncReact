@@ -8,10 +8,10 @@ namespace Gr4WebshopIncReact.Services
 {
     public interface IUserServices
     {
-        public User CreateUser(string FirstName, string LastName, string adress, string phoneNumber, string email);
-        public User GetById(Guid id);
-        public List<User> Search(string SearchPhrase);
-        public User Update(User user);
-        public bool Delete(User user);
+        public ApplicationUser CreateUser(string FirstName, string LastName, string adress, string phoneNumber, string email);
+        public ApplicationUser GetById(Guid id);
+        public List<ApplicationUser> Search(string SearchPhrase);
+        public ApplicationUser Update(ApplicationUser user);
+        public bool Delete(ApplicationUser user);
     }
 }

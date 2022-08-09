@@ -46,9 +46,9 @@ path: /api/product/createproduct
 required data:  string Name
 optional data:  string Description,
                 string CoverImageDestination,
-                List<string> ImagesDestination,
+                string ImagesDestination,           List of ImagesDestionations serialized to JSON
                 string Details,
-                List<Guid> Categories,
+                string Categories,                  List of Categories serialized to JSON
                 double Price,
                 double SaleAmount,
                 double SalePercentage,
@@ -68,9 +68,9 @@ required data:  string id
 optional data:  string Name,
                 string Description,
                 string CoverImageDestination,
-                List<string> ImagesDestination,
+                string ImagesDestination,           List of ImagesDestionations serialized to JSON
                 string Details,
-                List<Guid> Categories,
+                string Categories,                  List of Categories serialized to JSON
                 double Price,
                 double SaleAmount,
                 double SalePercentage,

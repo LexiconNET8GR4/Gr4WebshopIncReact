@@ -8,27 +8,27 @@ namespace Gr4WebshopIncReact.Services
 {
     public class UserDummyServices : IUserServices
     {
-        public User CreateUser(string FirstName, string LastName, string adress, string phoneNumber, string email)
+        public ApplicationUser CreateUser(string FirstName, string LastName, string adress, string phoneNumber, string email)
         {
             throw new NotImplementedException();
         }
 
-        public bool Delete(User user)
+        public bool Delete(ApplicationUser user)
         {
             throw new NotImplementedException();
         }
 
-        public User GetById(Guid id)
+        public ApplicationUser GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public List<User> Search(string SearchPhrase)
+        public List<ApplicationUser> Search(string SearchPhrase)
         {
             throw new NotImplementedException();
         }
 
-        public User Update(User user)
+        public ApplicationUser Update(ApplicationUser user)
         {
             throw new NotImplementedException();
         }

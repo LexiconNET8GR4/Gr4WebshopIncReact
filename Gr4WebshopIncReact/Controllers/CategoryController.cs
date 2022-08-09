@@ -114,16 +114,17 @@ namespace Gr4WebshopIncReact.Controllers
             Guid ParentId, 
             [Required]string Name, 
             bool isMainCateGory, 
-            [FromQuery]List<Guid> SubCategories)
+            string SubCategories)
         {
             Category category = new Category() {
                 Id=Guid.NewGuid(),
                 Name=Name,
                 isMainCateGory=isMainCateGory
             };
-            if (SubCategories != null && SubCategories.Count > 0)
+            var subCategoryList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(SubCategories);
+            if (subCategoryList != null && subCategoryList.Count > 0)
             {
-                foreach(Guid guid in SubCategories) {
+                foreach(Guid guid in subCategoryList) {
                     Category subCategory = _categoryServices.FindById(guid);
                     category.SubCategories.Add(subCategory);
                 }
@@ -153,17 +154,18 @@ namespace Gr4WebshopIncReact.Controllers
         public ActionResult EditCategory([Required] Guid Id, 
                                             string Name, 
                                             bool isMainCateGory, 
-                                            List<Guid> SubCategories)
+                                            string SubCategories)
         {
+            var subCategoryList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Category>>(SubCategories);
             Category category = _categoryServices.FindById(Id);
             if (category == null) return BadRequest();
             category.Name = Name;
             category.isMainCateGory = isMainCateGory;
             List<Category> subCategories = new List<Category>();
-            if (SubCategories != null && SubCategories.Count > 0)
+            if (subCategoryList != null && subCategoryList.Count > 0)
             {
                
-                category.SubCategories = subCategories;
+                category.SubCategories = subCategoryList;
             }
             Category returnCat = _categoryServices.Update(category);
             if (returnCat == null) return BadRequest();
