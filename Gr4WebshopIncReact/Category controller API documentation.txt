@@ -55,7 +55,7 @@ CreateCategory
 path: /api/category/createcategory
 required data: string Name
 optional data:	bool isMainCateGory, 
-				List<Guid> SubCategories)
+				string SubCategories)           List of SubCategories serialized to JSON
 result: success: JSON of the created category
 		failure: HTTP 400 Bad Request
 
@@ -67,6 +67,6 @@ path: /api/category/editcategory
 required data: Guid Id
 optional data:	string Name, 
                 bool isMainCateGory, 
-                List<Guid> SubCategories
+                string SubCategories           List of SubCategories serialized to JSON
 result: success: JSON of the modified category
 		failure: HTTP 400 Bad Request
