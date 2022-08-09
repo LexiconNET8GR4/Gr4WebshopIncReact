@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Gr4WebshopIncReact.Models.viewModels
 {
-    public class AdminIndexVM
+    public class ProductMgmtVM
     {
         public FilesUploadingModel FilesUploader { get; set; }
         public ProductCreationVM ProductCreatorVM { get; set; }

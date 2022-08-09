@@ -1,6 +1,7 @@
 ﻿@model List<Gr4WebshopIncReact.Models.Product>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
 
-<h2>Product Removal</h2>
+<h2>Remove Product</h2>
 <form id="product-remove-form">
     <select id="product-to-remove">
         Product to remove:
@@ -15,22 +16,22 @@
 <script>
     function removeProduct() {
 
-         let pId = document.getElementById('product-to-remove').value;
+        let pId = document.getElementById('product-to-remove').value;
 
         console.log(pId);
-    
+
         // Request made to the backend api
         // Send formData object
-         axios.post('/api/Product/deleteproduct', null, {
+        axios.post('/api/Product/deleteproduct', null, {
             params: {
-                 id: pId
+                id: pId
             }
         }).then(res => {
             console.log(res);
             // if succsess
-            window.location.href = "/Admin/ProductManagement";
+            window.location.reload();
 
         })
 
-        }
+    }
 </script>

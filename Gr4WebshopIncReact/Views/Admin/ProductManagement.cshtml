@@ -1,9 +1,14 @@
 ﻿@using Gr4WebshopIncReact.Models.viewModels
-@model AdminIndexVM
+@model ProductMgmtVM
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
 
-@*<partial name="_ProductRemovalForm" model="Model.Products" />*@
-@*<partial name="_ProductEditor" model="Model.ProductEditorVM" />*@
-@*<partial name="_FileUploadingForm" model="Model" />*@
+<a href="/Admin/Index">Index</a> || <a href="/">Store</a>
+
+<partial name="_FileUploadingForm" model="Model" />
+<hr />
+<partial name="_ProductRemovalForm" model="Model.Products" />
+<hr />
 <partial name="_productcreationform" model="Model.ProductCreatorVM" />
+<hr />
+<partial name="_ProductEditor" model="Model.ProductEditorVM" />

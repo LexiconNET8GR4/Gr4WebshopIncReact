@@ -15,7 +15,7 @@ namespace Gr4WebshopIncReact.Controllers
     //[Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private static AdminIndexVM indexVM; 
+        private static ProductMgmtVM indexVM; 
         private readonly ApplicationDbContext _context;
 
         public AdminController(ApplicationDbContext context)
@@ -24,25 +24,18 @@ namespace Gr4WebshopIncReact.Controllers
 
             if (indexVM == null)
             {
-                indexVM = new AdminIndexVM();
+                indexVM = new ProductMgmtVM();
             }
             UpdateViewModel();
         }
 
         public IActionResult Index()
         {
-            /*List<string> images = Directory.GetFiles("wwwroot/uploaded_images").ToList();
-            for (int i = 0; i < images.Count; i++)
-            {
-                images[i] = images[i].Split("/")[1];
-            }*/
-
-            return View(indexVM);
+            return View();
         }
 
         public IActionResult ProductManagement()
         {
-            UpdateViewModel();
             return View(indexVM);
         }
 
@@ -51,14 +44,14 @@ namespace Gr4WebshopIncReact.Controllers
             // Ensure it exists
             if (indexVM == null)
             {
-                indexVM = new AdminIndexVM();
+                indexVM = new ProductMgmtVM();
             }
 
             // Create a fresh file uploading container
             indexVM.FilesUploader = new FilesUploadingModel();
 
             // Get products
-            indexVM.Products = _context.Products.ToList();
+            indexVM.Products = _context.Products.OrderBy(x => x.Name).ToList();
 
             // Get the image paths
             List<string> images = Directory.GetFiles("wwwroot/uploaded_images").ToList();
@@ -80,27 +73,9 @@ namespace Gr4WebshopIncReact.Controllers
             {
                 ImageLocations = images,
                 Categories = _context.Categories.ToList(),
-                Products = _context.Products.ToList()
+                Products = _context.Products.OrderBy(x => x.Name).ToList()
             };
 
         }
-        [HttpPost]
-        public IActionResult TestingAxiosInPages()
-        {
-            return Json("Test recieved");
-        }
-
-        // Remove before push
-        #region Decripit
-        public IActionResult UploadSingleImage()
-        {
-            return View("SingleForm", new FileUploadingModel());
-        }
-
-        public IActionResult UploadMultipleImageS()
-        {
-            return View("MultipleForm", new FilesUploadingModel());
-        }
-        #endregion
     }
 }

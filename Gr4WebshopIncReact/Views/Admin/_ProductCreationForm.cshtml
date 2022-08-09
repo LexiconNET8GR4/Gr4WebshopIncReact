@@ -1,23 +1,6 @@
 ﻿@model Gr4WebshopIncReact.Models.viewModels.ProductCreationVM
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
 <h2>Create product</h2>
-
-@*
-     string Name                                 - text
-     string Description                          - text
-     string CoverImageDestination,               - Dropdown, images
-    ImagesDestination                            - Dropdown, images (multiple?) https://stackoverflow.com/questions/19206919/how-to-create-checkbox-inside-dropdown
-     [FQ] Details Details                        - text?
-     [FQ] List<ProductCategory> Categories       - Dropdown, categories
-     double Price,                               - number
-     double SaleAmount,                          - number
-     double SalePercentage,                      - number
-     double Stock,                               - number
-     DateTime DateStocked,                       - should be automated?
-     string Brand                                - text
-*@
-
-<button onclick="loadImages()">Load list</button>
-
 
 
 <form id="product-create-form">
@@ -56,8 +39,7 @@
                     @for (int i = 0; i < Model.ImageLocations.Count; i++)
                     {
                         // Remove the folder name from the dispaly of the image for ease of locating
-                        <option value="@Model.ImageLocations[i]">@Model.ImageLocations[i].Remove(0, 16)</option>
-                    }
+        <option value="@Model.ImageLocations[i]">@Model.ImageLocations[i].Remove(0, 16)</option>}
                 </select>
             </td>
         </tr>
@@ -68,12 +50,11 @@
             <td>
                 <div id="p-images" class="dropdown-check-list" tabindex="100">
                     <span class="anchor" onclick="loadList('p-images')">Additional Images</span>
-                    <ul class="items" id="listed-images">
+                    <ul class="items" id="p-listed-images">
                         @for (int i = 0; i < Model.ImageLocations.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-                            <li><input type="checkbox" id="@Model.ImageLocations[i]" />@Model.ImageLocations[i].Remove(0, 16)</li>
-                        }
+            <li><input type="checkbox" id="@Model.ImageLocations[i]" />@Model.ImageLocations[i].Remove(0, 16)</li>}
                     </ul>
                 </div>
             </td>
@@ -93,11 +74,12 @@
             <td>
                 <div id="p-categories" class="dropdown-check-list" tabindex="100">
                     <span class="anchor" onclick="loadList('p-categories')">Categories</span>
-                    <ul class="items" id="listed-categories">
+                    <ul class="items" id="p-listed-categories">
                         @for (int i = 0; i < Model.Categories.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-            <li><input type="checkbox" id="@Model.Categories[i].Id" />@Model.Categories[i].Name</li>}
+            <li><input type="checkbox" id="@Model.Categories[i].Id" />@Model.Categories[i].Name</li>
+}
                     </ul>
                 </div>
             </td>
@@ -180,25 +162,26 @@
 
             checkList.getElementsByClassName('anchor')[0].onclick =
                 function (evt) {
-                if (checkList.classList.contains('visible'))
-                    checkList.classList.remove('visible');
-                else
-                    checkList.classList.add('visible');
-            }
+                    if (checkList.classList.contains('visible'))
+                        checkList.classList.remove('visible');
+                    else
+                        checkList.classList.add('visible');
+                }
 
             checkList.classList.add('anchored');
             checkList.classList.add('visible');
         }
     }
 
-   // Check if a passed string is a number or not
+    // Check if a passed string is a number or not
     function isNumeric(value) {
         if (typeof value != "string") return false // Value is not a string
 
         return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
             !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
     }
-    /*
+
+    // get variables, verify, and send post request
     function attemptProductCreation() {
 
         // Files squred from form
@@ -208,7 +191,7 @@
 
         // Get all checked images for the additional images
         let pImages = [];
-        let imageList = document.getElementById("listed-images").getElementsByTagName("li");
+        let imageList = document.getElementById("p-listed-images").getElementsByTagName("li");
         for (var i = 0; i < imageList.length; i++) {
             if (imageList[i].children[0].checked == true) {
                 pImages.push(imageList[i].children[0].id.toString());
@@ -218,7 +201,7 @@
         let pDetails = document.getElementById("p-details").value;
         // Get all checked categories
         let pCategories = [];
-        let categoryList = document.getElementById("listed-categories").getElementsByTagName("li");
+        let categoryList = document.getElementById("p-listed-categories").getElementsByTagName("li");
         for (var i = 0; i < categoryList.length; i++) {
             if (categoryList[i].children[0].checked == true) {
                 pCategories.push(categoryList[i].children[0].id.toString());
@@ -241,112 +224,17 @@
         if (!isNumeric(pSalePercant)) pSalePercant = 0;
         if (!isNumeric(pStock)) pStock = 0;
 
-        console.log("added images: ");
-        for (var i = 0; i < pImages.length; i++) {
-            console.log(pImages[i]);
-        }
-        console.log("added categories: ");
-        for (var i = 0; i < pCategories.length; i++) {
-            console.log(pCategories[i]);
-        }
-
-        // form data
-        const pForm = new FormData();
-        pForm.append("Name", pName);
-        pForm.append("Description", pDesc);
-        pForm.append("CoverImageDestination", pCover);
-        for (var i = 0; i < pImages.length; i++) {
-            pForm.append("ImagesDestination", pImages[i]);
-        }
-        pForm.append("Details", pDesc);
-        for (var i = 0; i < pCategories; i++) {
-            pForm.append("Categories", pImages[i]);
-        }
-        pForm.append("Price", pPrice);
-        pForm.append("SaleAmount", pSaleAmount);
-        pForm.append("SalePercentage", pSalePercant);
-        pForm.append("Stock", pStock);
-        pForm.append("DateStocked", pDate);
-        pForm.append("Brand", pBrand);
-
-        console.log("pForm: ");
-        for (var pair of pForm.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
+        // Debug
+        //axios.interceptors.request.use((config) => {
+        //    console.log(config.params);
+        //    return config;
+        //}, (error) => {
+        //    if (DEBUG) { console.error("✉️ ", error); }
+        //    return Promise.reject(error);
+        //});
 
         // Request made to the backend api
-        // Send formData object
-        axios.post('/api/Product/createproduct', pForm)
-            .then(res => {
-            console.log(res);
-        })
-
-    }
-    */
-    // Backup
-    function attemptProductCreation() {
-
-        // Files squred from form
-        let pName = document.getElementById("p-name").value;
-        let pDesc = document.getElementById("p-desc").value;
-        let pCover = document.getElementById("p-cover").value;
-
-            // Get all checked images for the additional images
-        let pImages = [];
-        let imageList = document.getElementById("listed-images").getElementsByTagName("li");
-        for (var i = 0; i < imageList.length; i++) {
-            if (imageList[i].children[0].checked == true) {
-                pImages.push(imageList[i].children[0].id.toString());
-            }
-        }
-
-        let pDetails = document.getElementById("p-details").value;
-            // Get all checked categories
-        let pCategories = [];
-        let categoryList = document.getElementById("listed-categories").getElementsByTagName("li");
-        for (var i = 0; i < categoryList.length; i++) {
-            if (categoryList[i].children[0].checked == true) {
-                pCategories.push(categoryList[i].children[0].id.toString());
-            }
-        }
-
-        let pPrice = document.getElementById("p-price").value;
-        let pSaleAmount = document.getElementById("p-sale-a").value;
-        let pSalePercant = document.getElementById("p-sale-p").value;
-        let pStock = document.getElementById("p-stock").value;
-        let pDate = document.getElementById("p-date").value;
-        let pBrand = document.getElementById("p-brand").value;
-
-        // Validation
-        if (!isNumeric(pPrice)) {
-            pPrice = 0;
-        }
-
-        if (!isNumeric(pSaleAmount)) pSaleAmount = 0;
-        if (!isNumeric(pSalePercant)) pSalePercant = 0;
-        if (!isNumeric(pStock)) pStock = 0;
-
-        console.log("added images: ");
-        for (var i = 0; i < pImages.length; i++) {
-            console.log(pImages[i]);
-        }
-        console.log("added categories: ");
-        for (var i = 0; i < pCategories.length; i++) {
-            console.log(pCategories[i]);
-        }
-
-
-        axios.interceptors.request.use((config) => {
-            /** In dev, intercepts request and logs it into console for dev */
-            console.log(config.params);
-            return config;
-        }, (error) => {
-            if (DEBUG) { console.error("✉️ ", error); }
-            return Promise.reject(error);
-        });
-
-        // Request made to the backend api
-        // Send formData object
+        // Send object
         axios.post('/api/Product/createproduct', null, {
             params: {
                 Name: pName,
@@ -364,9 +252,10 @@
             }
         }).then(res => {
             console.log(res);
+            window.location.reload();
         })
 
-    } 
+    }
 </script>
 
 
@@ -375,51 +264,51 @@
         display: inline-block;
     }
 
-    .dropdown-check-list .anchor {
-        position: relative;
-        cursor: pointer;
-        display: inline-block;
-        padding: 5px 50px 5px 10px;
-        border: 1px solid #ccc;
-    }
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
 
-    .dropdown-check-list .anchor:after {
-        position: absolute;
-        content: "";
-        border-left: 2px solid black;
-        border-top: 2px solid black;
-        padding: 5px;
-        right: 10px;
-        top: 20%;
-        -moz-transform: rotate(-135deg);
-        -ms-transform: rotate(-135deg);
-        -o-transform: rotate(-135deg);
-        -webkit-transform: rotate(-135deg);
-        transform: rotate(-135deg);
-    }
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
 
-    .dropdown-check-list .anchor:active:after {
-        right: 8px;
-        top: 21%;
-    }
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
 
-    .dropdown-check-list ul.items {
-        padding: 2px;
-        display: none;
-        margin: 0;
-        border: 1px solid #ccc;
-        border-top: none;
-    }
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
 
-    .dropdown-check-list ul.items li {
-        list-style: none;
-    }
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
 
-    .dropdown-check-list.visible .anchor {
-        color: #0094ff;
-    }
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
 
-    .dropdown-check-list.visible .items {
-        display: block;
-    }
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
 </style>

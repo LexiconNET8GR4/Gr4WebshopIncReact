@@ -1,12 +1,12 @@
 ﻿@using Gr4WebshopIncReact.Models.viewModels
-@model AdminIndexVM
+@model ProductMgmtVM
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div id="scripts">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
 </div>
 
-
+<h2>Upload images</h2>
 <form enctype="multipart/form-data">
     <input class="custom-file-input" id="customFile" type="file" data-val="true" data-val-required="Please choose images" multiple="multiple" name="Files" />
     <br />
@@ -43,6 +43,7 @@
                 // Inform user of server response
                 if (res.data == "No error detected") {
                     document.getElementById("results-container").innerText = "Upload successful";
+                    window.location.reload();
                 } else {
                     document.getElementById("results-container").innerText = res.data;
                 }
