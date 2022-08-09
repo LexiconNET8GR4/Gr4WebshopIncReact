@@ -7,6 +7,8 @@ using Gr4WebshopIncReact.Models;
 using Gr4WebshopIncReact.Models.DTOS;
 using Microsoft.AspNetCore.Authorization;
 using Gr4WebshopIncReact.Services;
+using Microsoft.AspNetCore.Identity;
+using Gr4WebshopIncReact.Data;
 
 namespace Gr4WebshopIncReact.Controllers
 {
@@ -18,10 +20,12 @@ namespace Gr4WebshopIncReact.Controllers
         private readonly IOrderServices _orderServices;
         private readonly ICustomerServices _customerServices;
 
-        public CheckoutController(IOrderServices orderServices,ICustomerServices customerServices)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public CheckoutController(IOrderServices orderServices,ICustomerServices customerServices, UserManager<ApplicationUser> userManager)
         {
             _orderServices = orderServices;
             _customerServices = customerServices;
+            _userManager = userManager;
         }
 
         [Route("registered")]
@@ -45,6 +49,29 @@ namespace Gr4WebshopIncReact.Controllers
             Order order = _orderServices.CreateOrder(newCustomer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
             Receipt receipt = new Receipt(order);
             return Json(receipt);
+        }
+
+        [Route("getuserdata")]
+        [Authorize]
+        public async Task<ActionResult> GetUserData()
+        {
+            
+            var myuser=_userManager.GetUserId(User);
+            var user = await _userManager.GetUserAsync(User);
+            UserDTO userDTO = new UserDTO() {
+            FirstName=user.FirstName,
+            LastName=user.LastName,
+            Adress=user.Adress,
+            Email=user.Email,
+            PhoneNumber=user.PhoneNumber,
+            OrderHistory=new List<Guid>()
+            };
+            foreach(var oh in user.OrderHistory)
+            {
+                userDTO.OrderHistory.Add(oh.Id);
+            }
+
+            return Json(userDTO);
         }
 
 
