@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Gr4WebshopIncReact.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Gr4WebshopIncReact.Models;
-using Gr4WebshopIncReact.Services;
 using Gr4WebshopIncReact.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gr4WebshopIncReact.Services
 {
@@ -21,9 +21,28 @@ namespace Gr4WebshopIncReact.Services
             throw new NotImplementedException();
         }
 
-        public bool Delete(ApplicationUser user)
+        public bool Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var userToDelete = GetById(id);
+
+            //Guard against deleting admins
+            var adminRoleId = _context.Roles.Where(ur => ur.NormalizedName == "ADMIN").FirstOrDefault().Id;
+            var userRoles = _context.UserRoles.Where(ur => ur.RoleId == adminRoleId&&ur.UserId==id.ToString()).Count();
+            if (userRoles > 0) return false;
+
+
+            _context.Users.Remove(userToDelete);
+            return _context.SaveChanges() > 0 ? true : false;
+        }
+
+        public List<ApplicationUser> GetAll()
+        {
+            List<ApplicationUser> users = _context.Users.ToList();
+            foreach(var user in users)
+            {
+                user.OrderHistory = _context.Orders.Where(o => o.UserKey == user.Id).ToList();
+            }
+            return users;
         }
 
         public ApplicationUser GetById(Guid id)
@@ -40,7 +59,8 @@ namespace Gr4WebshopIncReact.Services
 
         public ApplicationUser Update(ApplicationUser user)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(user);
+            return _context.SaveChanges() > 0 ? user : null;
         }
     }
 }

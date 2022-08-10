@@ -58,18 +58,8 @@ namespace Gr4WebshopIncReact.Controllers
             
             var myuser=_userManager.GetUserId(User);
             var user = await _userManager.GetUserAsync(User);
-            UserDTO userDTO = new UserDTO() {
-            FirstName=user.FirstName,
-            LastName=user.LastName,
-            Adress=user.Adress,
-            Email=user.Email,
-            PhoneNumber=user.PhoneNumber,
-            OrderHistory=new List<Guid>()
-            };
-            foreach(var oh in user.OrderHistory)
-            {
-                userDTO.OrderHistory.Add(oh.Id);
-            }
+            UserDTO userDTO = new UserDTO(user);
+            
 
             return Json(userDTO);
         }

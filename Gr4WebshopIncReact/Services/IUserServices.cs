@@ -12,6 +12,7 @@ namespace Gr4WebshopIncReact.Services
         public ApplicationUser GetById(Guid id);
         public List<ApplicationUser> Search(string SearchPhrase);
         public ApplicationUser Update(ApplicationUser user);
-        public bool Delete(ApplicationUser user);
+        public bool Delete(Guid id);
+        public List<ApplicationUser> GetAll();
     }
 }

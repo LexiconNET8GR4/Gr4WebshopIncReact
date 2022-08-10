@@ -44,16 +44,9 @@ namespace Gr4WebshopIncReact
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();
-            services.AddTransient<ICouponServices, CouponDummyServices>();
-            services.AddTransient<ICartServices, CartDummyServices>();
             services.AddTransient<ICategoryServices, CategoryServices>();
-            services.AddTransient<ICustomerServices, CustomerDummyServices>();
-            services.AddTransient<IEmployeeServices, EmployeeDummyServices>();
             services.AddTransient<IOrderServices, OrderServices>();
-            services.AddTransient<IPaymentMethodServices, PaymentMethodDummyServices>();
-            services.AddTransient<IPaymentServices, PaymentDummyServices>();
             services.AddTransient<IProductServices, ProductServices>();
-            services.AddTransient<IShippingMethodServices, ShippingMethodDummyServices>();
             services.AddTransient<IUserServices, UserServices>();
             services.AddTransient<IImageDestinationServices, ImageDestinationServices>();
             services.AddRazorPages();

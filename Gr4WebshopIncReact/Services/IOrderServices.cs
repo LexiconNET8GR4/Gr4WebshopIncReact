@@ -13,6 +13,6 @@ namespace Gr4WebshopIncReact.Services
         public Order GetById(Guid id);
         public List<Order> Search(string SearchPhrase);
         public Order Update(Order order);
-        public bool Delete(Order order);
+        public bool Delete(Guid id);
     }
 }

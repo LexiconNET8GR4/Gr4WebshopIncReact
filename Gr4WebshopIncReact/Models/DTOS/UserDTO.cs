@@ -14,5 +14,19 @@ namespace Gr4WebshopIncReact.Models.DTOS
         public string Email { get; set; }
 
         public List<Guid> OrderHistory { get; set; }
+
+        public UserDTO(ApplicationUser user)
+        {
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Adress = user.Adress;
+            PhoneNumber = user.PhoneNumber;
+            Email = user.Email;
+            OrderHistory = new List<Guid>();
+            foreach(Order o in user.OrderHistory)
+            {
+                OrderHistory.Add(o.Id);
+            }
+        }
     }
 }
