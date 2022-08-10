@@ -1,0 +1,10 @@
+﻿@using Gr4WebshopIncReact.Models.viewModels
+@model CategoryMgmtVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+<a href="/Admin/Index">Index</a> || <a href="/Admin/ProductManagement">Products</a> || <a href="/">Store</a>
+
+<hr />
+<partial name="_CategoryCreationForm" model="Model.Categories" />
+<hr />

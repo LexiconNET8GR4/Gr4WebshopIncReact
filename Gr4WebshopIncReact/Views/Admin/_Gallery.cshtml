@@ -1,0 +1,9 @@
+﻿@model List<string>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@foreach (string p in Model)
+{
+    <img src="/@p"
+         height="50" width="50"
+         asp-append-version="true" />
+}

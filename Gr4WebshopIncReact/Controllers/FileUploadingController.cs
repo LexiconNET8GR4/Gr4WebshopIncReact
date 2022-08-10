@@ -1,4 +1,5 @@
 ﻿using Gr4WebshopIncReact.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,7 +20,8 @@ namespace Gr4WebshopIncReact.Controllers
                                                         "image/jpg",
                                                         "image/jpeg"}; // Are the formats allowed to be uploaded
         // Destination for files
-        private readonly string imageDestination = "wwwroot/uploaded_images"; 
+        private readonly string imageDestination = "wwwroot/uploaded_images";
+
 
         /// <summary>
         /// Post function to be accessed from the frontend, inquires about upload validity before requesting it be saved locally
@@ -27,6 +29,7 @@ namespace Gr4WebshopIncReact.Controllers
         /// <param name="model">Wraps the file in a more easily modifibale class</param>
         /// <returns></returns>
         [Route("UploadNewImage")]
+        [Authorize(Roles = "Admin")] // Disabled during testing
         [HttpPost]
         public IActionResult UploadNewImage([FromForm] FileUploadingModel model)
         {
@@ -50,6 +53,7 @@ namespace Gr4WebshopIncReact.Controllers
         /// <param name="model">Wraps the files in a more easily modifibale class</param>
         /// <returns></returns>
         [Route("UploadNewImages")]
+        [Authorize(Roles = "Admin")] // Disabled during testing
         [HttpPost]
         public IActionResult UploadNewImages([FromForm] FilesUploadingModel model)
         {
@@ -74,6 +78,15 @@ namespace Gr4WebshopIncReact.Controllers
                 }
             }
             return Json(rejectionMsg);
+        }
+
+       
+        [Route("GetAllImages")]
+        public async Task<IActionResult> GetAllImages()
+        {
+            string[] imageDestinations = Directory.GetFiles(imageDestination);
+
+            return Json(imageDestinations);
         }
 
         /// <summary>

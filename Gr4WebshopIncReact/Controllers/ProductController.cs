@@ -58,9 +58,9 @@ namespace Gr4WebshopIncReact.Controllers
             [Required] string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<string> ImagesDestination,
+            string ImagesDestination,
             string Details,
-            [FromQuery] List<Guid> Categories,
+            string Categories,
             double Price,
             double SaleAmount,
             double SalePercentage,
@@ -72,10 +72,12 @@ namespace Gr4WebshopIncReact.Controllers
             Product product = _productServices.CreateProduct(Name);
             if (Description != null) product.Description = Description;
             if (CoverImageDestination != null) product.CoverImageDestination = CoverImageDestination;
-            if (ImagesDestination != null&& ImagesDestination.Count>0) {
-                foreach(string i in ImagesDestination)
+            
+            List<string> imageDes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(ImagesDestination);
+            if (imageDes != null&& imageDes.Count>0) {
+                foreach(string i in imageDes)
                 {
-                    product.ImagesDestination.Add(_imageDestinationServices.GetImageDestination(i));
+                    _imageDestinationServices.AddImageDestination(product, i);
                 }
             }
             
@@ -86,9 +88,11 @@ namespace Gr4WebshopIncReact.Controllers
             if (Stock != 0) product.Stock = Stock;
             if (DateStocked != null) product.DateStocked = DateStocked;
             if (Brand != null) product.Brand = Brand;
-            if (Categories != null && Categories.Count > 0) {
+            
+            List<Guid> cats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(Categories);
+            if (cats != null && cats.Count > 0) {
                 product.Categories = new List<ProductCategory>();
-                foreach(Guid id in Categories)
+                foreach(Guid id in cats)
                 {
                     ProductCategory productCategory = new ProductCategory()
                     {
@@ -112,9 +116,9 @@ namespace Gr4WebshopIncReact.Controllers
             string Name,
             string Description,
             string CoverImageDestination,
-            [FromQuery] List<string> ImagesDestination,
+            string ImagesDestination,
             string Details,
-            [FromQuery] List<Guid> Categories,
+            string Categories,
             double Price,
             double SaleAmount,
             double SalePercentage,
@@ -138,9 +142,11 @@ namespace Gr4WebshopIncReact.Controllers
             productToModify.DateStocked = DateStocked;
             productToModify.Brand = Brand;
             productToModify.Categories = new List<ProductCategory>();
-            if (Categories != null && Categories.Count > 0)
+
+            List<Guid> cats = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(Categories);
+            if (cats != null && cats.Count > 0)
             {
-                foreach (Guid catid in Categories)
+                foreach (Guid catid in cats)
                 {
                     ProductCategory productCategory = new ProductCategory()
                     {
@@ -151,9 +157,10 @@ namespace Gr4WebshopIncReact.Controllers
                 }
             }
             productToModify.ImagesDestination = new List<ImageDestination>();
-            if (ImagesDestination != null && ImagesDestination.Count > 0)
+            List<string> imageDes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(ImagesDestination);
+            if (imageDes != null && imageDes.Count > 0)
             {
-                foreach(string imdes in ImagesDestination)
+                foreach(string imdes in imageDes)
                 {
                     var imagedes=_imageDestinationServices.AddImageDestination(productToModify, imdes);
                     productToModify.ImagesDestination.Add(imagedes);
