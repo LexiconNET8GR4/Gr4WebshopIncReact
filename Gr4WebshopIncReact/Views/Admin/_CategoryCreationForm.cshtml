@@ -114,11 +114,11 @@
             params: {
                 Name: cName,
                 isMainCateGory: cIsMain,
-                SubCategories: /*JSON.stringify(*/cSubCats/*)*/
+                SubCategories: JSON.stringify(cSubCats)
             }
         }).then(res => {
             console.log(res);
-            //window.location.reload();
+            window.location.reload();
         })
 
     }
