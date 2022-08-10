@@ -15,18 +15,24 @@ namespace Gr4WebshopIncReact.Controllers
     //[Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private static ProductMgmtVM indexVM; 
+        private static ProductMgmtVM productVM;
+        private static CategoryMgmtVM categoryVM;
         private readonly ApplicationDbContext _context;
 
         public AdminController(ApplicationDbContext context)
         {
             _context = context;
 
-            if (indexVM == null)
+            if (productVM == null)
             {
-                indexVM = new ProductMgmtVM();
+                productVM = new ProductMgmtVM();
+                UpdateProductVM();
             }
-            UpdateViewModel();
+            if (categoryVM == null)
+            {
+                categoryVM = new CategoryMgmtVM();
+                UpdateCategoryVM();
+            }
         }
 
         public IActionResult Index()
@@ -36,22 +42,39 @@ namespace Gr4WebshopIncReact.Controllers
 
         public IActionResult ProductManagement()
         {
-            return View(indexVM);
+            UpdateProductVM();
+            return View(productVM);
+        }
+        public IActionResult CategoryManagement()
+        {
+            UpdateCategoryVM();
+            return View(categoryVM);
         }
 
-        private void UpdateViewModel()
+        private void UpdateCategoryVM()
+        {    
+            // Ensure it exists
+            if (categoryVM == null)
+            {
+                categoryVM = new CategoryMgmtVM();
+            }
+
+            categoryVM.Categories = _context.Categories.OrderBy(x => x.Name).ToList();
+        }
+
+        private void UpdateProductVM()
         {
             // Ensure it exists
-            if (indexVM == null)
+            if (productVM == null)
             {
-                indexVM = new ProductMgmtVM();
+                productVM = new ProductMgmtVM();
             }
 
             // Create a fresh file uploading container
-            indexVM.FilesUploader = new FilesUploadingModel();
+            productVM.FilesUploader = new FilesUploadingModel();
 
             // Get products
-            indexVM.Products = _context.Products.OrderBy(x => x.Name).ToList();
+            productVM.Products = _context.Products.OrderBy(x => x.Name).ToList();
 
             // Get the image paths
             List<string> images = Directory.GetFiles("wwwroot/uploaded_images").ToList();
@@ -59,17 +82,17 @@ namespace Gr4WebshopIncReact.Controllers
             {
                 images[i] = images[i].Split("/")[1];
             }
-            indexVM.ImageLocations = images;
+            productVM.ImageLocations = images;
 
             // Create a fresh ProductCreation view model
-            indexVM.ProductCreatorVM = new ProductCreationVM
+            productVM.ProductCreatorVM = new ProductCreationVM
             {
                 ImageLocations = images,
                 Categories = _context.Categories.ToList()
             };
 
             // Create a fresh ProductEditor view model
-            indexVM.ProductEditorVM = new ProductEditorVM
+            productVM.ProductEditorVM = new ProductEditorVM
             {
                 ImageLocations = images,
                 Categories = _context.Categories.ToList(),

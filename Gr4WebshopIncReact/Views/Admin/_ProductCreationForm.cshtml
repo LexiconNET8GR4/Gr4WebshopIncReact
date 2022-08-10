@@ -135,22 +135,20 @@
     </table>
     <input type="button" onclick="attemptProductCreation()" value="Add Product" />
 </form>
-<p id="results-container">Currently lacking front-end validation</p>
 
 
 <script>
-    // Debugging
-    async function loadFiles() {
-        var files = [];
-        await axios.post('/api/FileUploading/GetAllImages') // Get list  of images for drop-down menu
-            .then(res => {
-                console.log("then")
-                files = res.data;
-            })
-        for (var i = 0; i < files.length; i++) {
-            console.log(files[i]);
-        }
-    }
+    //async function loadFiles() {
+    //    var files = [];
+    //    await axios.post('/api/FileUploading/GetAllImages') // Get list  of images for drop-down menu
+    //        .then(res => {
+    //            console.log("then")
+    //            files = res.data;
+    //        })
+    //    for (var i = 0; i < files.length; i++) {
+    //        console.log(files[i]);
+    //    }
+    //}
 
     function loadList(id) {
         // The first time the drop down menu is set up,
@@ -223,6 +221,11 @@
         if (!isNumeric(pSaleAmount)) pSaleAmount = 0;
         if (!isNumeric(pSalePercant)) pSalePercant = 0;
         if (!isNumeric(pStock)) pStock = 0;
+
+        if (pName == "") {
+            console.log("no name entered");
+            return;
+        }
 
         // Debug
         //axios.interceptors.request.use((config) => {

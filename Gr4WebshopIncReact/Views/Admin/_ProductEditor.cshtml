@@ -226,7 +226,8 @@
     function attemptProductEdit() {
 
         // Files squred from form
-        let peId = document.getElementById('pe-id').value;
+        let peId = "Not determined";
+        peId = document.getElementById('pe-id').value;
         let peName = document.getElementById("pe-name").value;
         let peDesc = document.getElementById("pe-desc").value;
         let peCover = document.getElementById("pe-cover").value;
@@ -265,6 +266,11 @@
         if (!isNumeric(peSaleAmount)) peSaleAmount = 0;
         if (!isNumeric(peSalePercant)) peSalePercant = 0;
         if (!isNumeric(peStock)) peStock = 0;
+
+        if (peId == "Not determined") {
+            console.log("No product loaded to edit");
+            return;
+        }
 
         // Debug
         //axios.interceptors.request.use((config) => {
