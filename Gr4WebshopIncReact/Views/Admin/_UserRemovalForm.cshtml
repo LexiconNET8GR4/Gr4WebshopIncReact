@@ -1,0 +1,41 @@
+﻿@model List<Gr4WebshopIncReact.Models.ApplicationUser>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+<h2>Remove Category</h2>
+<form id="user-remove-form">
+    <select id="user-to-remove">
+        Product to remove:
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <option value=@Model[i].Id> @Model[i].UserName (@Model[i].FirstName @Model[i].LastName: @Model[i].Id) </option>
+        }
+    </select>
+    <input type="Button" onclick="inspectUser()" value="Inspect" />
+</form>
+
+
+
+<script>
+    function inspectUser() {
+
+    }
+
+    function removeUser() {
+
+        let uId = document.getElementById('user-to-remove').value;
+
+
+        // Request made to the backend api
+        // Send formData object
+        axios.post('/api/User/deleteuser', null, {
+            params: {
+                Id: cId
+            }
+        }).then(res => {
+            console.log(res);
+            // if succsess
+            window.location.reload();
+
+        })
+
+    }</script>
