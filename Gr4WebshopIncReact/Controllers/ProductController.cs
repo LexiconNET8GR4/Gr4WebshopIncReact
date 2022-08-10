@@ -44,7 +44,8 @@ namespace Gr4WebshopIncReact.Controllers
         [Route("getproduct")]
         public ActionResult GetProduct(string id)
         {
-            var idGuid = Guid.Parse(id);
+            Guid idGuid;
+            if(!Guid.TryParse(id,out idGuid))return BadRequest();
             Product product = _productServices.GetById(idGuid);
             if (product == null) return BadRequest();
             

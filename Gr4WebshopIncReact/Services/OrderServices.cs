@@ -33,9 +33,12 @@ namespace Gr4WebshopIncReact.Services
             return _context.SaveChanges() > 0 ? order : null;
         }
 
-        public bool Delete(Order order)
+        public bool Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var orderToDelete = GetById(id);
+            if (orderToDelete == null) return false;
+            _context.Orders.Remove(orderToDelete);
+            return _context.SaveChanges() > 0 ? true : false;
         }
 
         public Order GetById(Guid id)
