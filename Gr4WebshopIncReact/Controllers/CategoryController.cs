@@ -156,22 +156,38 @@ namespace Gr4WebshopIncReact.Controllers
                                             bool isMainCateGory, 
                                             string SubCategories)
         {
-            var subCategoryList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Category>>(SubCategories);
+            // Check for valid Category-to-Edit Id
+            if (Id.ToString() == "")
+                return BadRequest();
+
+            if (_categoryServices.FindById(Id) == null)
+                return BadRequest();
+
+            // Recieve list of category IDs and find their corresponding categories
+            List<Guid> recievedCategoryIds = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Guid>>(SubCategories);
+            List<Category> subCategoryList = new List<Category>(); 
+            foreach (Guid id in recievedCategoryIds)
+            {
+                subCategoryList.Add(_categoryServices.FindById(id));
+            }
+
+            // Update the category in question
             Category category = _categoryServices.FindById(Id);
             if (category == null) return BadRequest();
             category.Name = Name;
             category.isMainCateGory = isMainCateGory;
-            List<Category> subCategories = new List<Category>();
-            if (subCategoryList != null && subCategoryList.Count > 0)
-            {
-               
-                category.SubCategories = subCategoryList;
-            }
+            category.SubCategories = subCategoryList;
             Category returnCat = _categoryServices.Update(category);
             if (returnCat == null) return BadRequest();
             return Json(PrepareForJSON(returnCat));
+        }
 
-
+        [Route("removecategory")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult RemoveCategory([Required] Guid Id)
+        {
+            if (_categoryServices.Delete(Id)) return StatusCode(200);
+            else return BadRequest();
         }
 
         private CategoryDTO PrepareForJSON(Category c)

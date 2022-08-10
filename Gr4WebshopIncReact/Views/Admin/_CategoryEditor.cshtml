@@ -1,1 +1,210 @@
-﻿
+﻿@model List<Gr4WebshopIncReact.Models.Category>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+<h2>Edit Category</h2>
+
+<select id="category-to-edit">
+    Product to edit:
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <option value=@Model[i].Id> @Model[i].Name (@Model[i].Id) </option>
+    }
+</select>
+<input type="Button" onclick="loadCategory()" value="Load to edit" />
+
+<form id="category-edit-form">
+    <h3>Currently editing: <b id="ce-id-display"> None </b></h3>
+    <input type="hidden" id="ce-id" value="no id selected" />
+    <table>
+        <thead>
+            <tr>
+                <td>Value</td>
+                <td>Input</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                Name
+            </td>
+            <td>
+                <input type="text" id="ce-name" maxlength="20" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Is this a main category?
+            </td>
+            <td>
+                <input type="checkbox" id="ce-main" />
+            </td>
+        </tr>   
+        <tr>
+            <td>
+                Sub Categories
+            </td>
+            <td>
+                <div id="ce-categories" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('ce-categories')">Categories</span>
+                    <ul class="items" id="ce-listed-categories">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+                            <li><input type="checkbox" id="@Model[i].Id" />@Model[i].Name</li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <input type="button" onclick="attemptCategoryEdit()" value="Edit Category" />
+</form>
+
+<script>
+    function loadList(id) {
+        // The first time the drop down menu is set up,
+        // Give it an event for toggling the options being visible and not
+        var checkList = document.getElementById(id);
+
+        if (!checkList.classList.contains('anchored')) {
+
+            checkList.getElementsByClassName('anchor')[0].onclick =
+                function (evt) {
+                    if (checkList.classList.contains('visible'))
+                        checkList.classList.remove('visible');
+                    else
+                        checkList.classList.add('visible');
+                }
+
+            checkList.classList.add('anchored');
+            checkList.classList.add('visible');
+        }
+    }
+
+    async function loadCategory() {
+
+        let ceId = document.getElementById('category-to-edit').value;
+        console.log(ceId);
+        let ceCategory = await axios.get('/api/category/getcategory', { params: { id: ceId } });
+        console.log(JSON.stringify(ceCategory.data));
+
+        // Load values of selected product
+        document.getElementById('ce-id-display').innerText = ceCategory.data.id;
+        document.getElementById('ce-id').value = ceCategory.data.id;
+
+        document.getElementById('ce-name').value = ceCategory.data.name;
+
+        document.getElementById('ce-main').checked = false;
+        document.getElementById('ce-main').checked = ceCategory.data.isMainCateGory;
+
+        let subCatList = document.getElementById("ce-listed-categories").getElementsByTagName("li");
+        for (var i = 0; i < subCatList.length; i++) {
+            subCatList[i].childNodes[0].checked = false;
+            for (var j = 0; j < ceCategory.data.subCategories.length; j++) {
+                if (subCatList[i].childNodes[0].id == ceCategory.data.subCategories[j]) {
+                    subCatList[i].childNodes[0].checked = true;
+                }
+            }
+
+        }
+    }
+
+    // get variables, verify, and send post request
+    function attemptCategoryEdit() {
+
+        // Files squred from form
+        let ceId = "Not determined";
+        ceId = document.getElementById('ce-id').value;
+
+        let ceName = document.getElementById("ce-name").value;
+
+        let ceIsMain = document.getElementById("ce-main").checked;
+
+        // Get all checked categories
+        let ceSubCats = [];
+        let subCategoryList = document.getElementById("ce-listed-categories").getElementsByTagName("li");
+        for (var i = 0; i < subCategoryList.length; i++) {
+            if (subCategoryList[i].children[0].checked == true) {
+                ceSubCats.push(subCategoryList[i].children[0].id.toString());
+            }
+        }
+
+        // Validation
+        if (ceId == "Not determined") {
+            console.log("No category loaded to edit");
+            return;
+        }
+
+        // Request made to the backend api
+        // Send object
+        axios.post('/api/Category/editcategory', null, {
+            params: {
+                Id: ceId,
+                Name: ceName,
+                isMainCateGory: ceIsMain,
+                SubCategories: JSON.stringify(ceSubCats)
+            }
+        }).then(res => {
+            console.log(res);
+            // if succsess
+            window.location.reload();
+        })
+
+    }
+
+</script>
+
+<style>
+    .dropdown-check-list {
+        display: inline-block;
+    }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
+
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
+
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
+
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
+
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
+
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
+</style>
+

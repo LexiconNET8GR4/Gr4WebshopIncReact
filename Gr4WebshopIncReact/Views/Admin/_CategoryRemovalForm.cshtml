@@ -20,9 +20,9 @@
 
         // Request made to the backend api
         // Send formData object
-        axios.post('/api/Product/deleteproduct', null, {
+    axios.post('/api/Category/removecategory', null, {
             params: {
-                id: pId
+                Id: cId
             }
         }).then(res => {
             console.log(res);
