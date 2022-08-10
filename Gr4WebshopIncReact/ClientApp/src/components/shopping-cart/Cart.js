@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { useNavigate } from "react-router-dom";
 
 
 export class Cart extends Component {
@@ -6,41 +7,45 @@ export class Cart extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { products: [], loadingProducts: true }; //global variables
+    this.state = {
+       products: [
+          {Product: {Name: 'stol', Price: 19, }, Amount: 4},
+          {Product: {Name: 'bord', Price: 59, }, Amount: 1}
+      ],
+     loadingProducts: false }; //global variables
   }
 
   componentDidMount() { //When cart component is mounted(loaded) the get request gets sent
-    this.populateCartData();
+    this.populateCartData(); //TODO: send productID to this method, populateCartData(productID)
   }
 
+  
   //Renders the table with the products
-  static renderProductsTable(products) { 
-    let totalPrice = 0
+  static renderProductsTable(products) {
+
     return (
+      <>
       <table className='table table-striped' aria-labelledby="tabelLabel">
         <thead>
-        <p>My products</p>
           <tr>
             <th>Name</th>
             <th>Price </th>
-            <th>Amount (pieces)</th>
-            <th>In stock (pieces)</th>
+            <th>Amount</th>
           </tr>
         </thead>
         <tbody>
           {products.map(item =>
-          //this.setState({totalPrice: totalPrice + product.price}),
             <tr key={item.Product.Name}>
-              <td>{item.Product.CurrentPrice}</td>
-              <td>{item.Amount}</td>
-              <td>{item.Product.Stock }</td>
+              <td>{item.Product.Name}</td>
+              <td>{item.Product.Price}</td>
+              <td><a style={{cursor: "pointer", color:"#0366d6"}} onClick={() => this.changeAmount('increase')}>+ </a> {item.Amount} <a style={{cursor: "pointer", color:"#0366d6"}} onClick={() => this.changeAmount('decrease')}> -</a></td>
             </tr>
           )}
         </tbody>
-        <p>Total price {totalPrice}</p>
-        <a href='./checkout'>Checkout</a>   
       </table>
-
+        <p>Total price: {products.reduce((acc, item) => acc+ item.Amount * item.Product.Price, 0)} </p>
+        <button   onClick={() => {window.location.replace("./checkout");}} className='btn btn-primary'>Checkout</button>   
+</>
     );
   }
 
@@ -53,7 +58,7 @@ export class Cart extends Component {
     return (
       <div>
         <h1 id="tabelLabel" >My Cart</h1>
-        <a href='./checkout'>Checkout</a>   
+
 
         {products_contents}
       </div>
@@ -62,13 +67,18 @@ export class Cart extends Component {
 
 
 
-  async populateCartData() {
+  async populateCartData(productId) {
     
-    //fetch('./api/CheckoutController/getallcategories')
-    fetch('/api/CheckoutController/getallcartproducts')
+    //TODO: get product(s) from backend
+        fetch('/api/???Controller/' + productId)
         .then(response => response.json())
-        .then(data => this.setState({ products: data.total, loadingProducts: false }));
+        .then(data => this.setState({ products: data, loadingProducts: false }));
 
    
+  }
+
+  async changeAmount(change) {
+    console.log(change);
+    //TODO: connect to backend
   }
 }

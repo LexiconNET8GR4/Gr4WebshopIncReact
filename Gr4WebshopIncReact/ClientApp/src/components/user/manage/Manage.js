@@ -34,7 +34,7 @@ const RenderManageTable = () => (
         <h4>Profile</h4>
         <div className='row'>
             <div className='col-md-6'>
-                <Formik initialValues={{ PhoneNumber: 0 }}
+                <Formik initialValues={{ PhoneNumber: '' }}
                          onSubmit={(values) => {
                             if(values.PhoneNumber === '') {
                                { document.getElementById('Error').style.display = 'block'}
