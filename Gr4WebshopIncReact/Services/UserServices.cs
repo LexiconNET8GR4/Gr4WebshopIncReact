@@ -24,13 +24,14 @@ namespace Gr4WebshopIncReact.Services
         public bool Delete(Guid id)
         {
             var userToDelete = GetById(id);
+            if (userToDelete == null) return false;
 
             //Guard against deleting admins
             var adminRoleId = _context.Roles.Where(ur => ur.NormalizedName == "ADMIN").FirstOrDefault().Id;
             var userRoles = _context.UserRoles.Where(ur => ur.RoleId == adminRoleId&&ur.UserId==id.ToString()).Count();
             if (userRoles > 0) return false;
 
-
+            
             _context.Users.Remove(userToDelete);
             return _context.SaveChanges() > 0 ? true : false;
         }
@@ -47,7 +48,9 @@ namespace Gr4WebshopIncReact.Services
 
         public ApplicationUser GetById(Guid id)
         {
-            var user = _context.Users.Where(u => u.Id == id.ToString()).FirstOrDefault();
+            var user = _context.Users.Where(u => u.Id == id.ToString())
+                .Include(oh=>oh.OrderHistory)
+                .FirstOrDefault();
             if (user != null) return user;
             return null;
         }
