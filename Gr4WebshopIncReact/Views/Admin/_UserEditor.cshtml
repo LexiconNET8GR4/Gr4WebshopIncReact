@@ -1,5 +1,170 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Gr4WebshopIncReact.Models.viewModels.UserEditorVM
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+<h2>Edit User</h2>
+<select id="user-to-edit">
+    User to edit:
+    @for (int i = 0; i < Model.Users.Count; i++)
+    {
+        <option value=@Model.Users[i].Id> @Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].UserName: @Model.Users[i].Id) </option>
+    }
+</select>
+<input type="Button" onclick="loadUser()" value="Load to edit" />
+
+<form>
+    <table>
+        <thead>
+            <tr>
+                <td>Data</td>
+                <td>Value</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                ID (customer key)
+            </td>
+            <td>
+                <input type="text" id="ue-id" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Email
+            </td>
+            <td>
+                <input type="text" id="ue-email" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                First name
+            </td>
+            <td>
+                <input type="text" id="ue-first-name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Last name
+            </td>
+            <td>
+                <input type="text" id="ue-last-name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Adress
+            </td>
+            <td>
+                <input type="text" id="ue-adress" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Roles
+            </td>
+            <td>
+                <div id="ue-roles" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('ue-roles')">Roles</span>
+                    <ul class="items" id="ue-listed-roles">
+                        @for (int i = 0; i < Model.Roles.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+                            <li><input type="checkbox" id="@Model.Roles[i].Id" />@Model.Roles[i].Name</li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Orders
+            </td>
+            <td>
+                <p>Basic order info is listed here. To edit orders, please use the order editing interface</p>
+                <ul id="ue-order-list">
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <input type="Button" onclick="attemptUserEdit()" value="Edit User" />
+</form>
+
+<script>
+    function loadList(id) {
+        // The first time the drop down menu is set up,
+        // Give it an event for toggling the options being visible and not
+        var checkList = document.getElementById(id);
+
+        if (!checkList.classList.contains('anchored')) {
+
+            checkList.getElementsByClassName('anchor')[0].onclick =
+                function (evt) {
+                    if (checkList.classList.contains('visible'))
+                        checkList.classList.remove('visible');
+                    else
+                        checkList.classList.add('visible');
+                }
+
+            checkList.classList.add('anchored');
+            checkList.classList.add('visible');
+        }
+    }
+</script>
+
+<style>
+    .dropdown-check-list {
+        display: inline-block;
+    }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
+
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
+
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
+
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
+
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
+
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
+</style>
+
+
