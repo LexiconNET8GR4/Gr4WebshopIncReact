@@ -9,7 +9,7 @@
         <option value=@Model.Users[i].Id> @Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].UserName: @Model.Users[i].Id) </option>
     }
 </select>
-<input type="Button" onclick="loadUser()" value="Load to edit" />
+<input type="Button" onclick="loadUser()" value="Load to edit(disabled WIP)" disabled />
 
 <form>
     <table>
@@ -88,7 +88,7 @@
             </td>
         </tr>
     </table>
-    <input type="Button" onclick="attemptUserEdit()" value="Edit User" />
+    <input type="Button" onclick="attemptUserEdit()" value="Edit User(disabled WIP)" disabled />
 </form>
 
 <script>
