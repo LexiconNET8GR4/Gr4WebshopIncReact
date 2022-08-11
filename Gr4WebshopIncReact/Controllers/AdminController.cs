@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Gr4WebshopIncReact.Models.viewModels;
 using Gr4WebshopIncReact.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gr4WebshopIncReact.Controllers
 {
@@ -17,6 +18,7 @@ namespace Gr4WebshopIncReact.Controllers
     {
         private static ProductMgmtVM productVM;
         private static CategoryMgmtVM categoryVM;
+        private static UserMgmtVM userVM;
         private readonly ApplicationDbContext _context;
 
         public AdminController(ApplicationDbContext context)
@@ -32,6 +34,11 @@ namespace Gr4WebshopIncReact.Controllers
             {
                 categoryVM = new CategoryMgmtVM();
                 UpdateCategoryVM();
+            }
+            if (userVM == null)
+            {
+                userVM = new UserMgmtVM();
+                UpdateUserVM();
             }
         }
 
@@ -49,6 +56,27 @@ namespace Gr4WebshopIncReact.Controllers
         {
             UpdateCategoryVM();
             return View(categoryVM);
+        }
+        public IActionResult UserManagement()
+        {
+            UpdateUserVM();
+            return View(userVM);
+        }
+
+        private void UpdateUserVM()
+        {
+            // Ensure it exists
+            if (userVM == null)
+            {
+                userVM = new UserMgmtVM();
+            }
+
+            userVM.Users = _context.Users.OrderBy(x => x.FirstName).ThenBy(y => y.LastName).ToList();
+            userVM.UserEditorVM = new UserEditorVM
+            {
+                Users = userVM.Users,
+                Roles = _context.Roles.OrderBy(x => x.Name).ToList()
+            };
         }
 
         private void UpdateCategoryVM()
@@ -99,6 +127,24 @@ namespace Gr4WebshopIncReact.Controllers
                 Products = _context.Products.OrderBy(x => x.Name).ToList()
             };
 
+        }
+
+        public IActionResult GetUserRoles(string userId)
+        {
+            // Get all role-to-user connectors involved with the requested user
+            List<IdentityUserRole<string>> userRoles = _context.UserRoles.Where(x => x.UserId == userId).ToList();
+
+            // Extract the role keys
+            List<string> roleIds = new List<string>();
+            for (int i = 0; i < userRoles.Count; i++)
+            {
+                roleIds.Add(userRoles[i].RoleId);
+            }
+
+            // Find all roles with matching keys
+            List<IdentityRole> roles = _context.Roles.Where(x => roleIds.Contains(x.Id)).ToList();
+
+            return Json(roles);
         }
     }
 }

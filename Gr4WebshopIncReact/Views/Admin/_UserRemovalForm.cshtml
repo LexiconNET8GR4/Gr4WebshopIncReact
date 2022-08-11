@@ -1,0 +1,157 @@
+﻿@model List<Gr4WebshopIncReact.Models.ApplicationUser>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+<h2>Remove Category</h2>
+<form id="user-remove-form">
+    <select id="user-to-remove">
+        Product to remove:
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <option value=@Model[i].Id> @Model[i].UserName (@Model[i].FirstName @Model[i].LastName: @Model[i].Id) </option>
+        }
+    </select>
+    <input type="Button" onclick="inspectUser()" value="Inspect (disabled WIP)" disabled/>
+</form>
+
+<div id="user-inspection">
+    <table>
+        <thead>
+            <tr>
+                <td>Data</td>
+                <td>Value</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                ID (customer key)
+            </td>
+            <td>
+                <input type="text" id="uri-id" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Email
+            </td>
+            <td>
+                <input type="text" id="uri-email" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                First name
+            </td>
+            <td>
+                <input type="text" id="uri-first-name" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Last name
+            </td>
+            <td>
+                <input type="text" id="uri-last-name" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Adress
+            </td>
+            <td>
+                <input type="text" id="uri-adress" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Roles
+            </td>
+            <td>
+                <ul id="uri-roles-list">
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Orders
+            </td>
+            <td>
+                <ul id="uri-order-list">
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <input type="Button" id="ur-removal-button" onclick="removeUser()" value="Remove User" disabled/>
+</div>
+
+
+<script>
+
+
+    async function inspectUser() {
+        
+        // Get user data to load
+        let riUserID = document.getElementById('user-to-remove').value;
+        let riUser = await axios.get('/api/user/getuser', { params: { id: riUserID } });
+
+        // Fetch orders
+        let riUserOrders = [];
+        for (var i = 0; i < riUser.data.orderHistory.length; i++) {
+            riUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: riUser.data.orderHistory[i] } }));
+        }
+
+        console.log("Logging orders");
+        for (var i = 0; i < riUserOrders.length; i++) {
+            console.log(riUserOrders);
+        }
+
+        // Fetch roles
+        let riUserRoles = await axios.get('/Admin/GetUserRoles', { params: { userId: riUserID } });
+
+        // Load aquired data
+        document.getElementById('uri-id').value = riUserID;
+        document.getElementById('uri-email').value = riUser.email;
+        document.getElementById('uri-first-name').value = riUser.firstName;
+        document.getElementById('uri-last-name').value = riUser.lastName;
+        document.getElementById('uri-adress').value = riUser.adress;
+
+        for (var i = 0; i < riUserRoles.length; i++) {
+            let listItem = document.createElement('li');
+            listItem.id = riUserRoles[i].data.id;
+            listItem.innerHTML = riUserRoles[i].data.name;
+
+            document.getElementById('uri-listed-roles').appendChild(listItem);
+        }
+
+        for (var i = 0; i < riUserOrders.length; i++) {
+            let listItem = document.createElement('li');
+            listItem.id = riUserOrders.id;
+            listItem.innerHTML = (riUserOrders[i].data.id + ", " + riUserOrders[i].data.productIds.length + " products ordred on " + riUserOrders[i].data.orderDate);
+
+            document.getElementById('uri-listed-orders').appendChild(listItem);
+        }
+
+        document.getElementById('ur-removal-button').disabled = false;
+
+    }
+
+
+    function removeUser() {
+
+        let uId = document.getElementById('uri-id').value;
+
+
+        // Request made to the backend api
+        // Send formData object
+        axios.post('/api/User/deleteuser', null, {
+            params: {
+                Id: uId
+            }
+        }).then(res => {
+            console.log(res);
+            // if succsess
+            window.location.reload();
+
+        })
+
+    }</script>
