@@ -10,7 +10,7 @@
             <option value=@Model[i].Id> @Model[i].UserName (@Model[i].FirstName @Model[i].LastName: @Model[i].Id) </option>
         }
     </select>
-    <input type="Button" onclick="inspectUser()" value="Inspect (disabled WIP)" disabled/>
+    <input type="Button" onclick="inspectUser()" value="Inspect"/>
 </form>
 
 <div id="user-inspection">
@@ -100,20 +100,21 @@
             riUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: riUser.data.orderHistory[i] } }));
         }
 
-        console.log("Logging orders");
-        for (var i = 0; i < riUserOrders.length; i++) {
-            console.log(riUserOrders);
-        }
 
         // Fetch roles
         let riUserRoles = await axios.get('/Admin/GetUserRoles', { params: { userId: riUserID } });
 
+        console.log("Logging roles");
+        for (var i = 0; i < riUserRoles.data.length; i++) {
+            console.log(riUserRoles.data.name + ": " + riUserRoles.data.id);
+        }
+
         // Load aquired data
         document.getElementById('uri-id').value = riUserID;
-        document.getElementById('uri-email').value = riUser.email;
-        document.getElementById('uri-first-name').value = riUser.firstName;
-        document.getElementById('uri-last-name').value = riUser.lastName;
-        document.getElementById('uri-adress').value = riUser.adress;
+        document.getElementById('uri-email').value = riUser.data.email;
+        document.getElementById('uri-first-name').value = riUser.data.firstName;
+        document.getElementById('uri-last-name').value = riUser.data.lastName;
+        document.getElementById('uri-adress').value = riUser.data.adress;
 
         for (var i = 0; i < riUserRoles.length; i++) {
             let listItem = document.createElement('li');
