@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import CategoryView from "./detailCategory";
 function Category() {
   const [categoryList, setCategoryList] = useState([]);
@@ -12,7 +12,7 @@ function Category() {
     { name: "Sideboard", imageCat: "img/category-4.webp" },
     { name: "Chair", imageCat: "img/category-2.webp" },
   ];
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const filterCategory = (e) => {
     e.preventDefault();
     const inputVal = e.target.innerHTML;
@@ -26,7 +26,7 @@ function Category() {
       .then((c) => {
         const filtrate = c.filter((a) => a.category === inputVal);
         // console.log(filtrate);
-        navigate(`/detail/${e.target.innerHTML}`);
+        Redirect(`/detail/${e.target.innerHTML}`);
         return setCategoryList(filtrate);
         
       });

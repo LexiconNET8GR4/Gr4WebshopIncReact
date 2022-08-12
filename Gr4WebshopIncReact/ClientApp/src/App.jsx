@@ -24,13 +24,13 @@ export default class App extends Component {
     render() {
         return (
             <>
+                <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
+                <NavMenu />
                 <Header />
                 <NavBars />
-                <Routes>
-                    <Route path="/" element={<Landing />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/detail/:category" element={<CategoryView />} />
-                </Routes>
+                 <Route path="/" component={Landing} />
+                <Route path="/products" component={Products} />
+                <Route path="/detail/:category" component={CategoryView} />
                 <Footer />
             </>
 
