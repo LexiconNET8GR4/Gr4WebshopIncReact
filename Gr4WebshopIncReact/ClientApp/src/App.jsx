@@ -17,6 +17,7 @@ import { ApplicationPaths } from './components/api-authorization/ApiAuthorizatio
 import CategoryView from './components/pages/detailCategory';
 
 import './custom.css'
+import { LoginMenu } from './components/api-authorization/LoginMenu';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -26,17 +27,20 @@ export default class App extends Component {
             <>
                 <Header />
                 <NavBars />
-                <Routes>
-                    <Route path="/" element={<Landing />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/detail/:category" element={<CategoryView />} />
-                </Routes>
+                <LoginMenu>
+                </LoginMenu>
+                
+                    <Route path="/" component={Landing} />
+                    <Route path="/products" component={Products } />
+                    <Route path="/detail/:category" component={CategoryView } />
+                    <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
+                
                 <Footer />
             </>
 
             //--------------------------------------------------------------
             //
-       //<Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
+       //
      // <Header />
      // <NavBars />
      // <Routes>
