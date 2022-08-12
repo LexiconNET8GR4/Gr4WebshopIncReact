@@ -70,8 +70,6 @@ function Header() {
                 className="start-100 translate-middle badge rounded-pill bg-secondary"
                 style={{ fontSize: 9 + "px" }}
               >
-                99
-                <span className="visually-hidden">unread messages</span>
               </span>
             </span>
             <span className="">
@@ -93,8 +91,6 @@ function Header() {
                   position: "relative",
                 }}
               >
-                99+
-                <span className="visually-hidden">unread messages</span>
               </span>
             </span>
           </div>
