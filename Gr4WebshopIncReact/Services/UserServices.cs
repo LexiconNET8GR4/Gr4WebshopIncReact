@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gr4WebshopIncReact.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gr4WebshopIncReact.Services
 {
@@ -43,6 +44,32 @@ namespace Gr4WebshopIncReact.Services
                 user.OrderHistory = _context.Orders.Where(o => o.UserKey == user.Id).ToList();
             }
             return users;
+        }
+
+        public List<ApplicationUser> GetAllWithRole(string RoleName)
+        {
+            // Find the role with the name passed
+            IdentityRole role;
+            try
+            {
+                role = _context.Roles.First(x => x.Name == RoleName);
+            }
+            catch (NullReferenceException)
+            {
+                // If no role with the passed name, there aren't any users with the role.
+                return new List<ApplicationUser>();
+            }
+
+            // Find the users with the role by checking the connector class for the many-to-many relation
+            List<IdentityUserRole<string>> connecters = _context.UserRoles.Where<IdentityUserRole<string>>(x => x.RoleId == role.Id).ToList();
+            List<ApplicationUser> usersWithRole = new List<ApplicationUser>();
+            foreach (IdentityUserRole<string> c in connecters)
+            {
+                usersWithRole.AddRange(_context.Users.Where<ApplicationUser>(x => x.Id == c.UserId).ToList());
+            }
+
+            // There shouldn't be duplicates in this list but to make sure only return distinct discoveries
+            return usersWithRole.Distinct().ToList();
         }
 
         public ApplicationUser GetById(Guid id)
