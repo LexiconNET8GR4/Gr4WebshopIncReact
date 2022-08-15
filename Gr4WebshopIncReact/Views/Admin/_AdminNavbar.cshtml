@@ -1,5 +1,10 @@
 ﻿
-<a href="/Admin/Index">Index</a> || <a href="/Admin/ProductManagement">Products</a> || <a href="/Admin/CategoryManagement">Categories</a> || <a href="/Admin/UserManagement">Users</a> || <a href="/">Store</a>
+<a href="/Admin/Index">Index</a> || 
+<a href="/Admin/ProductManagement">Products</a> || 
+<a href="/Admin/CategoryManagement">Categories</a> || 
+<a href="/Admin/UserManagement">Users</a> || 
+<a href="/Admin/OrderManagement">Orders</a>
+<a href="/">Store</a>
 @if (User.IsInRole("Admin") == false)
     {
         <h2 style="color:red">You are not signed in as admin!</h2>

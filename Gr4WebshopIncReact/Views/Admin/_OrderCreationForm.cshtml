@@ -1,0 +1,255 @@
+﻿@model Gr4WebshopIncReact.Models.viewModels.OrderCreationVM
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+<h2>Create Order</h2>
+
+
+<form id="order-create-form">
+
+    <table>
+        <thead>
+            <tr>
+                <td>Value</td>
+                <td>Input</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                User Id
+            </td>
+            <td>
+                <select id="o-user-id" name="User ID">
+
+                    @for (int i = 0; i < Model.Users.Count; i++)
+                    {
+                        // Remove the folder name from the dispaly of the image for ease of locating
+                    <option value="@Model.Users[i].Id">@Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].Id)</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Products (WIP, can only select one of each for now)
+            </td>
+            <td>
+                <div id="o-products" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('o-products')">Products</span>
+                    <ul class="items" id="p-listed-products">
+                        @for (int i = 0; i < Model.Products.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name</li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Shipping Adress
+            </td>
+            <td>
+                <input type="text" id="o-shipping" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Date placed
+            </td>
+            <td>
+                <input type="date" id="o-date" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment (WIP)
+            </td>
+            <td>
+                <input type="text" id="o-payment disabled" />
+            </td>
+        </tr>
+    </table>
+    <input type="button" onclick="attemptOrderCreation()" value="Create Order" />
+</form>
+
+
+<script>
+    //async function loadFiles() {
+    //    var files = [];
+    //    await axios.post('/api/FileUploading/GetAllImages') // Get list  of images for drop-down menu
+    //        .then(res => {
+    //            console.log("then")
+    //            files = res.data;
+    //        })
+    //    for (var i = 0; i < files.length; i++) {
+    //        console.log(files[i]);
+    //    }
+    //}
+
+    function loadList(id) {
+        // The first time the drop down menu is set up,
+        // Give it an event for toggling the options being visible and not
+        var checkList = document.getElementById(id);
+
+
+        if (!checkList.classList.contains('anchored')) {
+
+            checkList.getElementsByClassName('anchor')[0].onclick =
+                function (evt) {
+                    if (checkList.classList.contains('visible'))
+                        checkList.classList.remove('visible');
+                    else
+                        checkList.classList.add('visible');
+                }
+
+            checkList.classList.add('anchored');
+            checkList.classList.add('visible');
+        }
+    }
+
+    // Check if a passed string is a number or not
+    function isNumeric(value) {
+        if (typeof value != "string") return false // Value is not a string
+
+        return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
+            !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
+    }
+
+    // get variables, verify, and send post request
+    function attemptOrderCreation() {
+
+        // Files squred from form
+        let pName = document.getElementById("p-name").value;
+        let pDesc = document.getElementById("p-desc").value;
+        let pCover = document.getElementById("p-cover").value;
+
+        // Get all checked images for the additional images
+        let pImages = [];
+        let imageList = document.getElementById("p-listed-images").getElementsByTagName("li");
+        for (var i = 0; i < imageList.length; i++) {
+            if (imageList[i].children[0].checked == true) {
+                pImages.push(imageList[i].children[0].id.toString());
+            }
+        }
+
+        let pDetails = document.getElementById("p-details").value;
+        // Get all checked categories
+        let pCategories = [];
+        let categoryList = document.getElementById("p-listed-categories").getElementsByTagName("li");
+        for (var i = 0; i < categoryList.length; i++) {
+            if (categoryList[i].children[0].checked == true) {
+                pCategories.push(categoryList[i].children[0].id.toString());
+            }
+        }
+
+        let pPrice = document.getElementById("p-price").value;
+        let pSaleAmount = document.getElementById("p-sale-a").value;
+        let pSalePercant = document.getElementById("p-sale-p").value;
+        let pStock = document.getElementById("p-stock").value;
+        let pDate = document.getElementById("p-date").value;
+        let pBrand = document.getElementById("p-brand").value;
+
+        // Validation
+        if (!isNumeric(pPrice)) {
+            pPrice = 0;
+        }
+
+        if (!isNumeric(pSaleAmount)) pSaleAmount = 0;
+        if (!isNumeric(pSalePercant)) pSalePercant = 0;
+        if (!isNumeric(pStock)) pStock = 0;
+
+        if (pName == "") {
+            console.log("no name entered");
+            return;
+        }
+
+        // Debug
+        //axios.interceptors.request.use((config) => {
+        //    console.log(config.params);
+        //    return config;
+        //}, (error) => {
+        //    if (DEBUG) { console.error("✉️ ", error); }
+        //    return Promise.reject(error);
+        //});
+
+        // Request made to the backend api
+        // Send object
+        axios.post('/api/Product/createproduct', null, {
+            params: {
+                Name: pName,
+                Description: pDesc,
+                CoverImageDestination: pCover,
+                ImagesDestination: JSON.stringify(pImages),
+                Details: pDetails,
+                Categories: JSON.stringify(pCategories),
+                Price: pPrice,
+                SaleAmount: pSaleAmount,
+                SalePercentage: pSalePercant,
+                Stock: pStock,
+                DateStocked: pDate,
+                Brand: pBrand
+            }
+        }).then(res => {
+            console.log(res);
+            window.location.reload();
+        })
+
+    }
+</script>
+
+
+<style>
+    .dropdown-check-list {
+        display: inline-block;
+    }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
+
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
+
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
+
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
+
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
+
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
+</style>
+
