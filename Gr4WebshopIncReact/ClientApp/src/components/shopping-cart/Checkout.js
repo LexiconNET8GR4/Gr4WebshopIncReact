@@ -12,7 +12,7 @@ export class Checkout extends Component {
         isAuthenticated: false,
         userName: null,
         CartProducts: [
-          {Product: {Name: 'stol', Price: 19, }, Amount: 3},
+          {Product: {Name: 'stol', Price: 19, }, Amount: 3}, 
           {Product: {Name: 'bord', Price: 59, }, Amount: 1}
         ],
         CheckOutItems: [] //TODO: enter productIds, quantitys to  list
@@ -66,7 +66,6 @@ export class Checkout extends Component {
 
   render() {
   const { isAuthenticated, userName } = this.state;
-
   const AnonymousCheckout = () => (
     <Formik initialValues={{ FirstName: '', LastName: '', Adress:'', PhoneNumber: '', Email:'',   Type:'',   Provider:'' }}
             handleSubmit={(values) => {
@@ -80,7 +79,7 @@ export class Checkout extends Component {
                 Provider: values.Provider,
                 CheckOutItems: this.state.CheckOutItems //TODO: enter correct list
               };
-              const options = {
+               const options = {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -96,7 +95,7 @@ export class Checkout extends Component {
               } 
               else {
                  { document.getElementById('Error').style.display = 'none'}
-                 this.sendData(values, options);
+                 this.sendData(values );
               }
           }}
             >
@@ -113,10 +112,8 @@ export class Checkout extends Component {
                     <input type='number' name='PhoneNumber' onChange={handleChange} value={values.PhoneNumber}/>
                 <label htmlFor='Email' style={{display: "block"}}>Email</label>
                     <input type='text' name='Email' onChange={handleChange} value={values.Email}/>
-                <hr/>
                 <label htmlFor='Type' style={{display: "block"}}>Payment type</label>
                     <input type='text' name='Type' onChange={handleChange} value={values.Type}/>
-                    <hr/>
                 <label htmlFor='Provider' style={{display: "block"}}>Shipment provider</label>
                     <input type='text' name='Provider' onChange={handleChange} value={values.Provider}/>
                 <button className="btn btn-primary" type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Place order</button>
@@ -191,11 +188,20 @@ export class Checkout extends Component {
   if(!isAuthenticated) {
     return (
       <div>
-        <h1 id="tabelLabel" >Enter credentials</h1>
-        <AnonymousCheckout/>
-        <p id="Error">Please enter all details  </p>
+      <div className='row'>
+        <div className='col-md-7'>
+          <h1 id="tabelLabel" >Enter credentials</h1>
+          <AnonymousCheckout/>
+        </div>
+        <div className='col-md-5'>
+          <h3>Cart</h3>
+          {cart_contents}
+
+        </div>
       </div>
-    );
+      <p id="Error">Please enter all details  </p>
+    </div>);
+    
   } else {
     return(
       <div>
@@ -220,7 +226,7 @@ export class Checkout extends Component {
     //save products in CartProducts
   }
 
-  async sendData(values, options) {
+  async sendData(values) {
     //send post with values
   }
 }
