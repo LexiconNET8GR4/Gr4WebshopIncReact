@@ -8,6 +8,7 @@ namespace Gr4WebshopIncReact.Models
 {
     public class Customer
     {
+        
         [Key]
         public Guid Id { get; set; }
 
@@ -27,17 +28,26 @@ namespace Gr4WebshopIncReact.Models
         public Guid? UserKey { get; set; }
         public ApplicationUser User { get; set; }
 
-        public Customer(string firstName, string lastName, ApplicationUser user)
+        public Customer(ApplicationUser user)
         {
-            FirstName = firstName;
-            LastName = lastName;
+            Id = Guid.NewGuid();
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Email = user.Email;
+            Adress = user.Adress;
+            PhoneNumber = user.PhoneNumber;
+            UserKey = Guid.Parse(user.Id);
             User = user;
         }
 
-        public Customer(string firstName, string lastName)
+        public Customer(string firstName, string lastName, string email, string adress,string phoneNumber)
         {
+            Id = Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
+            Email = email;
+            Adress = adress;
+            PhoneNumber = phoneNumber;
         }
     }
 }

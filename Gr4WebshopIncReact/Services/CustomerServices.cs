@@ -18,17 +18,17 @@ namespace Gr4WebshopIncReact.Services
         {
             _context = context;
         }
-        public Customer CreateCustomer(string firstName, string lastName)
+        public Customer CreateCustomer(string firstName, string lastName, string email, string adress, string number)
         {
-            Customer customer = new Customer(firstName, lastName);
+            Customer customer = new Customer(firstName, lastName,email,adress,number);
             _context.Customers.Add(customer);
             return _context.SaveChanges() > 0 ? customer : null;
 
         }
 
-        public Customer CreateCustomer(string firstName, string lastName, ApplicationUser user)
+        public Customer CreateCustomer( ApplicationUser user)
         {
-            Customer customer = new Customer(firstName, lastName, user);
+            Customer customer = new Customer( user);
             _context.Customers.Add(customer);
             return _context.SaveChanges() > 0 ? customer : null;
         }

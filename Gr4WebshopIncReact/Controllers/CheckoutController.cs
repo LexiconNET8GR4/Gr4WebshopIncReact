@@ -21,11 +21,14 @@ namespace Gr4WebshopIncReact.Controllers
         private readonly ICustomerServices _customerServices;
 
         private readonly UserManager<ApplicationUser> _userManager;
-        public CheckoutController(IOrderServices orderServices,ICustomerServices customerServices, UserManager<ApplicationUser> userManager)
+        private readonly IUserServices _userServices;
+
+        public CheckoutController(IOrderServices orderServices,ICustomerServices customerServices, UserManager<ApplicationUser> userManager,IUserServices userServices)
         {
             _orderServices = orderServices;
             _customerServices = customerServices;
             _userManager = userManager;
+            _userServices = userServices;
         }
 
         [Route("registered")]
@@ -35,7 +38,12 @@ namespace Gr4WebshopIncReact.Controllers
         {
             var checkoutItemsList =Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
             Customer customer = _customerServices.GetById(Guid.Parse(customerId));
-            if (customer == null) return BadRequest();
+            if (customer == null) 
+            {
+                var userId = _userManager.GetUserId(User);
+                var user = _userServices.GetById(Guid.Parse(userId));
+                customer = new Customer( user);
+            }
             Order order=_orderServices.CreateOrder(customer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
             Receipt receipt = new Receipt(order);
             return Json(receipt);
@@ -46,7 +54,7 @@ namespace Gr4WebshopIncReact.Controllers
         public ActionResult Anonymous(string checkoutItems,CustomerDTO customer, string shippingAddress)
         {
             var checkoutItemsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
-            Customer newCustomer = _customerServices.CreateCustomer(customer.FirstName, customer.LastName);
+            Customer newCustomer = _customerServices.CreateCustomer(customer.FirstName, customer.LastName,customer.Email,customer.Adress,customer.PhoneNumber);
             Order order = _orderServices.CreateOrder(newCustomer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
             Receipt receipt = new Receipt(order);
             return Json(receipt);

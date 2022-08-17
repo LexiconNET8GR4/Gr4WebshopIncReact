@@ -8,8 +8,8 @@ namespace Gr4WebshopIncReact.Services
 {
     public interface ICustomerServices
     {
-        public Customer CreateCustomer(string firstName, string lastName);
-        public Customer CreateCustomer(string firstName, string lastName, ApplicationUser user);
+        public Customer CreateCustomer(string firstName, string lastName, string email, string adress, string number);
+        public Customer CreateCustomer( ApplicationUser user);
         public Customer GetById(Guid id);
         public List<Customer> Search(string SearchPhrase);
         public Customer Update(Customer customer);
