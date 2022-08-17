@@ -130,14 +130,6 @@ namespace Gr4WebshopIncReact.Controllers
             else return BadRequest();
         }
 
-        [Route("getuser")]
-        [Authorize(Roles = "Admin")]
-        public ActionResult GetUser(Guid id)
-        {
-            var user = _userServices.GetById(id); 
-            var userToReturn = new UserDTO(user); 
-            return Json(userToReturn);
-
-        }
+        
     }
 }
