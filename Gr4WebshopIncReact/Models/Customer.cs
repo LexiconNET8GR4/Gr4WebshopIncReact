@@ -26,5 +26,18 @@ namespace Gr4WebshopIncReact.Models
 
         public Guid? UserKey { get; set; }
         public ApplicationUser User { get; set; }
+
+        public Customer(string firstName, string lastName, ApplicationUser user)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            User = user;
+        }
+
+        public Customer(string firstName, string lastName)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
     }
 }
