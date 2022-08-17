@@ -23,23 +23,71 @@
                     @for (int i = 0; i < Model.Users.Count; i++)
                     {
                         // Remove the folder name from the dispaly of the image for ease of locating
-                    <option value="@Model.Users[i].Id">@Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].Id)</option>
+                        <option value="@Model.Users[i].Id">@Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].Id)</option>
                     }
                 </select>
             </td>
         </tr>
         <tr>
             <td>
-                Products (WIP, can only select one of each for now)
+                Use registered user? (WIP)
+            </td>
+            <td>
+                <input type="checkbox" id="o-use-user" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer First Name (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-first-name" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Last Name (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-last-name" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Adress (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-adress" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Number (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-phone" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Email (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-email" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Products (WIP, will add 3 of each checked)
             </td>
             <td>
                 <div id="o-products" class="dropdown-check-list" tabindex="100">
                     <span class="anchor" onclick="loadList('o-products')">Products</span>
-                    <ul class="items" id="p-listed-products">
+                    <ul class="items" id="o-listed-products">
                         @for (int i = 0; i < Model.Products.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name</li>
+                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name <input type="text" id="o-amount-@Model.Products[i].Id" value="(WIP)" disabled/></li>
                         }
                     </ul>
                 </div>
@@ -53,40 +101,12 @@
                 <input type="text" id="o-shipping" />
             </td>
         </tr>
-        <tr>
-            <td>
-                Date placed
-            </td>
-            <td>
-                <input type="date" id="o-date" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Payment (WIP)
-            </td>
-            <td>
-                <input type="text" id="o-payment disabled" />
-            </td>
-        </tr>
     </table>
-    <input type="button" onclick="attemptOrderCreation()" value="Create Order" />
+    <input type="button" onclick="attemptOrderCreation()" value="Create Order"/>
 </form>
 
 
 <script>
-    //async function loadFiles() {
-    //    var files = [];
-    //    await axios.post('/api/FileUploading/GetAllImages') // Get list  of images for drop-down menu
-    //        .then(res => {
-    //            console.log("then")
-    //            files = res.data;
-    //        })
-    //    for (var i = 0; i < files.length; i++) {
-    //        console.log(files[i]);
-    //    }
-    //}
-
     function loadList(id) {
         // The first time the drop down menu is set up,
         // Give it an event for toggling the options being visible and not
@@ -108,91 +128,67 @@
         }
     }
 
-    // Check if a passed string is a number or not
-    function isNumeric(value) {
-        if (typeof value != "string") return false // Value is not a string
-
-        return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
-            !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
-    }
-
     // get variables, verify, and send post request
     function attemptOrderCreation() {
 
         // Files squred from form
-        let pName = document.getElementById("p-name").value;
-        let pDesc = document.getElementById("p-desc").value;
-        let pCover = document.getElementById("p-cover").value;
+        let oUser = document.getElementById("o-user-id").value;
+        let oShipping = document.getElementById("o-shipping").value;
 
-        // Get all checked images for the additional images
-        let pImages = [];
-        let imageList = document.getElementById("p-listed-images").getElementsByTagName("li");
-        for (var i = 0; i < imageList.length; i++) {
-            if (imageList[i].children[0].checked == true) {
-                pImages.push(imageList[i].children[0].id.toString());
+        // Get all checked products
+        let oProducts = [];
+        let productList = document.getElementById("o-listed-products").getElementsByTagName("li");
+        for (var i = 0; i < productList.length; i++) {
+            if (productList[i].children[0].checked == true) {
+                oProducts.push(productList[i].children[0].id.toString());
             }
         }
-
-        let pDetails = document.getElementById("p-details").value;
-        // Get all checked categories
-        let pCategories = [];
-        let categoryList = document.getElementById("p-listed-categories").getElementsByTagName("li");
-        for (var i = 0; i < categoryList.length; i++) {
-            if (categoryList[i].children[0].checked == true) {
-                pCategories.push(categoryList[i].children[0].id.toString());
+        let productAmountList = [];
+        let cartItem = class {
+            constructor(id, amount) {
+                this.id = id;
+                this.amount = amount;
             }
         }
-
-        let pPrice = document.getElementById("p-price").value;
-        let pSaleAmount = document.getElementById("p-sale-a").value;
-        let pSalePercant = document.getElementById("p-sale-p").value;
-        let pStock = document.getElementById("p-stock").value;
-        let pDate = document.getElementById("p-date").value;
-        let pBrand = document.getElementById("p-brand").value;
+        for (var i = 0; i < oProducts.length; i++) {
+            productAmountList.push(new cartItem(oProducts[i], 3));
+        }
 
         // Validation
-        if (!isNumeric(pPrice)) {
-            pPrice = 0;
-        }
 
-        if (!isNumeric(pSaleAmount)) pSaleAmount = 0;
-        if (!isNumeric(pSalePercant)) pSalePercant = 0;
-        if (!isNumeric(pStock)) pStock = 0;
-
-        if (pName == "") {
-            console.log("no name entered");
-            return;
-        }
 
         // Debug
-        //axios.interceptors.request.use((config) => {
-        //    console.log(config.params);
-        //    return config;
-        //}, (error) => {
-        //    if (DEBUG) { console.error("✉️ ", error); }
-        //    return Promise.reject(error);
-        //});
+        axios.interceptors.request.use((config) => {
+           console.log(config.params);
+           return config;
+        }, (error) => {
+            console.error("✉️ ", error);
+            return Promise.reject(error);
+        });
 
         // Request made to the backend api
+        let test = [];
         // Send object
-        axios.post('/api/Product/createproduct', null, {
+        //axios.post('/api/category/createcategory', null, {
+        //    params: {
+        //        Name: "test category",
+        //        isMainCateGory: false,
+        //        SubCategories: JSON.stringify(test)
+        //    }
+        //}).then(res => {
+        //    console.log(res);
+        //    //window.location.reload();
+        //})
+
+        axios.post('/api/checkout/registered', null, {
             params: {
-                Name: pName,
-                Description: pDesc,
-                CoverImageDestination: pCover,
-                ImagesDestination: JSON.stringify(pImages),
-                Details: pDetails,
-                Categories: JSON.stringify(pCategories),
-                Price: pPrice,
-                SaleAmount: pSaleAmount,
-                SalePercentage: pSalePercant,
-                Stock: pStock,
-                DateStocked: pDate,
-                Brand: pBrand
+                checkoutItems: JSON.stringify(test),//JSON.stringify(productAmountList),
+                customerId: "test id",
+                shippingAddress: "lorem testum"
             }
         }).then(res => {
             console.log(res);
-            window.location.reload();
+           // window.location.reload();
         })
 
     }

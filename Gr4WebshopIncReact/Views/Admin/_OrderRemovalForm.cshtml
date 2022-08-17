@@ -1,0 +1,182 @@
+﻿@model List<Gr4WebshopIncReact.Models.Product>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+    <h2>Remove Order</h2>
+
+    <div id="ro-search-bar">
+        <p>Order Id (WIP)</p>
+        <input type="text" id="r-order-to-inspect" disabled />
+        <input type="button" onclick="inspectOrder" value="Inspect" disabled />
+        <p id="ro-searach-results"></p>
+    </div>
+
+    <div id="r-order-inspection">
+        <table>
+            <thead>
+                <tr>
+                    <td>Value</td>
+                    <td>Input</td>
+                </tr>
+            </thead>
+            <ln />
+            <tr>
+                <td>
+                    User Id
+                </td>
+                <td>
+                    <input type="text" id="r-user-id" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Belongs to registered user?
+                </td>
+                <td>
+                    <input type="checkbox" id="r-use-user" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Unregistered Customers First Name
+                </td>
+                <td>
+                    <input type="text" id="roc-first-name" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Unregistered Customers Last Name
+                </td>
+                <td>
+                    <input type="text" id="roc-last-name" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Unregistered Customers Adress
+                </td>
+                <td>
+                    <input type="text" id="roc-adress" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Unregistered Customers Number
+                </td>
+                <td>
+                    <input type="text" id="roc-phone" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Unregistered Customers Mail
+                </td>
+                <td>
+                    <input type="text" id="roc-email" disabled />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Products {WIP}
+                </td>
+                <td>
+                    <div id="ro-products" class="dropdown-check-list" tabindex="100">
+                        <span class="anchor" onclick="loadList('ro-products')">Products</span>
+                        <ul class="items" id="ro-listed-products">
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                // Remove the folder name from the dispaly of the image for ease of locating
+                                <li><input type="checkbox" id="@Model[i].Id" disabled />@Model[i].Name <input type="text" id="ro-amount-@Model[i].Id" value="(WIP)" disabled /></li>
+                            }
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Shipping Adress
+                </td>
+                <td>
+                    <input type="text" id="ro-shipping" disabled />
+                </td>
+            </tr>
+        </table>
+        <input type="button" onclick="removeOrder()" disabled value="Remove Order (WIP)" />
+    </div>
+
+    <script>
+        function loadList(id) {
+            // The first time the drop down menu is set up,
+            // Give it an event for toggling the options being visible and not
+            var checkList = document.getElementById(id);
+
+
+            if (!checkList.classList.contains('anchored')) {
+
+                checkList.getElementsByClassName('anchor')[0].onclick =
+                    function (evt) {
+                        if (checkList.classList.contains('visible'))
+                            checkList.classList.remove('visible');
+                        else
+                            checkList.classList.add('visible');
+                    }
+
+                checkList.classList.add('anchored');
+                checkList.classList.add('visible');
+            }
+        }
+    </script>
+
+
+    <style>
+        .dropdown-check-list {
+            display: inline-block;
+        }
+
+            .dropdown-check-list .anchor {
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                padding: 5px 50px 5px 10px;
+                border: 1px solid #ccc;
+            }
+
+                .dropdown-check-list .anchor:after {
+                    position: absolute;
+                    content: "";
+                    border-left: 2px solid black;
+                    border-top: 2px solid black;
+                    padding: 5px;
+                    right: 10px;
+                    top: 20%;
+                    -moz-transform: rotate(-135deg);
+                    -ms-transform: rotate(-135deg);
+                    -o-transform: rotate(-135deg);
+                    -webkit-transform: rotate(-135deg);
+                    transform: rotate(-135deg);
+                }
+
+                .dropdown-check-list .anchor:active:after {
+                    right: 8px;
+                    top: 21%;
+                }
+
+            .dropdown-check-list ul.items {
+                padding: 2px;
+                display: none;
+                margin: 0;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+
+                .dropdown-check-list ul.items li {
+                    list-style: none;
+                }
+
+            .dropdown-check-list.visible .anchor {
+                color: #0094ff;
+            }
+
+            .dropdown-check-list.visible .items {
+                display: block;
+            }
+    </style>

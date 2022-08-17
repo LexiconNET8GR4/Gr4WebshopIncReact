@@ -30,10 +30,11 @@ namespace Gr4WebshopIncReact.Controllers
 
         [Route("registered")]
         [Authorize]
-        public ActionResult Registered(string checkoutItems,Guid customerId,string shippingAddress)
+        [HttpPost]
+        public ActionResult Registered(string checkoutItems,string customerId,string shippingAddress)
         {
-            var checkoutItemsList=Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
-            Customer customer = _customerServices.GetById(customerId);
+            var checkoutItemsList =Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
+            Customer customer = _customerServices.GetById(Guid.Parse(customerId));
             if (customer == null) return BadRequest();
             Order order=_orderServices.CreateOrder(customer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
             Receipt receipt = new Receipt(order);
