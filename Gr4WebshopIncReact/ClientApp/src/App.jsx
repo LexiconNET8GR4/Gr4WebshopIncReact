@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Routes } from 'react-router';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { NavMenu } from './components/NavMenu'; // temporarily kept in to allow admin access
@@ -16,6 +15,7 @@ import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizat
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import CategoryView from './components/pages/detailCategory';
 
+import './App.css'
 import './custom.css'
 import { LoginMenu } from './components/api-authorization/LoginMenu';
 

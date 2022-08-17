@@ -1,0 +1,97 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"');
+
+.left-margin {
+  margin-left: 15px;
+}
+
+.widthControl {
+  width: 100%;
+  height: 400px;
+}
+
+.categoryImg {
+  width: 150px;
+  height: 150px;
+}
+
+.categorytext {
+  margin-left: 45px;
+}
+
+.checked {
+  color: orange;
+}
+
+.sc-dnqmqq {
+  margin-left: 60px !important;
+  margin-right: 60px !important;
+  background: transparent !important;
+}
+
+.kVtMtA {
+  box-shadow: none !important;
+  width: 100px !important;
+  background: transparent !important;
+}
+
+.bhRnqO {
+  box-shadow: none !important;
+  width: 100px !important;
+  background: transparent !important;
+}
+
+.kVtMtA::before {
+  height: 25px !important;
+  width: 25px !important;
+}
+
+.bhRnqO::before {
+  height: 25px !important;
+  width: 25px !important;
+}
+
+.nav-link {
+  color: gray;
+  text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.nav-link :hover {
+  color: white;
+  background-color: black;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+
+}
+
+.changeIcon {
+  font-size: 14px;
+  color: gray;
+}
+
+.changeIcon::before {
+  content: '>';
+  display: inline-block;
+  margin-left: -1.3em;
+  /* same as padding-left set on li */
+  width: 1.3em;
+  /* same as padding-left set on li */
+
+}
+
+h5 {
+  color: gray;
+}
+
+.react-multi-carousel-item {
+  width: 200px !important;
+}
+
