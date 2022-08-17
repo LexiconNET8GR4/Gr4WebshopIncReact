@@ -1,0 +1,14 @@
+﻿@using Gr4WebshopIncReact.Models.viewModels
+@model CategoryMgmtVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+
+<partial name="_AdminNavbar" />
+
+<hr />
+<partial name="_CategoryRemovalForm" model="Model.Categories" />
+<hr />
+<partial name="_CategoryCreationForm" model="Model.Categories" />
+<hr />
+<partial name="_CategoryEditor" model="Model.Categories" />
+<hr />

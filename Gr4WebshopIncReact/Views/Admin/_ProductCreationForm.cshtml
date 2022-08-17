@@ -1,0 +1,317 @@
+﻿@model Gr4WebshopIncReact.Models.viewModels.ProductCreationVM
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+<h2>Create product</h2>
+
+
+<form id="product-create-form">
+
+    <table>
+        <thead>
+            <tr>
+                <td>Value</td>
+                <td>Input</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                Name
+            </td>
+            <td>
+                <input type="text" id="p-name" maxlength="20" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description
+            </td>
+            <td>
+                <input type="text" id="p-desc" maxlength="2000" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Cover Image
+            </td>
+            <td>
+                <select id="p-cover" name="Cover Image">
+
+                    @for (int i = 0; i < Model.ImageLocations.Count; i++)
+                    {
+                        // Remove the folder name from the dispaly of the image for ease of locating
+        <option value="@Model.ImageLocations[i]">@Model.ImageLocations[i].Remove(0, 16)</option>}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Additional Images
+            </td>
+            <td>
+                <div id="p-images" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('p-images')">Additional Images</span>
+                    <ul class="items" id="p-listed-images">
+                        @for (int i = 0; i < Model.ImageLocations.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+            <li><input type="checkbox" id="@Model.ImageLocations[i]" />@Model.ImageLocations[i].Remove(0, 16)</li>}
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Details
+            </td>
+            <td>
+                <input type="text" id="p-details" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Categories
+            </td>
+            <td>
+                <div id="p-categories" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('p-categories')">Categories</span>
+                    <ul class="items" id="p-listed-categories">
+                        @for (int i = 0; i < Model.Categories.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+            <li><input type="checkbox" id="@Model.Categories[i].Id" />@Model.Categories[i].Name</li>
+}
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Price
+            </td>
+            <td>
+                <input type="text" id="p-price" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Discount amount
+            </td>
+            <td>
+                <input type="text" id="p-sale-a" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Discount percentage
+            </td>
+            <td>
+                <input type="text" id="p-sale-p" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Stock
+            </td>
+            <td>
+                <input type="text" id="p-stock" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Date stocked
+            </td>
+            <td>
+                <input type="date" id="p-date" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Brand
+            </td>
+            <td>
+                <input type="text" id="p-brand" />
+            </td>
+        </tr>
+    </table>
+    <input type="button" onclick="attemptProductCreation()" value="Add Product" />
+</form>
+
+
+<script>
+    //async function loadFiles() {
+    //    var files = [];
+    //    await axios.post('/api/FileUploading/GetAllImages') // Get list  of images for drop-down menu
+    //        .then(res => {
+    //            console.log("then")
+    //            files = res.data;
+    //        })
+    //    for (var i = 0; i < files.length; i++) {
+    //        console.log(files[i]);
+    //    }
+    //}
+
+    function loadList(id) {
+        // The first time the drop down menu is set up,
+        // Give it an event for toggling the options being visible and not
+        var checkList = document.getElementById(id);
+
+
+        if (!checkList.classList.contains('anchored')) {
+
+            checkList.getElementsByClassName('anchor')[0].onclick =
+                function (evt) {
+                    if (checkList.classList.contains('visible'))
+                        checkList.classList.remove('visible');
+                    else
+                        checkList.classList.add('visible');
+                }
+
+            checkList.classList.add('anchored');
+            checkList.classList.add('visible');
+        }
+    }
+
+    // Check if a passed string is a number or not
+    function isNumeric(value) {
+        if (typeof value != "string") return false // Value is not a string
+
+        return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
+            !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
+    }
+
+    // get variables, verify, and send post request
+    function attemptProductCreation() {
+
+        // Files squred from form
+        let pName = document.getElementById("p-name").value;
+        let pDesc = document.getElementById("p-desc").value;
+        let pCover = document.getElementById("p-cover").value;
+
+        // Get all checked images for the additional images
+        let pImages = [];
+        let imageList = document.getElementById("p-listed-images").getElementsByTagName("li");
+        for (var i = 0; i < imageList.length; i++) {
+            if (imageList[i].children[0].checked == true) {
+                pImages.push(imageList[i].children[0].id.toString());
+            }
+        }
+
+        let pDetails = document.getElementById("p-details").value;
+        // Get all checked categories
+        let pCategories = [];
+        let categoryList = document.getElementById("p-listed-categories").getElementsByTagName("li");
+        for (var i = 0; i < categoryList.length; i++) {
+            if (categoryList[i].children[0].checked == true) {
+                pCategories.push(categoryList[i].children[0].id.toString());
+            }
+        }
+
+        let pPrice = document.getElementById("p-price").value;
+        let pSaleAmount = document.getElementById("p-sale-a").value;
+        let pSalePercant = document.getElementById("p-sale-p").value;
+        let pStock = document.getElementById("p-stock").value;
+        let pDate = document.getElementById("p-date").value;
+        let pBrand = document.getElementById("p-brand").value;
+
+        // Validation
+        if (!isNumeric(pPrice)) {
+            pPrice = 0;
+        }
+
+        if (!isNumeric(pSaleAmount)) pSaleAmount = 0;
+        if (!isNumeric(pSalePercant)) pSalePercant = 0;
+        if (!isNumeric(pStock)) pStock = 0;
+
+        if (pName == "") {
+            console.log("no name entered");
+            return;
+        }
+
+        // Debug
+        //axios.interceptors.request.use((config) => {
+        //    console.log(config.params);
+        //    return config;
+        //}, (error) => {
+        //    if (DEBUG) { console.error("✉️ ", error); }
+        //    return Promise.reject(error);
+        //});
+
+        // Request made to the backend api
+        // Send object
+        axios.post('/api/Product/createproduct', null, {
+            params: {
+                Name: pName,
+                Description: pDesc,
+                CoverImageDestination: pCover,
+                ImagesDestination: JSON.stringify(pImages),
+                Details: pDetails,
+                Categories: JSON.stringify(pCategories),
+                Price: pPrice,
+                SaleAmount: pSaleAmount,
+                SalePercentage: pSalePercant,
+                Stock: pStock,
+                DateStocked: pDate,
+                Brand: pBrand
+            }
+        }).then(res => {
+            console.log(res);
+            window.location.reload();
+        })
+
+    }
+</script>
+
+
+<style>
+    .dropdown-check-list {
+        display: inline-block;
+    }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
+
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
+
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
+
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
+
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
+
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
+</style>
