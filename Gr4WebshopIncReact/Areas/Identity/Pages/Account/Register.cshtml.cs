@@ -65,6 +65,10 @@ namespace Gr4WebshopIncReact.Areas.Identity.Pages.Account
             public string Adress { get; set; }
 
             [Required]
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
+
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -93,7 +97,7 @@ namespace Gr4WebshopIncReact.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email,  Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, Adress = Input.Adress };
+                var user = new ApplicationUser { UserName = Input.Email,  Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName, Adress = Input.Adress, PhoneNumber = Input.PhoneNumber };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
