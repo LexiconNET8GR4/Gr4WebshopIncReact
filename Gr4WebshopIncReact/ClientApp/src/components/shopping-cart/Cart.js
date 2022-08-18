@@ -53,7 +53,7 @@ export class Cart extends Component {
         </tbody>
       </table>
         <p>Total price: {products.reduce((acc, item) => acc+ item.Amount * item.Product.Price, 0)} </p>
-        <button   onClick={() => {window.location.replace("./checkout");}} className='btn btn-primary'>Checkout</button>   
+        <button onClick={() => {window.location.replace("./checkout");}} className='btn btn-primary'>Checkout</button>   
 </>
     );
   }
@@ -91,7 +91,7 @@ export class Cart extends Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: data.ProductId })
       };
-    fetch('/api/ProductController/getproduct', requestOptions) 
+    fetch('/api/product/findproduct', requestOptions) 
         .then(response => response.json())
         .then(dataNew => this.setState({ products: dataNew.total, loadingProducts:false })); //save extended products in products TODO: add to list instead of replacing?
     console.log('updated Product info!');
