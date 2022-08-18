@@ -30,7 +30,7 @@ namespace Gr4WebshopIncReact.Models
 
         public Customer(ApplicationUser user)
         {
-            Id = Guid.NewGuid();
+            Id = Guid.Parse(user.Id);
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;

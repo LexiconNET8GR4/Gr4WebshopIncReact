@@ -11,6 +11,7 @@ namespace Gr4WebshopIncReact.Services
         public Order CreateOrder(Customer customer, List<CheckoutItem> products, string shippingAddress, PaymentMethod paymentMethod);
         public Order CreateOrder(Customer customer, List<CheckoutItem> products, string shippingAddress, PaymentMethod paymentMethod, Coupon coupon);
         public Order GetById(Guid id);
+        public List<Order> GetByUserId(Guid id);
         public List<Order> Search(string SearchPhrase);
         public Order Update(Order order);
         public bool Delete(Guid id);
