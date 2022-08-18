@@ -51,8 +51,9 @@ namespace Gr4WebshopIncReact.Controllers
 
 
         [Route("anonymous")]
-        public ActionResult Anonymous(string checkoutItems,CustomerDTO customer, string shippingAddress)
+        public ActionResult Anonymous(string checkoutItems,string customerDTO, string shippingAddress)
         {
+            CustomerDTO customer = Newtonsoft.Json.JsonConvert.DeserializeObject<CustomerDTO>(customerDTO);
             var checkoutItemsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
             Customer newCustomer = _customerServices.CreateCustomer(customer.FirstName, customer.LastName,customer.Email,customer.Adress,customer.PhoneNumber);
             Order order = _orderServices.CreateOrder(newCustomer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
