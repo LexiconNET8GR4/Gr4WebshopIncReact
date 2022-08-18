@@ -54,6 +54,14 @@
         </tr>
         <tr>
             <td>
+                Phone Number
+            </td>
+            <td>
+                <input type="text" id="ue-number" />
+            </td>
+        </tr>
+        <tr>
+            <td>
                 Adress
             </td>
             <td>
@@ -134,6 +142,7 @@
         document.getElementById('ue-first-name').value = ueUser.data.firstName;
         document.getElementById('ue-last-name').value = ueUser.data.lastName;
         document.getElementById('ue-adress').value = ueUser.data.adress;
+        document.getElementById('ue-number').value = ueUser.data.phoneNumber;
 
 
         let rolesList = document.getElementById("ue-listed-roles").getElementsByTagName("li");
@@ -166,6 +175,7 @@
         let ueFirstName = document.getElementById("ue-first-name").value;
         let ueLastName = document.getElementById("ue-last-name").value;
         let ueAdress = document.getElementById("ue-adress").value;
+        let ueNumber = document.getElementById("ue-number").value;
 
         // Get all checked images for the additional images
         let ueRoles = [];
@@ -201,6 +211,7 @@
                 LastName: ueLastName,
                 Email: ueEmail,
                 Adress: ueAdress,
+                PhoneNumber: ueNumber,
                 Roles: JSON.stringify(ueRoles)
             }
         }).then(res => {

@@ -69,6 +69,7 @@ namespace Gr4WebshopIncReact.Controllers
             string LastName,
             string Email,
             string Adress,
+            string PhoneNumber,
             string Roles)
         {
             // Ensure a valid ID ahs been passed
@@ -93,6 +94,7 @@ namespace Gr4WebshopIncReact.Controllers
             userToEdit.Email = Email;
             userToEdit.NormalizedEmail = Email.ToUpper();
             userToEdit.Adress = Adress;
+            userToEdit.PhoneNumber = PhoneNumber;
             List<string> aquiredRoles = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(Roles);
 
             // Remove old roles and add in the new ones
