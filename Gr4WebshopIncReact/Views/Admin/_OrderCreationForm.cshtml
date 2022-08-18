@@ -87,7 +87,7 @@
                         @for (int i = 0; i < Model.Products.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name <input type="text" id="o-amount-@Model.Products[i].Id" value="(WIP)" disabled/></li>
+                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name <input type="text" id="o-amount-@Model.Products[i].Id" value="1"/></li>
                         }
                     </ul>
                 </div>
@@ -128,6 +128,14 @@
         }
     }
 
+    // Check if a passed string is a number or not
+    function isNumeric(value) {
+        if (typeof value != "string") return false // Value is not a string
+
+        return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
+            !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
+    }
+
     // get variables, verify, and send post request
     function attemptOrderCreation() {
 
@@ -144,14 +152,23 @@
             }
         }
         let productAmountList = [];
-        let cartItem = class {
-            constructor(id, amount) {
-                this.id = id;
-                this.amount = amount;
+        let CheckoutItem = class {
+            constructor(ProductId, Quantity) {
+                this.ProductId = ProductId;
+                this.Quantity = Quantity;
             }
         }
         for (var i = 0; i < oProducts.length; i++) {
-            productAmountList.push(new cartItem(oProducts[i], 3));
+            // Ensure the input amount value is numerical and greater than 0
+            let amount = document.getElementById('o-amount-' + oProducts);
+            if (isNumeric(amount)) {
+                // If 0 below or below 0, add no product
+                if (amount > 0) {
+                    productAmountList.push(new CheckoutItem(oProducts[i], amount));
+                }
+            } else { // if amount input is not numerical, add a singular instance of the product
+                productAmountList.push(new CheckoutItem(oProducts[i], 1));
+            }
         }
 
         // Validation
@@ -159,7 +176,7 @@
 
         // Debug
         axios.interceptors.request.use((config) => {
-           console.log(config.params);
+            console.log(config.params);
            return config;
         }, (error) => {
             console.error("✉️ ", error);
@@ -167,24 +184,11 @@
         });
 
         // Request made to the backend api
-        let test = [];
-        // Send object
-        //axios.post('/api/category/createcategory', null, {
-        //    params: {
-        //        Name: "test category",
-        //        isMainCateGory: false,
-        //        SubCategories: JSON.stringify(test)
-        //    }
-        //}).then(res => {
-        //    console.log(res);
-        //    //window.location.reload();
-        //})
-
         axios.post('/api/checkout/registered', null, {
             params: {
-                checkoutItems: JSON.stringify(test),//JSON.stringify(productAmountList),
-                customerId: "8ece3f24-a414-45e6-962a-dca797f82823",
-                shippingAddress: "lorem testum"
+                checkoutItems: JSON.stringify(productAmountList),
+                customerId: oUser,
+                shippingAddress: oShipping
             }
         }).then(res => {
             console.log(res);
