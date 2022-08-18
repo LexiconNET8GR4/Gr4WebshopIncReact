@@ -56,6 +56,10 @@ namespace Gr4WebshopIncReact.Controllers
         public ActionResult GetOrderAsAdmin(Guid orderId)
         {
             Order order = _orderServices.GetById(orderId);
+            if (order == null)
+            {
+                return BadRequest();
+            }
             return Json(new OrderDTO(order));
         }
     }

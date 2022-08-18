@@ -4,8 +4,8 @@
 
     <div id="ro-search-bar">
         <p>Order Id (WIP)</p>
-        <input type="text" id="r-order-to-inspect" disabled />
-        <input type="button" onclick="inspectOrder" value="Inspect" disabled />
+        <input type="text" id="r-order-to-inspect" />
+        <input type="button" onclick="inspectOrder()" value="Inspect" />
         <p id="ro-searach-results"></p>
     </div>
 
@@ -123,6 +123,25 @@
                 checkList.classList.add('anchored');
                 checkList.classList.add('visible');
             }
+        }
+
+        async function inspectOrder() {
+
+            // Get order data to load
+            let riOrderID = document.getElementById('r-order-to-inspect').value;
+            console.log(riOrderID);
+
+            document.getElementById("ro-searach-results").innerHTML = "";
+            let riOrder = await axios.get('/api/order/getorderasadmin', { params: { orderId: riOrderID } })
+                .catch(function (error) {
+                    document.getElementById("ro-searach-results").innerHTML = "Order not found";
+                });
+            if (riOrder == undefined) {
+                console.log("Order not found");
+                return;
+            }
+            console.log("data: " + riOrder.data);
+
         }
     </script>
 

@@ -43,7 +43,8 @@ namespace Gr4WebshopIncReact.Services
 
         public Order GetById(Guid id)
         {
-            throw new NotImplementedException();
+            Order? orderToReturn = _context.Orders.Find(id);
+            return orderToReturn;
         }
 
         public List<Order> Search(string SearchPhrase)
