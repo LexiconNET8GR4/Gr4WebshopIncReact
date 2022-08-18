@@ -20,6 +20,7 @@ namespace Gr4WebshopIncReact.Models
         public Guid DetailsKey {get; set; }
         public Details Details { get; set; }
         public List<ProductCategory> Categories { get; set; }
+        public List<OrderedProduct> Orders { get; set; }
 
         public double Price { get; set; }
         public double CurrentPrice { 

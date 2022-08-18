@@ -84,6 +84,12 @@ namespace Gr4WebshopIncReact.Data
             modelBuilder.Entity<OrderedProduct>()
                 .HasOne(p => p.Order)
                 .WithMany(o => o.Products)
+                .HasForeignKey(op => op.OrderKey);
+
+            // Create one-to-many connection beteween connector and Order
+            modelBuilder.Entity<OrderedProduct>()
+                .HasOne(o => o.Product)
+                .WithMany(p => p.Orders)
                 .HasForeignKey(op => op.ProductKey);
             #endregion
 
