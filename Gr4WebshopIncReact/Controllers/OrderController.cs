@@ -34,9 +34,10 @@ namespace Gr4WebshopIncReact.Controllers
 
         [Route("editorder")]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditOrder(OrderDTO order)
+        public ActionResult EditOrder(string orderDTO)
         {
-            Order orderToEdit = order.ConvertToOrder();
+            OrderDTO recievedData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderDTO>(orderDTO);
+            Order orderToEdit = recievedData.ConvertToOrder();
             var orderToReturn = new OrderDTO(_orderServices.Update(orderToEdit));
             return Json(orderToReturn);
         }

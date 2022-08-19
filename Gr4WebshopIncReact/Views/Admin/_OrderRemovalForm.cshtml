@@ -85,7 +85,7 @@
                             @for (int i = 0; i < Model.Count; i++)
                             {
                                 // Remove the folder name from the dispaly of the image for ease of locating
-                                <li><input type="checkbox" id="@Model[i].Id" disabled />@Model[i].Name <input type="text" id="ro-amount-@Model[i].Id" value="(WIP)" disabled /></li>
+                                <li><input type="checkbox" id="@Model[i].Id" disabled />@Model[i].Name <input type="text" id="ro-amount-@Model[i].Id" disabled /></li>
                             }
                         </ul>
                     </div>
@@ -140,8 +140,63 @@
                 console.log("Order not found");
                 return;
             }
-            console.log("data: " + riOrder.data);
+            console.log(riOrder);
 
+            // Load aquired order data
+
+            // Was the order placed by a registered user
+            if (riOrder.data.userId == null) {
+                document.getElementById("r-user-id").value = "N/A";
+                document.getElementById("r-use-user").checked = false;
+            } else {
+                document.getElementById("r-user-id").value = riOrder.data.userId;
+                document.getElementById("r-use-user").checked = true;
+            }
+
+            let riCustomer = await axios.get('/admin/GetCustomer', { params: { customerId: riOrder.data.customerId } })
+                .catch(function (error) {
+                    document.getElementById("ro-searach-results").innerHTML= "Customer not found";
+                });
+            if (riCustomer == undefined) {
+                console.log("Customer not found");
+                return;
+            }
+
+            // Set up customer data
+            let firstNameRegion = document.getElementById("roc-first-name");
+            (riCustomer.data.firstName != null ? firstNameRegion.value = riCustomer.data.firstName : firstNameRegion.value = "Not found")
+            let lastNameRegion = document.getElementById("roc-last-name");
+            (riCustomer.data.lastName != null ? lastNameRegion.value = riCustomer.data.lastName : lastNameRegion.value = "Not found")
+            let adressRegion = document.getElementById("roc-adress");
+            (riCustomer.data.adress != null ? adressRegion.value = riCustomer.data.adress : adressRegion.value = "Not found")
+            let numberRegion = document.getElementById("roc-phone");
+            (riCustomer.data.phoneNumber != null ? numberRegion.value = riCustomer.data.phoneNumber : numberRegion.value = "Not found")
+            let emailRegion = document.getElementById("roc-email");
+            (riCustomer.data.email != null ? emailRegion.value = riCustomer.data.email : emailRegion.value = "Not found")
+
+            // Set up Shipping Adress
+            let shippingRegion = document.getElementById("ro-shipping");
+            (riOrder.data.shippingAddress != null ? shippingRegion.value = riOrder.data.shippingAddress : shippingRegion.value = "Not found")
+
+            console.log("riOrder.data.orderProducts: ");
+            console.log(riOrder.data.orderProducts);
+            console.log("riOrder.data.orderProducts[0]: ");
+            console.log(riOrder.data.orderProducts[0]);
+
+            let productList = document.getElementById("ro-listed-products").getElementsByTagName("li");
+            for (var i = 0; i < productList.length; i++) {
+                productList[i].childNodes[0].checked = false;
+                console.log("productList[i].childNodes[2]: ");
+                console.log(productList[i].childNodes[2]);
+                productList[i].childNodes[2].value = "";
+                for (var j = 0; j < riOrder.data.orderProducts.length; j++) {
+                    if (productList[i].childNodes[0].id == riOrder.data.orderProducts[j].productId) {
+                        productList[i].childNodes[0].checked = true;
+                        productList[i].childNodes[2].value = riOrder.data.orderProducts[j].quantity;
+                    }
+                }
+
+            }
         }
     </script>
 

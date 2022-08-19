@@ -1,5 +1,6 @@
 ﻿using Gr4WebshopIncReact.Data;
 using Gr4WebshopIncReact.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Gr4WebshopIncReact.Services
         }
         public Order CreateOrder(Customer customer, List<CheckoutItem> products, string shippingAddress, PaymentMethod paymentMethod)
         {
-
+            
             Order order = CreateOrderCommon(customer, products, shippingAddress, paymentMethod);
             _context.Orders.Add(order);
             return _context.SaveChanges() > 0 ? order : null;
@@ -43,7 +44,11 @@ namespace Gr4WebshopIncReact.Services
 
         public Order GetById(Guid id)
         {
-            Order? orderToReturn = _context.Orders.Find(id);
+            Order? orderToReturn = _context.Orders.Where(o => o.Id == id)
+                .Include(p => p.Products)
+                .Include(p => p.ShippingMethod)
+                .Include(p => p.Payment)
+                .FirstOrDefault();
             return orderToReturn;
         }
 
@@ -54,17 +59,27 @@ namespace Gr4WebshopIncReact.Services
 
         public Order Update(Order order)
         {
-            throw new NotImplementedException();
+            _context.Orders.Update(order);
+            return _context.SaveChanges() > 0 ? order : null;
         }
 
         private Order CreateOrderCommon(Customer customer, List<CheckoutItem> products, string shippingAddress, PaymentMethod paymentMethod)
         {
+            // Feature not implemted, create dummy shipping method to avoid issues
+            ShippingMethod shipping = new ShippingMethod()
+            {
+                Id = Guid.NewGuid(),
+                Type = "Dummy Type",
+                Provider = "Dummy Provider"
+
+            };
             Order order = new Order();
             order.CustomerKey = customer.Id;
             order.Customer = customer;
             order.ShippingAddress = shippingAddress;
             order.Payment = new Payment() { Method = paymentMethod };
             order.Products = new List<OrderedProduct>();
+            order.ShippingMethod = shipping;
             foreach(CheckoutItem c in products)
             {
                 OrderedProduct orderedProduct = new OrderedProduct()

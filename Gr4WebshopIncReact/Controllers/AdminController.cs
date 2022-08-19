@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Gr4WebshopIncReact.Models.viewModels;
 using Gr4WebshopIncReact.Data;
 using Microsoft.AspNetCore.Identity;
+using Gr4WebshopIncReact.Models.DTOS;
 
 namespace Gr4WebshopIncReact.Controllers
 {
@@ -172,6 +173,32 @@ namespace Gr4WebshopIncReact.Controllers
             List<IdentityRole> roles = _context.Roles.Where(x => roleIds.Contains(x.Id)).ToList();
 
             return Json(roles);
+        }
+
+        public IActionResult GetCustomer(string customerId)
+        {
+
+            Customer customerToReturn;
+            Guid recievedId;
+
+            // Parse recieved id
+            if (Guid.TryParse(customerId, out recievedId) == false) 
+                return BadRequest();
+
+            customerToReturn = _context.Customers.Find(recievedId);
+
+            // Sanity check
+            if (customerToReturn == null)
+                return BadRequest();
+
+            CustomerDTO dtoToRetrun = new CustomerDTO { 
+                FirstName = customerToReturn.FirstName,
+                LastName = customerToReturn.LastName,
+                Adress = customerToReturn.Adress,
+                Email = customerToReturn.Email
+            };
+
+            return Json(dtoToRetrun);
         }
     }
 }
