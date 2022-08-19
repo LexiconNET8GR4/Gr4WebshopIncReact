@@ -46,6 +46,12 @@ namespace Gr4WebshopIncReact.Services
             throw new NotImplementedException();
         }
 
+        public List<Order> GetByUserId(Guid id)
+        {
+            List<Order> orders = _context.Orders.Where(u => u.UserKey == id.ToString()).ToList();
+            return orders;
+        }
+
         public List<Order> Search(string SearchPhrase)
         {
             throw new NotImplementedException();
@@ -62,7 +68,7 @@ namespace Gr4WebshopIncReact.Services
             order.CustomerKey = customer.Id;
             order.Customer = customer;
             order.ShippingAddress = shippingAddress;
-            order.Payment.Method = paymentMethod;
+            order.Payment = new Payment() { Method = paymentMethod };
             order.Products = new List<OrderedProduct>();
             foreach(CheckoutItem c in products)
             {

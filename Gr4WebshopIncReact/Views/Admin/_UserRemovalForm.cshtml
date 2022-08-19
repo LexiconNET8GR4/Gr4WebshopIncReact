@@ -10,7 +10,7 @@
             <option value=@Model[i].Id> @Model[i].UserName (@Model[i].FirstName @Model[i].LastName: @Model[i].Id) </option>
         }
     </select>
-    <input type="Button" onclick="inspectUser()" value="Inspect (disabled WIP)" disabled/>
+    <input type="Button" onclick="inspectUser()" value="Inspect"/>
 </form>
 
 <div id="user-inspection">
@@ -67,7 +67,7 @@
                 Roles
             </td>
             <td>
-                <ul id="uri-roles-list">
+                <ul id="uri-listed-roles">
                 </ul>
             </td>
         </tr>
@@ -76,7 +76,7 @@
                 Orders
             </td>
             <td>
-                <ul id="uri-order-list">
+                <ul id="uri-listed-orders">
                 </ul>
             </td>
         </tr>
@@ -100,26 +100,23 @@
             riUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: riUser.data.orderHistory[i] } }));
         }
 
-        console.log("Logging orders");
-        for (var i = 0; i < riUserOrders.length; i++) {
-            console.log(riUserOrders);
-        }
 
         // Fetch roles
         let riUserRoles = await axios.get('/Admin/GetUserRoles', { params: { userId: riUserID } });
 
         // Load aquired data
         document.getElementById('uri-id').value = riUserID;
-        document.getElementById('uri-email').value = riUser.email;
-        document.getElementById('uri-first-name').value = riUser.firstName;
-        document.getElementById('uri-last-name').value = riUser.lastName;
-        document.getElementById('uri-adress').value = riUser.adress;
+        document.getElementById('uri-email').value = riUser.data.email;
+        document.getElementById('uri-first-name').value = riUser.data.firstName;
+        document.getElementById('uri-last-name').value = riUser.data.lastName;
+        document.getElementById('uri-adress').value = riUser.data.adress;
 
-        for (var i = 0; i < riUserRoles.length; i++) {
+
+        document.getElementById('uri-listed-roles').innerHTML = "";
+        for (var i = 0; i < riUserRoles.data.length; i++) {
             let listItem = document.createElement('li');
-            listItem.id = riUserRoles[i].data.id;
-            listItem.innerHTML = riUserRoles[i].data.name;
-
+            listItem.id = riUserRoles.data[i].id;
+            listItem.innerHTML = riUserRoles.data[i].name;
             document.getElementById('uri-listed-roles').appendChild(listItem);
         }
 

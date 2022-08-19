@@ -19,6 +19,7 @@ namespace Gr4WebshopIncReact.Controllers
         private static ProductMgmtVM productVM;
         private static CategoryMgmtVM categoryVM;
         private static UserMgmtVM userVM;
+        private static OrderMgmtVM orderVM;
         private readonly ApplicationDbContext _context;
 
         public AdminController(ApplicationDbContext context)
@@ -39,6 +40,11 @@ namespace Gr4WebshopIncReact.Controllers
             {
                 userVM = new UserMgmtVM();
                 UpdateUserVM();
+            }
+            if (orderVM == null)
+            {
+                orderVM = new OrderMgmtVM();
+                UpdateOrderVM();
             }
         }
 
@@ -61,6 +67,27 @@ namespace Gr4WebshopIncReact.Controllers
         {
             UpdateUserVM();
             return View(userVM);
+        }
+
+        public IActionResult OrderManagement()
+        {
+            UpdateOrderVM();
+            return View(orderVM);
+        }
+
+        private void UpdateOrderVM()
+        {
+            // Ensure it exists
+            if (orderVM == null)
+            {
+                orderVM = new OrderMgmtVM();
+            }
+            orderVM.OrderCreationVM = new OrderCreationVM
+            {
+                Orders = _context.Orders.ToList(),
+                Users = _context.Users.ToList(),
+                Products = _context.Products.ToList()
+            };
         }
 
         private void UpdateUserVM()

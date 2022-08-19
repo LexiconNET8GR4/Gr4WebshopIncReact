@@ -9,7 +9,7 @@
         <option value=@Model.Users[i].Id> @Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].UserName: @Model.Users[i].Id) </option>
     }
 </select>
-<input type="Button" onclick="loadUser()" value="Load to edit(disabled WIP)" disabled />
+<input type="Button" onclick="loadUser()" value="Load to edit" />
 
 <form>
     <table>
@@ -54,6 +54,14 @@
         </tr>
         <tr>
             <td>
+                Phone Number
+            </td>
+            <td>
+                <input type="text" id="ue-number" />
+            </td>
+        </tr>
+        <tr>
+            <td>
                 Adress
             </td>
             <td>
@@ -71,7 +79,7 @@
                         @for (int i = 0; i < Model.Roles.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-                            <li><input type="checkbox" id="@Model.Roles[i].Id" />@Model.Roles[i].Name</li>
+                            <li><input type="checkbox" id="@Model.Roles[i].Name" />@Model.Roles[i].Name</li>
                         }
                     </ul>
                 </div>
@@ -88,7 +96,7 @@
             </td>
         </tr>
     </table>
-    <input type="Button" onclick="attemptUserEdit()" value="Edit User(disabled WIP)" disabled />
+    <input type="Button" onclick="attemptUserEdit()" value="Edit User" />
 </form>
 
 <script>
@@ -110,6 +118,108 @@
             checkList.classList.add('anchored');
             checkList.classList.add('visible');
         }
+    }
+
+    async function loadUser() {
+
+        // Get user data to load
+        let ueUserID = document.getElementById('user-to-edit').value;
+        let ueUser = await axios.get('/api/user/getuser', { params: { id: ueUserID } });
+
+        // Fetch orders
+        let ueUserOrders = [];
+        for (var i = 0; i < ueUser.data.orderHistory.length; i++) {
+            ueUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: ueUser.data.orderHistory[i] } }));
+        }
+
+
+        // Fetch roles
+        let ueUserRoles = await axios.get('/Admin/GetUserRoles', { params: { userId: ueUserID } });
+
+        // Load aquired data
+        document.getElementById('ue-id').value = ueUserID;
+        document.getElementById('ue-email').value = ueUser.data.email;
+        document.getElementById('ue-first-name').value = ueUser.data.firstName;
+        document.getElementById('ue-last-name').value = ueUser.data.lastName;
+        document.getElementById('ue-adress').value = ueUser.data.adress;
+        document.getElementById('ue-number').value = ueUser.data.phoneNumber;
+
+
+        let rolesList = document.getElementById("ue-listed-roles").getElementsByTagName("li");
+        for (var i = 0; i < rolesList.length; i++) {
+            rolesList[i].childNodes[0].checked = false;
+            for (var j = 0; j < ueUserRoles.data.length; j++) {
+                if (rolesList[i].childNodes[0].id == ueUserRoles.data[j].name) {
+                    rolesList[i].childNodes[0].checked = true;
+                }
+            }
+
+        }
+
+        for (var i = 0; i < ueUserOrders.length; i++) {
+            let listItem = document.createElement('li');
+            listItem.id = ueUserOrders[i].id;
+            listItem.innerHTML = (ueUserOrders[i].data.id + ", " + ueUserOrders[i].data.productIds.length + " products ordred on " + ueUserOrders[i].data.orderDate);
+
+            document.getElementById('ue-listed-orders').appendChild(listItem);
+        }
+    }
+
+    // get variables, verify, and send post request
+    function attemptUserEdit() {
+
+        // Files squred from form
+        let ueId = "Not determined";
+        ueId = document.getElementById('ue-id').value;
+        let ueEmail = document.getElementById("ue-email").value;
+        let ueFirstName = document.getElementById("ue-first-name").value;
+        let ueLastName = document.getElementById("ue-last-name").value;
+        let ueAdress = document.getElementById("ue-adress").value;
+        let ueNumber = document.getElementById("ue-number").value;
+
+        // Get all checked images for the additional images
+        let ueRoles = [];
+        let roleList = document.getElementById("ue-listed-roles").getElementsByTagName("li");
+        for (var i = 0; i < roleList.length; i++) {
+            if (roleList[i].children[0].checked == true) {
+                ueRoles.push(roleList[i].children[0].id.toString());
+            }
+        }
+
+
+        // Validation
+        if (ueId == "Not determined") {
+            console.log("No user loaded to edit");
+            return;
+        }
+
+        // Debug
+        //axios.interceptors.request.use((config) => {
+        //    console.log(config.params);
+        //    return config;
+        //}, (error) => {
+        //    if (DEBUG) { console.error("✉️ ", error); }
+        //    return Promise.reject(error);
+        //});
+
+        // Request made to the backend api
+        // Send object
+        axios.post('/api/user/edituser', null, {
+            params: {
+                id: ueId,
+                FirstName: ueFirstName,
+                LastName: ueLastName,
+                Email: ueEmail,
+                Adress: ueAdress,
+                PhoneNumber: ueNumber,
+                Roles: JSON.stringify(ueRoles)
+            }
+        }).then(res => {
+            console.log(res);
+            // if succsess
+            window.location.reload();
+        })
+
     }
 </script>
 

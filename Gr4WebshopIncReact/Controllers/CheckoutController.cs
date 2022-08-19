@@ -21,31 +21,59 @@ namespace Gr4WebshopIncReact.Controllers
         private readonly ICustomerServices _customerServices;
 
         private readonly UserManager<ApplicationUser> _userManager;
-        public CheckoutController(IOrderServices orderServices,ICustomerServices customerServices, UserManager<ApplicationUser> userManager)
+        private readonly IUserServices _userServices;
+
+        public CheckoutController(IOrderServices orderServices,ICustomerServices customerServices, UserManager<ApplicationUser> userManager,IUserServices userServices)
         {
             _orderServices = orderServices;
             _customerServices = customerServices;
             _userManager = userManager;
+            _userServices = userServices;
         }
 
         [Route("registered")]
         [Authorize]
-        public ActionResult Registered(string checkoutItems,Guid customerId,string shippingAddress)
+        [HttpPost]
+        public ActionResult Registered(string checkoutItems,string shippingAddress)
         {
-            var checkoutItemsList=Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
-            Customer customer = _customerServices.GetById(customerId);
-            if (customer == null) return BadRequest();
+            var userId = _userManager.GetUserId(User);
+            var checkoutItemsList =Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
+            Customer customer = _customerServices.GetById(Guid.Parse(userId));
+            if (customer == null) 
+            {
+                
+                var user = _userServices.GetById(Guid.Parse(userId));
+                customer = new Customer( user);
+            }
             Order order=_orderServices.CreateOrder(customer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
+            Receipt receipt = new Receipt(order);
+            return Json(receipt);
+        }
+
+        [Route("admin")]
+        [Authorize(Roles ="Admin")]
+        [HttpPost]
+        public ActionResult Admin(string checkoutItems, string shippingAddress,string userId)
+        {
+            var checkoutItemsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
+            Customer customer = _customerServices.GetById(Guid.Parse(userId));
+            if (customer == null)
+            {
+                var user = _userServices.GetById(Guid.Parse(userId));
+                customer = new Customer(user);
+            }
+            Order order = _orderServices.CreateOrder(customer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
             Receipt receipt = new Receipt(order);
             return Json(receipt);
         }
 
 
         [Route("anonymous")]
-        public ActionResult Anonymous(string checkoutItems,CustomerDTO customer, string shippingAddress)
+        public ActionResult Anonymous(string checkoutItems,string customerDTO, string shippingAddress)
         {
+            CustomerDTO customer = Newtonsoft.Json.JsonConvert.DeserializeObject<CustomerDTO>(customerDTO);
             var checkoutItemsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
-            Customer newCustomer = _customerServices.CreateCustomer(customer.FirstName, customer.LastName);
+            Customer newCustomer = _customerServices.CreateCustomer(customer.FirstName, customer.LastName,customer.Email,customer.Adress,customer.PhoneNumber);
             Order order = _orderServices.CreateOrder(newCustomer, checkoutItemsList, shippingAddress, new PaymentMethod() { Id = Guid.NewGuid(), Type = "Dummy Test" });
             Receipt receipt = new Receipt(order);
             return Json(receipt);

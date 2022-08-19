@@ -1,0 +1,255 @@
+﻿@model Gr4WebshopIncReact.Models.viewModels.OrderCreationVM
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+<h2>Create Order</h2>
+
+
+<form id="order-create-form">
+
+    <table>
+        <thead>
+            <tr>
+                <td>Value</td>
+                <td>Input</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                User Id
+            </td>
+            <td>
+                <select id="o-user-id" name="User ID">
+
+                    @for (int i = 0; i < Model.Users.Count; i++)
+                    {
+                        // Remove the folder name from the dispaly of the image for ease of locating
+                        <option value="@Model.Users[i].Id">@Model.Users[i].FirstName @Model.Users[i].LastName (@Model.Users[i].Id)</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Use registered user? (WIP)
+            </td>
+            <td>
+                <input type="checkbox" id="o-use-user" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer First Name (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-first-name" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Last Name (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-last-name" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Adress (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-adress" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Number (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-phone" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Email (WIP)
+            </td>
+            <td>
+                <input type="text" id="oc-email" disabled/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Products (WIP, will add 3 of each checked)
+            </td>
+            <td>
+                <div id="o-products" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('o-products')">Products</span>
+                    <ul class="items" id="o-listed-products">
+                        @for (int i = 0; i < Model.Products.Count; i++)
+                        {
+                            // Remove the folder name from the dispaly of the image for ease of locating
+                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name <input type="text" id="o-amount-@Model.Products[i].Id" value="1"/></li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Shipping Adress
+            </td>
+            <td>
+                <input type="text" id="o-shipping" />
+            </td>
+        </tr>
+    </table>
+    <input type="button" onclick="attemptOrderCreation()" value="Create Order"/>
+</form>
+
+
+<script>
+    function loadList(id) {
+        // The first time the drop down menu is set up,
+        // Give it an event for toggling the options being visible and not
+        var checkList = document.getElementById(id);
+
+
+        if (!checkList.classList.contains('anchored')) {
+
+            checkList.getElementsByClassName('anchor')[0].onclick =
+                function (evt) {
+                    if (checkList.classList.contains('visible'))
+                        checkList.classList.remove('visible');
+                    else
+                        checkList.classList.add('visible');
+                }
+
+            checkList.classList.add('anchored');
+            checkList.classList.add('visible');
+        }
+    }
+
+    // Check if a passed string is a number or not
+    function isNumeric(value) {
+        if (typeof value != "string") return false // Value is not a string
+
+        return !isNaN(value) && // Type coerce the entire string in an attempt to parse it ('parseFloat' does not do this)
+            !isNaN(parseFloat(value)) // Ensure strings containing only whitespace returns false
+    }
+
+    // get variables, verify, and send post request
+    function attemptOrderCreation() {
+
+        // Files squred from form
+        let oUser = document.getElementById("o-user-id").value;
+        let oShipping = document.getElementById("o-shipping").value;
+
+        // Get all checked products
+        let oProducts = [];
+        let productList = document.getElementById("o-listed-products").getElementsByTagName("li");
+        for (var i = 0; i < productList.length; i++) {
+            if (productList[i].children[0].checked == true) {
+                oProducts.push(productList[i].children[0].id.toString());
+            }
+        }
+        let productAmountList = [];
+        let CheckoutItem = class {
+            constructor(ProductId, Quantity) {
+                this.ProductId = ProductId;
+                this.Quantity = Quantity;
+            }
+        }
+        for (var i = 0; i < oProducts.length; i++) {
+            // Ensure the input amount value is numerical and greater than 0
+            let amount = document.getElementById('o-amount-' + oProducts);
+            if (isNumeric(amount)) {
+                // If 0 below or below 0, add no product
+                if (amount > 0) {
+                    productAmountList.push(new CheckoutItem(oProducts[i], amount));
+                }
+            } else { // if amount input is not numerical, add a singular instance of the product
+                productAmountList.push(new CheckoutItem(oProducts[i], 1));
+            }
+        }
+
+        // Validation
+
+
+        // Debug
+        axios.interceptors.request.use((config) => {
+            console.log(config.params);
+           return config;
+        }, (error) => {
+            console.error("✉️ ", error);
+            return Promise.reject(error);
+        });
+
+        // Request made to the backend api
+        axios.post('/api/checkout/registered', null, {
+            params: {
+                checkoutItems: JSON.stringify(productAmountList),
+                customerId: oUser,
+                shippingAddress: oShipping
+            }
+        }).then(res => {
+            console.log(res);
+           // window.location.reload();
+        })
+
+    }
+</script>
+
+
+<style>
+    .dropdown-check-list {
+        display: inline-block;
+    }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
+
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
+
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
+
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
+
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
+
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
+</style>
+

@@ -49,6 +49,7 @@ namespace Gr4WebshopIncReact
             services.AddTransient<IProductServices, ProductServices>();
             services.AddTransient<IUserServices, UserServices>();
             services.AddTransient<IImageDestinationServices, ImageDestinationServices>();
+            services.AddTransient<ICustomerServices,CustomerServices>();
             services.AddRazorPages();
 
             // In production, the React files will be served from this directory

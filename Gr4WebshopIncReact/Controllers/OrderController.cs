@@ -18,10 +18,12 @@ namespace Gr4WebshopIncReact.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderServices _orderServices;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrderController(IOrderServices orderServices)
+        public OrderController(IOrderServices orderServices, UserManager<ApplicationUser> userManager)
         {
             _orderServices = orderServices;
+            _userManager = userManager;
         }
 
         [Route("deleteorder")]
@@ -57,6 +59,37 @@ namespace Gr4WebshopIncReact.Controllers
         {
             Order order = _orderServices.GetById(orderId);
             return Json(new OrderDTO(order));
+        }
+
+        [Route("getordersbyuserid")]
+        [Authorize(Roles ="Admin")]
+        public ActionResult GetOrdersByUserId(Guid userId)
+        {
+            List<Order> orders = _orderServices.GetByUserId(userId);
+            if (orders == null || orders.Count < 1) return BadRequest();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach(Order o in orders)
+            {
+                OrderDTO orderDTO = new OrderDTO(o);
+                orderDTOs.Add(orderDTO);
+            }
+            return Json(orderDTOs);
+        }
+
+        [Route("getmyorders")]
+        [Authorize]
+        public ActionResult GetMyOrders()
+        {
+            var userId = Guid.Parse(_userManager.GetUserId(User));
+            List<Order> orders = _orderServices.GetByUserId(userId);
+            if (orders == null || orders.Count < 1) return BadRequest();
+            List<OrderDTO> orderDTOs = new List<OrderDTO>();
+            foreach (Order o in orders)
+            {
+                OrderDTO orderDTO = new OrderDTO(o);
+                orderDTOs.Add(orderDTO);
+            }
+            return Json(orderDTOs);
         }
     }
 }

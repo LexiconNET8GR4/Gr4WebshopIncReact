@@ -23,10 +23,14 @@ namespace Gr4WebshopIncReact.Models.DTOS
             PhoneNumber = user.PhoneNumber;
             Email = user.Email;
             OrderHistory = new List<Guid>();
-            foreach(Order o in user.OrderHistory)
+            if(user.OrderHistory != null)
             {
-                OrderHistory.Add(o.Id);
+                foreach(Order o in user.OrderHistory)
+                {
+                    OrderHistory.Add(o.Id);
+                }
             }
+
         }
     }
 }
