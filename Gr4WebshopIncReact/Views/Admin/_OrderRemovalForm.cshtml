@@ -10,6 +10,7 @@
     </div>
 
     <div id="r-order-inspection">
+        <input type="hidden" id="r-order-to-remove-id" />
         <table>
             <thead>
                 <tr>
@@ -100,7 +101,7 @@
                 </td>
             </tr>
         </table>
-        <input type="button" onclick="removeOrder()" disabled value="Remove Order (WIP)" />
+        <input type="button" id="ro-button" onclick="removeOrder()" disabled value="Remove Order (WIP)" />
     </div>
 
     <script>
@@ -129,7 +130,7 @@
 
             // Get order data to load
             let riOrderID = document.getElementById('r-order-to-inspect').value;
-            console.log(riOrderID);
+            document.getElementById('r-order-to-remove-id').value = riOrderID;
 
             document.getElementById("ro-searach-results").innerHTML = "";
             let riOrder = await axios.get('/api/order/getorderasadmin', { params: { orderId: riOrderID } })
@@ -178,10 +179,6 @@
             let shippingRegion = document.getElementById("ro-shipping");
             (riOrder.data.shippingAddress != null ? shippingRegion.value = riOrder.data.shippingAddress : shippingRegion.value = "Not found")
 
-            console.log("riOrder.data.orderProducts: ");
-            console.log(riOrder.data.orderProducts);
-            console.log("riOrder.data.orderProducts[0]: ");
-            console.log(riOrder.data.orderProducts[0]);
 
             let productList = document.getElementById("ro-listed-products").getElementsByTagName("li");
             for (var i = 0; i < productList.length; i++) {
@@ -195,9 +192,33 @@
                         productList[i].childNodes[2].value = riOrder.data.orderProducts[j].quantity;
                     }
                 }
-
             }
+
+
+            document.getElementById('ro-button').disabled = false;
         }
+
+        function removeOrder() {
+
+            let oId = document.getElementById('r-order-to-remove-id').value;
+
+
+            // Request made to the backend api
+            // Send formData object
+            axios.post('/api/Order/deleteorder', null, {
+                params: {
+                    orderId: oId
+                }
+            }).then(res => {
+                console.log(res);
+                // if succsess
+                window.location.reload();
+
+            })
+
+        }
+
+
     </script>
 
 
