@@ -15,10 +15,10 @@
         <ln />
         <tr>
             <td>
-                User Id
+                User Id (WIP)
             </td>
             <td>
-                <select id="o-user-id" name="User ID">
+                <select id="o-user-id" name="User ID (WIP)" disabled >
 
                     @for (int i = 0; i < Model.Users.Count; i++)
                     {
@@ -30,55 +30,55 @@
         </tr>
         <tr>
             <td>
-                Use registered user? (WIP)
+                Create new customer (for unregistered users)? [required atm]
             </td>
             <td>
-                <input type="checkbox" id="o-use-user" disabled/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                New Customer First Name (WIP)
-            </td>
-            <td>
-                <input type="text" id="oc-first-name" disabled/>
+                <input type="checkbox" id="o-new-customer" checked disabled />
             </td>
         </tr>
         <tr>
             <td>
-                New Customer Last Name (WIP)
+                New Customer First Name
             </td>
             <td>
-                <input type="text" id="oc-last-name" disabled/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                New Customer Adress (WIP)
-            </td>
-            <td>
-                <input type="text" id="oc-adress" disabled/>
+                <input type="text" id="oc-first-name" />
             </td>
         </tr>
         <tr>
             <td>
-                New Customer Number (WIP)
+                New Customer Last Name 
             </td>
             <td>
-                <input type="text" id="oc-phone" disabled/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                New Customer Email (WIP)
-            </td>
-            <td>
-                <input type="text" id="oc-email" disabled/>
+                <input type="text" id="oc-last-name" />
             </td>
         </tr>
         <tr>
             <td>
-                Products (WIP, will add 3 of each checked)
+                New Customer Adress 
+            </td>
+            <td>
+                <input type="text" id="oc-adress" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Number 
+            </td>
+            <td>
+                <input type="text" id="oc-phone" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                New Customer Email 
+            </td>
+            <td>
+                <input type="text" id="oc-email" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Products
             </td>
             <td>
                 <div id="o-products" class="dropdown-check-list" tabindex="100">
@@ -87,7 +87,7 @@
                         @for (int i = 0; i < Model.Products.Count; i++)
                         {
                             // Remove the folder name from the dispaly of the image for ease of locating
-                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name <input type="text" id="o-amount-@Model.Products[i].Id" value="1"/></li>
+                            <li><input type="checkbox" id="@Model.Products[i].Id" />@Model.Products[i].Name <input type="text" id="o-amount-@Model.Products[i].Id" /></li>
                         }
                     </ul>
                 </div>
@@ -139,9 +139,29 @@
     // get variables, verify, and send post request
     function attemptOrderCreation() {
 
-        // Files squred from form
+        // Data aquired from form
         let oUser = document.getElementById("o-user-id").value;
         let oShipping = document.getElementById("o-shipping").value;
+
+        // Get data for potentiallty unregistered customer
+        let oCustomerIsUnregistered = (document.getElementById("o-new-customer").checked == true);
+        console.log("oCustomerIsUnregistered: " + oCustomerIsUnregistered);
+        let oc_firstName = document.getElementById("oc-first-name").value;
+        let oc_lastName = document.getElementById("oc-last-name").value;
+        let oc_adress = document.getElementById("oc-adress").value;
+        let oc_number = document.getElementById("oc-phone").value;
+        let oc_email = document.getElementById("oc-email").value;
+        let CustomerDTO = class {
+            constructor(FirstName, LastName, Adress, PhoneNumber, Email) {
+                this.FirstName = FirstName;
+                this.LastName = LastName;
+                this.Adress = Adress;
+                this.PhoneNumber = PhoneNumber;
+                this.Email = Email;
+            }
+        }
+
+        let oc_customer = new CustomerDTO(oc_firstName, oc_lastName, oc_adress, oc_number, oc_email);
 
         // Get all checked products
         let oProducts = [];
@@ -160,13 +180,14 @@
         }
         for (var i = 0; i < oProducts.length; i++) {
             // Ensure the input amount value is numerical and greater than 0
-            let amount = document.getElementById('o-amount-' + oProducts);
+            let amount = document.getElementById('o-amount-' + oProducts[i]).value;
             if (isNumeric(amount)) {
                 // If 0 below or below 0, add no product
                 if (amount > 0) {
                     productAmountList.push(new CheckoutItem(oProducts[i], amount));
                 }
-            } else { // if amount input is not numerical, add a singular instance of the product
+            }
+            else { // if amount input is not numerical, add a singular instance of the product
                 productAmountList.push(new CheckoutItem(oProducts[i], 1));
             }
         }
@@ -174,26 +195,42 @@
         // Validation
 
 
-        // Debug
-        axios.interceptors.request.use((config) => {
-            console.log(config.params);
-           return config;
-        }, (error) => {
-            console.error("✉️ ", error);
-            return Promise.reject(error);
-        });
+        //// Debug
+        //axios.interceptors.request.use((config) => {
+        //    console.log(config.params);
+        //   return config;
+        //}, (error) => {
+        //    console.error("✉️ ", error);
+        //    return Promise.reject(error);
+        //});
 
-        // Request made to the backend api
-        axios.post('/api/checkout/registered', null, {
-            params: {
-                checkoutItems: JSON.stringify(productAmountList),
-                customerId: oUser,
-                shippingAddress: oShipping
-            }
-        }).then(res => {
-            console.log(res);
-           // window.location.reload();
-        })
+        if (oCustomerIsUnregistered) {
+            // Request made to the backend api
+            console.log("Calling amogus");
+            axios.post('/api/checkout/anonymous', null, {
+                params: {
+                    checkoutItems: JSON.stringify(productAmountList),
+                    customerDTO: oc_customer,
+                    shippingAddress: oShipping
+                }
+            }).then(res => {
+                console.log(res);
+                // window.location.reload();
+            })
+        } else {
+            // Request made to the backend api
+            axios.post('/api/checkout/registered', null, { // WARNING: Currently admins cannot create an order for other registered users, update once functionality has been added in the backend
+                params: {
+                    checkoutItems: JSON.stringify(productAmountList),
+                    customerId: oUser,
+                    shippingAddress: oShipping
+                }
+            }).then(res => {
+                console.log(res);
+                // window.location.reload();
+            })
+        }
+
 
     }
 </script>

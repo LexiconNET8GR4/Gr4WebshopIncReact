@@ -99,6 +99,7 @@
         for (var i = 0; i < riUser.data.orderHistory.length; i++) {
             riUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: riUser.data.orderHistory[i] } }));
         }
+        console.log(riUserOrders);
 
 
         // Fetch roles
@@ -151,4 +152,5 @@
 
         })
 
-    }</script>
+    }
+</script>

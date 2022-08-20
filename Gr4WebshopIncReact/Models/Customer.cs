@@ -22,8 +22,8 @@ namespace Gr4WebshopIncReact.Models
         public string PhoneNumber { get; set; }
         [Required]
         public string Email { get; set; }
-        public Guid OrderKey { get; set; }
-        public Order Order { get; set; }
+        //public Guid OrderKey { get; set; }
+        public List<Order> Orders { get; set; }
 
         public Guid? UserKey { get; set; }
         public ApplicationUser User { get; set; }

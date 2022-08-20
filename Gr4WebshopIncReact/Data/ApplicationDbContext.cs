@@ -96,15 +96,15 @@ namespace Gr4WebshopIncReact.Data
             //  --- --- One to One relations
             #region One to One Relations
             // Order - Customer
-            modelBuilder.Entity<Customer>()
-                .HasOne(c => c.Order)
-                .WithOne(o => o.Customer)
-                .HasForeignKey<Order>(o => o.CustomerKey);
+            //modelBuilder.Entity<Customer>()
+            //    .HasOne(c => c.Order)
+            //    .WithOne(o => o.Customer);
+            //.HasForeignKey<Order>(o => o.CustomerKey);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Customer)
-                .WithOne(c => c.Order)
-                .HasForeignKey<Customer>(c => c.OrderKey);
+                .WithMany(c => c.Orders)
+                .HasForeignKey(c => c.CustomerKey);
 
             // Order - Payment
             modelBuilder.Entity<Order>()
