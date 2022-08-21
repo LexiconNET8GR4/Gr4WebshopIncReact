@@ -206,7 +206,6 @@
 
         if (oCustomerIsUnregistered) {
             // Request made to the backend api
-            console.log("Calling amogus");
             axios.post('/api/checkout/anonymous', null, {
                 params: {
                     checkoutItems: JSON.stringify(productAmountList),
@@ -215,11 +214,11 @@
                 }
             }).then(res => {
                 console.log(res);
-                // window.location.reload();
+                window.location.reload();
             })
         } else {
             // Request made to the backend api
-            axios.post('/api/checkout/admin', null, { // WARNING: Currently admins cannot create an order for other registered users, update once functionality has been added in the backend
+            axios.post('/api/checkout/admin', null, { 
                 params: {
                     checkoutItems: JSON.stringify(productAmountList),
                     shippingAddress: oShipping,
@@ -227,7 +226,7 @@
                 }
             }).then(res => {
                 console.log(res);
-                // window.location.reload();
+                window.location.reload();
             })
         }
 

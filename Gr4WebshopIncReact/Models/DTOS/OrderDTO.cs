@@ -26,7 +26,8 @@ namespace Gr4WebshopIncReact.Models.DTOS
         public Guid CouponId { get; set; }
 
         public OrderDTO(Order order) { 
-            Id = order.Id; CustomerId = order.CustomerKey; 
+            Id = order.Id; 
+            CustomerId = order.CustomerKey; 
             OrderProducts = new List<OrderProductDTO>(); 
             foreach (var p in order.Products) 
             {

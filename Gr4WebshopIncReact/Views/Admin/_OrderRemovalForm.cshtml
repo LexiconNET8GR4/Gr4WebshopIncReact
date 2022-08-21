@@ -3,7 +3,7 @@
     <h2>Remove Order</h2>
 
     <div id="ro-search-bar">
-        <p>Order Id (WIP)</p>
+        <p>Order Id</p>
         <input type="text" id="r-order-to-inspect" />
         <input type="button" onclick="inspectOrder()" value="Inspect" />
         <p id="ro-searach-results"></p>
@@ -77,7 +77,7 @@
             </tr>
             <tr>
                 <td>
-                    Products {WIP}
+                    Products
                 </td>
                 <td>
                     <div id="ro-products" class="dropdown-check-list" tabindex="100">
@@ -85,7 +85,6 @@
                         <ul class="items" id="ro-listed-products">
                             @for (int i = 0; i < Model.Count; i++)
                             {
-                                // Remove the folder name from the dispaly of the image for ease of locating
                                 <li><input type="checkbox" id="@Model[i].Id" disabled />@Model[i].Name <input type="text" id="ro-amount-@Model[i].Id" disabled /></li>
                             }
                         </ul>
@@ -101,7 +100,7 @@
                 </td>
             </tr>
         </table>
-        <input type="button" id="ro-button" onclick="removeOrder()" disabled value="Remove Order (WIP)" />
+        <input type="button" id="ro-button" onclick="removeOrder()" disabled value="Remove Order" />
     </div>
 
     <script>

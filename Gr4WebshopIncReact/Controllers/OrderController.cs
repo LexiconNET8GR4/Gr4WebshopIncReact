@@ -34,12 +34,37 @@ namespace Gr4WebshopIncReact.Controllers
             else return BadRequest();
         }
 
+        //[Route("editorder")]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult EditOrder(string orderDTO)
+        //{
+        //    var recievedData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderDTO>(orderDTO);
+        //    Order orderToEdit = recievedData.ConvertToOrder();
+        //    var orderToReturn = new OrderDTO(_orderServices.Update(orderToEdit));
+        //    return Json(orderToReturn);
+        //}
+
         [Route("editorder")]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditOrder(string orderDTO)
+        public ActionResult EditOrder(string orderId, string shippingAdress, string checkoutItems)
         {
-            OrderDTO recievedData = Newtonsoft.Json.JsonConvert.DeserializeObject<OrderDTO>(orderDTO);
-            Order orderToEdit = recievedData.ConvertToOrder();
+            var checkoutItemsList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<CheckoutItem>>(checkoutItems);
+            Guid recievedId;
+            Order orderToEdit;
+            if (Guid.TryParse(orderId, out recievedId))
+                orderToEdit = _orderServices.GetById(recievedId);
+            else
+                return BadRequest();
+
+            if (orderToEdit == null)
+                return BadRequest();
+
+
+            if (shippingAdress != null)
+                orderToEdit.ShippingAddress = shippingAdress;
+
+            _orderServices.UpdateOrderProducts(orderToEdit, checkoutItemsList);
+
             var orderToReturn = new OrderDTO(_orderServices.Update(orderToEdit));
             return Json(orderToReturn);
         }

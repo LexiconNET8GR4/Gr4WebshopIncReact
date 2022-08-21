@@ -1,5 +1,330 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model List<Gr4WebshopIncReact.Models.Product>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+<h2>Edit Order</h2>
+
+<div id="eo-search-bar">
+    <p>Order Id</p>
+    <input type="text" id="e-order-to-inspect" />
+    <input type="button" onclick="loadEditOrder()" value="Load" />
+    <p id="eo-searach-results"></p>
+</div>
+
+<div id="e-order-inspection">
+    <table>
+        <thead>
+            <tr>
+                <td>Value</td>
+                <td>Input</td>
+            </tr>
+        </thead>
+        <ln />
+        <tr>
+            <td>
+                Order being edited Id
+            </td>
+            <td>
+                <input type="text" id="e-order-to-edit-id" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Customer Id
+            </td>
+            <td>
+                <input type="text" id="e-customer-id" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                User Id
+            </td>
+            <td>
+                <input type="text" id="e-user-id" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Belongs to registered user?
+            </td>
+            <td>
+                <input type="checkbox" id="e-use-user" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unregistered Customers First Name
+            </td>
+            <td>
+                <input type="text" id="eoc-first-name" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unregistered Customers Last Name
+            </td>
+            <td>
+                <input type="text" id="eoc-last-name" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unregistered Customers Adress
+            </td>
+            <td>
+                <input type="text" id="eoc-adress" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unregistered Customers Number
+            </td>
+            <td>
+                <input type="text" id="eoc-phone" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unregistered Customers Mail
+            </td>
+            <td>
+                <input type="text" id="eoc-email" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Products
+            </td>
+            <td>
+                <div id="eo-products" class="dropdown-check-list" tabindex="100">
+                    <span class="anchor" onclick="loadList('eo-products')">Products</span>
+                    <ul class="items" id="eo-listed-products">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <li><input type="checkbox" id="@Model[i].Id" />@Model[i].Name <input type="text" id="eo-amount-@Model[i].Id" /></li>
+                        }
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Shipping Adress
+            </td>
+            <td>
+                <input type="text" id="eo-shipping" />
+            </td>
+        </tr>
+    </table>
+    <input type="button" id="eo-button" onclick="editOrder()" value="Edit Order (WIP)" />
+</div>
+
+<script>
+        function loadList(id) {
+            // The first time the drop down menu is set up,
+            // Give it an event for toggling the options being visible and not
+            var checkList = document.getElementById(id);
+
+
+            if (!checkList.classList.contains('anchored')) {
+
+                checkList.getElementsByClassName('anchor')[0].onclick =
+                    function (evt) {
+                        if (checkList.classList.contains('visible'))
+                            checkList.classList.remove('visible');
+                        else
+                            checkList.classList.add('visible');
+                    }
+
+                checkList.classList.add('anchored');
+                checkList.classList.add('visible');
+            }
+        }
+
+    async function loadEditOrder() {
+
+            // Get order data to load
+            let eiOrderID = document.getElementById('e-order-to-inspect').value;
+            document.getElementById('e-order-to-edit-id').value = eiOrderID;
+
+
+            document.getElementById("eo-searach-results").innerHTML = "";
+            let eiOrder = await axios.get('/api/order/getorderasadmin', { params: { orderId: eiOrderID } })
+                .catch(function (error) {
+                    document.getElementById("eo-searach-results").innerHTML = "Order not found";
+                });
+            if (eiOrder == undefined) {
+                console.log("Order not found");
+                return;
+            }
+            console.log(eiOrder);
+
+            // Load aquired order data
+            document.getElementById("e-customer-id").value = eiOrder.data.customerId;
+
+            // Was the order placed by a registered user
+            if (eiOrder.data.userId == null) {
+                document.getElementById("e-user-id").value = "N/A";
+                document.getElementById("e-use-user").checked = false;
+            } else {
+                document.getElementById("e-user-id").value = eiOrder.data.userId;
+                document.getElementById("e-use-user").checked = true;
+            }
+
+            let eiCustomer = await axios.get('/admin/GetCustomer', { params: { customerId: eiOrder.data.customerId } })
+                .catch(function (error) {
+                    document.getElementById("eo-searach-results").innerHTML= "Customer not found";
+                });
+            if (eiCustomer == undefined) {
+                console.log("Customer not found");
+                return;
+            }
+
+            // Set up customer data
+            let firstNameRegion = document.getElementById("eoc-first-name");
+            (eiCustomer.data.firstName != null ? firstNameRegion.value = eiCustomer.data.firstName : firstNameRegion.value = "Not found")
+            let lastNameRegion = document.getElementById("eoc-last-name");
+            (eiCustomer.data.lastName != null ? lastNameRegion.value = eiCustomer.data.lastName : lastNameRegion.value = "Not found")
+            let adressRegion = document.getElementById("eoc-adress");
+            (eiCustomer.data.adress != null ? adressRegion.value = eiCustomer.data.adress : adressRegion.value = "Not found")
+            let numberRegion = document.getElementById("eoc-phone");
+            (eiCustomer.data.phoneNumber != null ? numberRegion.value = eiCustomer.data.phoneNumber : numberRegion.value = "Not found")
+            let emailRegion = document.getElementById("eoc-email");
+            (eiCustomer.data.email != null ? emailRegion.value = eiCustomer.data.email : emailRegion.value = "Not found")
+
+            // Set up Shipping Adress
+            let shippingRegion = document.getElementById("eo-shipping");
+            (eiOrder.data.shippingAddress != null ? shippingRegion.value = eiOrder.data.shippingAddress : shippingRegion.value = "Not found")
+
+
+            let productList = document.getElementById("eo-listed-products").getElementsByTagName("li");
+            for (var i = 0; i < productList.length; i++) {
+                productList[i].childNodes[0].checked = false;
+                console.log("productList[i].childNodes[2]: ");
+                console.log(productList[i].childNodes[2]);
+                productList[i].childNodes[2].value = "";
+                for (var j = 0; j < eiOrder.data.orderProducts.length; j++) {
+                    if (productList[i].childNodes[0].id == eiOrder.data.orderProducts[j].productId) {
+                        productList[i].childNodes[0].checked = true;
+                        productList[i].childNodes[2].value = eiOrder.data.orderProducts[j].quantity;
+                    }
+                }
+            }
+
+
+            //document.getElementById('eo-button').disabled = false;
+        }
+
+    function editOrder() {
+
+        // Data aquired from form
+        let eId = document.getElementById("e-order-to-edit-id").value;
+        let eUser = document.getElementById("e-user-id").value;
+        let eShipping = document.getElementById("eo-shipping").value;
+        let eCustomer = document.getElementById("e-customer-id").value;
+
+
+        // Get all checked products
+        let eoProducts = [];
+        let productList = document.getElementById("eo-listed-products").getElementsByTagName("li");
+        for (var i = 0; i < productList.length; i++) {
+            if (productList[i].children[0].checked == true) {
+                eoProducts.push(productList[i].children[0].id.toString());
+            }
+        }
+        let productAmountList = [];
+        let CheckoutItem = class {
+            constructor(ProductId, Quantity) {
+                this.ProductId = ProductId;
+                this.Quantity = Quantity;
+            }
+        }
+        for (var i = 0; i < eoProducts.length; i++) {
+            // Ensure the input amount value is numerical and greater than 0
+            let amount = document.getElementById('eo-amount-' + eoProducts[i]).value;
+            if (isNumeric(amount)) {
+                // If 0 below or below 0, add no product
+                if (amount > 0) {
+                    productAmountList.push(new CheckoutItem(eoProducts[i], amount));
+                }
+            }
+            else { // if amount input is not numerical, add a singular instance of the product
+                productAmountList.push(new CheckoutItem(eoProducts[i], 1));
+            }
+        }
+
+
+
+        // Request made to the backend api
+        axios.post('/api/order/editorder', null, {
+            params: {
+                orderId: eId,
+                shippingAdress: eShipping,
+                checkoutItems: JSON.stringify(productAmountList)
+
+            }
+        }).then(res => {
+            console.log(res);
+            // window.location.reload();
+        })
+
+
+
+        }
+
+
+</script>
+
+
+<style>
+    .dropdown-check-list {
+        display: inline-block;
+    }
+
+        .dropdown-check-list .anchor {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 50px 5px 10px;
+            border: 1px solid #ccc;
+        }
+
+            .dropdown-check-list .anchor:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 5px;
+                right: 10px;
+                top: 20%;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+            }
+
+            .dropdown-check-list .anchor:active:after {
+                right: 8px;
+                top: 21%;
+            }
+
+        .dropdown-check-list ul.items {
+            padding: 2px;
+            display: none;
+            margin: 0;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+            .dropdown-check-list ul.items li {
+                list-style: none;
+            }
+
+        .dropdown-check-list.visible .anchor {
+            color: #0094ff;
+        }
+
+        .dropdown-check-list.visible .items {
+            display: block;
+        }
+</style>

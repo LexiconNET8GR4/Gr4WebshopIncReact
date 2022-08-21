@@ -73,6 +73,28 @@ namespace Gr4WebshopIncReact.Services
             return _context.SaveChanges() > 0 ? order : null;
         }
 
+        public Order UpdateOrderProducts(Order order, List<CheckoutItem> newProducts)
+        {
+            order.Products = new List<OrderedProduct>();
+            List<OrderedProduct> oldProducts = _context.OrderedProducts.Where(op => op.OrderKey == order.Id).ToList();
+            _context.RemoveRange(oldProducts);
+
+            foreach (CheckoutItem c in newProducts)
+            {
+                OrderedProduct orderedProduct = new OrderedProduct()
+                {
+                    OrderKey = order.Id,
+                    ProductKey = c.ProductId,
+                    Product = _productServices.GetById(c.ProductId),
+                    Amount = c.Quantity
+                };
+                order.Products.Add(orderedProduct);
+            }
+
+
+            return order;
+        }
+
         private Order CreateOrderCommon(Customer customer, List<CheckoutItem> products, string shippingAddress, PaymentMethod paymentMethod)
         {
             // Feature not implemted, create dummy shipping method to avoid issues
