@@ -15,10 +15,10 @@
         <ln />
         <tr>
             <td>
-                User Id (WIP)
+                User Id
             </td>
             <td>
-                <select id="o-user-id" name="User ID (WIP)" disabled >
+                <select id="o-user-id" name="User ID"  >
 
                     @for (int i = 0; i < Model.Users.Count; i++)
                     {
@@ -30,10 +30,10 @@
         </tr>
         <tr>
             <td>
-                Create new customer (for unregistered users)? [required atm]
+                Create new customer (for unregistered users)?
             </td>
             <td>
-                <input type="checkbox" id="o-new-customer" checked disabled />
+                <input type="checkbox" id="o-new-customer" />
             </td>
         </tr>
         <tr>
@@ -219,11 +219,11 @@
             })
         } else {
             // Request made to the backend api
-            axios.post('/api/checkout/registered', null, { // WARNING: Currently admins cannot create an order for other registered users, update once functionality has been added in the backend
+            axios.post('/api/checkout/admin', null, { // WARNING: Currently admins cannot create an order for other registered users, update once functionality has been added in the backend
                 params: {
                     checkoutItems: JSON.stringify(productAmountList),
-                    customerId: oUser,
-                    shippingAddress: oShipping
+                    shippingAddress: oShipping,
+                    userId: oUser
                 }
             }).then(res => {
                 console.log(res);

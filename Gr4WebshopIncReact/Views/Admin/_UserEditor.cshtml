@@ -127,10 +127,7 @@
         let ueUser = await axios.get('/api/user/getuser', { params: { id: ueUserID } });
 
         // Fetch orders
-        let ueUserOrders = [];
-        for (var i = 0; i < ueUser.data.orderHistory.length; i++) {
-            ueUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: ueUser.data.orderHistory[i] } }));
-        }
+        let ueUserOrders = await axios.get('/api/order/getordersbyuserid', { params: { userId: ueUserID } });
 
 
         // Fetch roles
@@ -156,12 +153,20 @@
 
         }
 
-        for (var i = 0; i < ueUserOrders.length; i++) {
+        document.getElementById('ue-order-list').innerHTML = "";
+        for (var i = 0; i < ueUserOrders.data.length; i++) {
             let listItem = document.createElement('li');
-            listItem.id = ueUserOrders[i].id;
-            listItem.innerHTML = (ueUserOrders[i].data.id + ", " + ueUserOrders[i].data.productIds.length + " products ordred on " + ueUserOrders[i].data.orderDate);
+            listItem.id = ueUserOrders.data[i].id;
+            listItem.innerHTML = ueUserOrders.data[i].id;
 
-            document.getElementById('ue-listed-orders').appendChild(listItem);
+            for (var j = 0; j < ueUserOrders.data[i].orderProducts.length; j++) {
+                let product = await axios.get('/api/product/getproduct', { params: { id: ueUserOrders.data[i].orderProducts[j].productId } });
+                if (product != null) {
+                    listItem.innerHTML += ", (" + product.data.name + " (" + ueUserOrders.data[i].orderProducts[j].quantity + "))";
+                }
+            }
+
+            document.getElementById('ue-order-list').appendChild(listItem);
         }
     }
 
