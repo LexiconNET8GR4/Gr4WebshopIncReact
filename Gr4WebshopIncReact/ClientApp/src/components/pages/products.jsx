@@ -14,6 +14,28 @@ function Products() {
         return setProductsList(product);
       });
   }, []);
+ const click = (id, name, price, qty) => {
+    var existingEntries = JSON.parse(localStorage.getItem("existingEntries"));
+
+    const obj = {
+      id: id,
+      name: name,
+      price: price,
+      qty: qty,
+    };
+    if (existingEntries == null) existingEntries = [];
+    localStorage.setItem("cart", JSON.stringify(obj));
+    let index = existingEntries.findIndex((obj) => obj.id === id);
+    if (index === -1) {
+      existingEntries.push({ ...obj, count: 1 });
+    } else {
+      const pr = existingEntries[index];
+      existingEntries[index] = { ...pr, count: pr.count + 1 };
+    }
+
+    localStorage.setItem("existingEntries", JSON.stringify(existingEntries));
+    console.log(existingEntries);
+  };
 
   return (
     <>
