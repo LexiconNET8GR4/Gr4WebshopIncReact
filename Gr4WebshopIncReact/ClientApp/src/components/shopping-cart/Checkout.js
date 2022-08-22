@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Formik } from 'formik';
 import authService from '../api-authorization/AuthorizeService';
+import './style.css';
+
 
 export class Checkout extends Component {
   static displayName = Checkout.name;
@@ -11,6 +13,9 @@ export class Checkout extends Component {
     this.state = { 
         isAuthenticated: false,
         userName: null,
+        GUID:'',
+        extendedUser: [],
+        loadedExtendedUser: false,
         CartProducts: [
           {Product: {Name: 'stol', Price: 19, }, Amount: 3}, 
           {Product: {Name: 'bord', Price: 59, }, Amount: 1}
@@ -29,7 +34,9 @@ export class Checkout extends Component {
     this.setState({
         isAuthenticated,
         userName: user && user.name,
+        GUID: user.sub
     });
+    this.getUserInfo();
   }
 
    //Renders the table with the products
@@ -63,34 +70,19 @@ export class Checkout extends Component {
     );
   }
 
+  
+  
+
+
+
+
 
   render() {
   const { isAuthenticated, userName } = this.state;
   const AnonymousCheckout = () => (
-    <Formik initialValues={{ FirstName: '', LastName: '', Adress:'', PhoneNumber: '', Email:'',   Type:'',   Provider:'' }}
-            handleSubmit={(values) => {
-              const body = {
-                FirstName: values.FirstName,
-                LastName: values.LastName,
-                Adress: values.Adress,
-                PhoneNumber: values.PhoneNumber,
-                Email: values.Email,
-                Type: values.type,
-                Provider: values.Provider,
-                CheckOutItems: this.state.CheckOutItems //TODO: enter correct list
-              };
-               const options = {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json"
-                },
-                body: JSON.stringify(body)
-                
-              };
-            }}
+    <Formik initialValues={{ FirstName: '', LastName: '', Adress:'', PhoneNumber: '', Email:'',   Provider:'' }}
             onSubmit={(values) => {
-              if(values.FirstName == '' || values.LastName == '' || values.Adress == '' || values.PhoneNumber == 0 || values.Email == '' || values.Type == '' || values.Provider == '' ) {
+              if(values.FirstName === '' || values.LastName === '' || values.Adress === '' || values.PhoneNumber === '' || values.Email === ''  || values.Provider === '' ) {
                  { document.getElementById('Error').style.display = 'block'}
               } 
               else {
@@ -99,7 +91,6 @@ export class Checkout extends Component {
               }
           }}
             >
-        
         {({values, handleChange, handleSubmit, isSubmitting}) =>(
             <form onSubmit={handleSubmit} >
                 <label htmlFor='FirstName' style={{display: "block"}}>First name</label>
@@ -112,9 +103,7 @@ export class Checkout extends Component {
                     <input type='number' name='PhoneNumber' onChange={handleChange} value={values.PhoneNumber}/>
                 <label htmlFor='Email' style={{display: "block"}}>Email</label>
                     <input type='text' name='Email' onChange={handleChange} value={values.Email}/>
-                <label htmlFor='Type' style={{display: "block"}}>Payment type</label>
-                    <input type='text' name='Type' onChange={handleChange} value={values.Type}/>
-                <label htmlFor='Provider' style={{display: "block"}}>Shipment provider</label>
+                <label htmlFor='Provider' style={{display: "block"}}>Shipping Adress </label>
                     <input type='text' name='Provider' onChange={handleChange} value={values.Provider}/>
                 <button className="btn btn-primary" type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Place order</button>
             </form>
@@ -122,29 +111,15 @@ export class Checkout extends Component {
     </Formik>
   );
 
-  const AuthenticatedCheckout = () => (
-    <Formik initialValues={{ FirstName: '', LastName: '', Adress:'', PhoneNumber: '', Email:'',   Type:'',   Provider:'' }}
-            handleSubmit={(values) => {
-              const body = {
-                Adress: values.Adress,
-                CustomerID: userName, //TODO: might be wrong ID?  
-                Type: values.type,
-                Provider: values.Provider,
-                CheckOutItems: this.state.CheckOutItems //TODO: enter correct list
-
-              };
-              const options = {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json"
-                },
-                body: JSON.stringify(body)
-                
-              };
-            }}
+  let AuthenticatedCheckout  = () => (
+    <Formik initialValues={{ FirstName:this.state.extendedUser.firstName  !== null ? this.state.extendedUser.firstName : '',
+                             LastName: this.state.extendedUser.lastName   !== null ? this.state.extendedUser.lastName  : '', 
+                             Adress:   this.state.extendedUser.adress     !== null ? this.state.extendedUser.adress    : '' ,
+                             PhoneNumber: this.state.extendedUser.phoneNumber !== null ? this.state.extendedUser.phoneNumber : '',
+                             Email:       this.state.extendedUser.email   !== null ? this.state.extendedUser.email     : '', 
+                             Provider: '' }}
              onSubmit={(values) => {
-                if(values.FirstName == '' || values.LastName == '' || values.Adress == '' || values.PhoneNumber == 0 || values.Email == '' || values.Type == '' || values.Provider == '' ) {
+                if(values.FirstName === '' || values.LastName === '' || values.Adress === '' || values.PhoneNumber === '' || values.Email === '' || values.Provider === '' ) {
                    { document.getElementById('Error').style.display = 'block'}
                 } 
                 else {
@@ -159,7 +134,6 @@ export class Checkout extends Component {
             <form onSubmit={handleSubmit} >
                 <label htmlFor='FirstName' style={{display: "block"}}>First name</label>
                     <input type='text' name='FirstName' onChange={handleChange} value={values.FirstName}/>
-
                 <label htmlFor='LastName' style={{display: "block"}}>Last name</label>
                     <input type='text' name='LastName' onChange={handleChange} value={values.LastName}/>
                 <label htmlFor='Adress' style={{display: "block"}}>Adress</label>
@@ -167,10 +141,8 @@ export class Checkout extends Component {
                 <label htmlFor='PhoneNumber' style={{display: "block"}}>Phone number</label>
                     <input type='number' name='PhoneNumber' onChange={handleChange} value={values.PhoneNumber}/>
                 <label htmlFor='Email' style={{display: "block"}}>Email</label>
-                    <input disabled="" type='text' name='Email' onChange={handleChange} value={userName}/>
-                <label htmlFor='Type' style={{display: "block"}}>Payment type</label>
-                    <input type='text' name='Type' onChange={handleChange} value={values.Type}/>
-                <label htmlFor='Provider' style={{display: "block"}}>Shipment provider</label>
+                    <input disabled="" type='text' name='Email' onChange={handleChange} value={values.Email}/>
+                <label htmlFor='Provider' style={{display: "block"}}>Shipping adress</label>
                     <input type='text' name='Provider' onChange={handleChange} value={values.Provider}/>
 
                 <button className="btn btn-primary" type='submit' style={{display: "block", marginTop: "30px"}} disabled={isSubmitting}>Place order</button>
@@ -179,12 +151,12 @@ export class Checkout extends Component {
     </Formik>
   );
 
-
-  let cart_contents = this.state.CartProducts.length == 0
+  let cart_contents = this.state.CartProducts.length === 0
   ? <p><em>Empty Cart...</em></p>
   : Checkout.renderCartTable(this.state.CartProducts);
 
-
+  
+  
   if(!isAuthenticated) {
     return (
       <div>
@@ -203,7 +175,7 @@ export class Checkout extends Component {
     </div>);
     
   } else {
-    return(
+    return (
       <div>
         <div className='row'>
           <div className='col-md-7'>
@@ -217,16 +189,76 @@ export class Checkout extends Component {
           </div>
         </div>
         <p id="Error">Please enter all details  </p>
+
       </div>);
    }
+
   }
 
-  async changeProductIdForProducts(checkoutItems) {
-    //TODO: send to backend
-    //save products in CartProducts
+  async getUserInfo() {
+    await fetch("/api/checkout/getuserdata")
+    .then(res => res.json())
+    .then(
+      (result) => {
+        console.log(result)
+        this.setState({
+          extendedUser : result,
+          loadedExtendedUser: true
+          /*isLoaded: true,
+          items: result.items*/
+        });
+      },
+      // Note: it's important to handle errors here
+      // instead of a catch() block so that we don't swallow
+      // exceptions from actual bugs in components.
+      (error) => {
+        this.setState({/*
+          isLoaded: true,*/
+          error
+        });
+      }
+    )
+   
   }
 
   async sendData(values) {
-    //send post with values
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: ''
+  };
+
+    if (!this.state.isAuthenticated) { //Anonymously:
+      const body = {
+        checkoutItems: 'Stol', //TODO: enter correct list
+        customer: 
+        { 
+          Adress: values.Adress,
+          Email: values.Email,
+          FirstName: values.FirstName,
+          LastName: values.LastName,
+          PhoneNumber: values.PhoneNumber,
+          },
+        shippingAddress: values.Provider,
+      };
+      requestOptions.body = JSON.stringify( body );
+      let response =  await fetch('/api/checkout/anonymous', requestOptions);
+      console.log('response' + response.data);
+    } 
+    else { // Autheniticated: 
+      const body = {
+        checkoutItems: 'Stol', //TODO: enter correct list
+        customerId : this.state.GUID,
+        shippingAddress: values.Provider,
+      };
+      requestOptions.body = body ; //TODO: should it be JSON.stringify?
+
+      console.log(requestOptions.body)
+
+
+      let response =  await fetch('/api/checkout/registered', requestOptions);
+      console.log('response: ' + response.data);
+    }
   }
+
 }
