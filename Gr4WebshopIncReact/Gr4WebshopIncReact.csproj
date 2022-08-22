@@ -36,6 +36,31 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\img\carsoule.jpg" />
+    <None Include="wwwroot\img\category-0.webp" />
+    <None Include="wwwroot\img\category-1.webp" />
+    <None Include="wwwroot\img\category-2.webp" />
+    <None Include="wwwroot\img\category-3.webp" />
+    <None Include="wwwroot\img\category-4.webp" />
+    <None Include="wwwroot\img\category-5.webp" />
+    <None Include="wwwroot\img\category-6.webp" />
+    <None Include="wwwroot\img\category-7.webp" />
+    <None Include="wwwroot\img\Desktop-sliders.jpg" />
+    <None Include="wwwroot\img\Desktop-sliders_5e4c18ad-f2d9-4a84-8609-320ead989087.jpg" />
+    <None Include="wwwroot\img\Desktop-sliders_8c78ad80-4278-4acd-82f7-d2ec27b300e5.jpg" />
+    <None Include="wwwroot\img\download.jpg" />
+    <None Include="wwwroot\img\images %281%29.jpg" />
+    <None Include="wwwroot\img\images.jpg" />
+    <None Include="wwwroot\img\imgside.jpg" />
+    <None Include="wwwroot\img\kisspng-chair-table-ofisa-plus-seat-furniture-virco-school-furniture-classroom-chairs-student-5ba339b64a93d5.5832180415374237983055.jpg" />
+    <None Include="wwwroot\img\newone.jpg" />
+    <None Include="wwwroot\img\offer.webp" />
+    <None Include="wwwroot\img\Outdoor-Furniture-Transparent-Background.png" />
+    <None Include="wwwroot\img\saleer.jpg" />
+    <None Include="wwwroot\img\silder.jpg" />
+  </ItemGroup>
+
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Routes } from 'react-router';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { NavMenu } from './components/NavMenu'; // temporarily kept in to allow admin access
@@ -9,13 +8,19 @@ import NavBars from  './components/core/sub-header';
 import Footer from './components/core/footer';
 import Products from './components/pages/products';
 import Category from './components/pages/category';
+import CategoryView from "./components/pages/detailCategory";
 import Landing from './components/landing';
+import Cart from './components/pages/cart';
+import Checkout from './components/pages/checkout';
+import Thankyou from "./components/pages/Thankyou";
+
 
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
-import CategoryView from './components/pages/detailCategory';
-import "./App.css";
+
+
+import './App.css'
 import './custom.css'
 import { LoginMenu } from './components/api-authorization/LoginMenu';
 
@@ -31,7 +36,10 @@ export default class App extends Component {
                 <NavBars />
                  <Route path="/" component={Landing} />
                 <Route path="/products" component={Products} />
-                <Route path="/detail/:category" component={CategoryView} />
+                <Route path="/detail/:category" element={<CategoryView />} />
+        	<Route path="/cart" element={<Cart />} />
+        	<Route path="/checkout" element={<Checkout />} />
+        	<Route path="/thankyou" element={<Thankyou />} />
                 <Footer />
             </>
 

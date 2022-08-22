@@ -1,0 +1,109 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "brand": "Testing",
+      "image": "category-0.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "name": "Abc",
+      "category": "Sofa",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 138
+    },
+    {
+      "id": 2,
+      "brand": "Testing",
+      "image": "category-2.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "name": "New One",
+      "category": "Chair",
+      "description": "this is description",
+      "richDescription": "this is description",
+      "price": 150
+    },
+    {
+      "id": 3,
+      "brand": "Testing",
+      "image": "category-5.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "category": "Table",
+      "name": "Abc",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 1358
+    },
+    {
+      "id": 4,
+      "brand": "Testing",
+      "image": "category-4.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "name": "gfdgfd",
+      "category": "Table",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 1348
+    },
+    {
+      "id": 5,
+      "brand": "Testing",
+      "image": "category-2.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "category": "Table",
+      "name": "dgdf",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 1338
+    },
+    {
+      "id": 6,
+      "brand": "Testing",
+      "image": "category-3.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "name": "dfgdfg",
+      "description": "ABC",
+      "category": "Sideboard",
+      "richDescription": "this is description",
+      "price": 1038
+    },
+    {
+      "brand": "Testing",
+      "image": "category-0.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "name": "Abc",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 138,
+      "id": 7
+    },
+    {
+      "brand": "Testing",
+      "image": "category-0.webp",
+      "numReviews": null,
+      "isFeatured": true,
+      "name": "Abc",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 138,
+      "id": 8
+    },
+    {
+      "brand": "Testing",
+      "image": "category-0.webp",
+      "numReviews": null,
+      "isFeatured": false,
+      "name": "Abc",
+      "description": "ABC",
+      "richDescription": "this is description",
+      "price": 138,
+      "id": 9
+    }
+  ]
+}
