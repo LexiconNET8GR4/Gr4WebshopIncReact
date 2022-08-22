@@ -31,7 +31,6 @@ export default class App extends Component {
         return (
             <>
                 <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
-                <NavMenu />
                 <Header />
                 <NavBars />
                  <Route path="/" component={Landing} />
