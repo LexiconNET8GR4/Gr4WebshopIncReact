@@ -95,11 +95,7 @@
         let riUser = await axios.get('/api/user/getuser', { params: { id: riUserID } });
 
         // Fetch orders
-        let riUserOrders = [];
-        for (var i = 0; i < riUser.data.orderHistory.length; i++) {
-            riUserOrders.add(await axios.get('/api/order/getorderasadmin', { params: { orderId: riUser.data.orderHistory[i] } }));
-        }
-        console.log(riUserOrders);
+        let riUserOrders = await axios.get('/api/order/getordersbyuserid', { params: { userId: riUserID } });
 
 
         // Fetch roles
@@ -121,10 +117,18 @@
             document.getElementById('uri-listed-roles').appendChild(listItem);
         }
 
-        for (var i = 0; i < riUserOrders.length; i++) {
+        document.getElementById('uri-listed-orders').innerHTML = "";
+        for (var i = 0; i < riUserOrders.data.length; i++) {
             let listItem = document.createElement('li');
-            listItem.id = riUserOrders.id;
-            listItem.innerHTML = (riUserOrders[i].data.id + ", " + riUserOrders[i].data.productIds.length + " products ordred on " + riUserOrders[i].data.orderDate);
+            listItem.id = riUserOrders.data[i].id;
+            listItem.innerHTML = riUserOrders.data[i].id;
+
+            for (var j = 0; j < riUserOrders.data[i].orderProducts.length; j++) {
+                let product = await axios.get('/api/product/getproduct', { params: { id: riUserOrders.data[i].orderProducts[j].productId } });
+                if (product != null) {
+                    listItem.innerHTML += ", (" + product.data.name + " (" + riUserOrders.data[i].orderProducts[j].quantity + "))";
+                }
+            }
 
             document.getElementById('uri-listed-orders').appendChild(listItem);
         }

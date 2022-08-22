@@ -54,7 +54,11 @@ namespace Gr4WebshopIncReact.Services
 
         public List<Order> GetByUserId(Guid id)
         {
-            List<Order> orders = _context.Orders.Where(u => u.UserKey == id.ToString()).ToList();
+            List<Order> orders = _context.Orders.Where(u => u.UserKey == id.ToString())
+                .Include(o => o.Products)
+                .Include(o => o.ShippingMethod)
+                .Include(o => o.Payment)
+                .ToList();
             return orders;
         }
 
@@ -67,6 +71,28 @@ namespace Gr4WebshopIncReact.Services
         {
             _context.Orders.Update(order);
             return _context.SaveChanges() > 0 ? order : null;
+        }
+
+        public Order UpdateOrderProducts(Order order, List<CheckoutItem> newProducts)
+        {
+            order.Products = new List<OrderedProduct>();
+            List<OrderedProduct> oldProducts = _context.OrderedProducts.Where(op => op.OrderKey == order.Id).ToList();
+            _context.RemoveRange(oldProducts);
+
+            foreach (CheckoutItem c in newProducts)
+            {
+                OrderedProduct orderedProduct = new OrderedProduct()
+                {
+                    OrderKey = order.Id,
+                    ProductKey = c.ProductId,
+                    Product = _productServices.GetById(c.ProductId),
+                    Amount = c.Quantity
+                };
+                order.Products.Add(orderedProduct);
+            }
+
+
+            return order;
         }
 
         private Order CreateOrderCommon(Customer customer, List<CheckoutItem> products, string shippingAddress, PaymentMethod paymentMethod)
@@ -86,6 +112,8 @@ namespace Gr4WebshopIncReact.Services
             order.Payment = new Payment() { Method = paymentMethod };
             order.Products = new List<OrderedProduct>();
             order.ShippingMethod = shipping;
+            if (customer.UserKey != null) 
+                order.UserKey = customer.UserKey.ToString();
             foreach(CheckoutItem c in products)
             {
                 OrderedProduct orderedProduct = new OrderedProduct()

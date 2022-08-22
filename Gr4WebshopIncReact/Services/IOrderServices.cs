@@ -14,6 +14,7 @@ namespace Gr4WebshopIncReact.Services
         public List<Order> GetByUserId(Guid id);
         public List<Order> Search(string SearchPhrase);
         public Order Update(Order order);
+        public Order UpdateOrderProducts(Order order, List<CheckoutItem> newProducts);
         public bool Delete(Guid id);
     }
 }
