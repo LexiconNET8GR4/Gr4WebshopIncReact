@@ -11,7 +11,7 @@ export class Cart extends Component {
       isAuthenticated: false,
       userName: null,
       products: [{Product: {Name: 'stol', Price: 19, }, Amount: 4}, {Product: {Name: 'bord', Price: 59, }, Amount: 1}], //TODO: make empty; this is only an example
-      loadingProducts: true 
+      loadingProducts: true
     }; 
   }
 
@@ -26,6 +26,7 @@ export class Cart extends Component {
         isAuthenticated,
         userName: user && user.name,
     });
+    console.log(user);
   }
 
   //Renders the table with the products
@@ -52,7 +53,7 @@ export class Cart extends Component {
         </tbody>
       </table>
         <p>Total price: {products.reduce((acc, item) => acc+ item.Amount * item.Product.Price, 0)} </p>
-        <button   onClick={() => {window.location.replace("./checkout");}} className='btn btn-primary'>Checkout</button>   
+        <button onClick={() => {window.location.replace("./checkout");}} className='btn btn-primary'>Checkout</button>   
 </>
     );
   }
@@ -63,20 +64,18 @@ export class Cart extends Component {
     const { isAuthenticated, userName } = this.state;
     let title = isAuthenticated ? <h1 id="tabelLabel" >{userName}'s Cart</h1> : <h1 id="tabelLabel" >My Cart</h1> 
 
-    const {data} = this.props.location; // get info from product frontend about products added to cart   (/sendToCart can send to cart)
-    console.log(data);
-    if(data !== undefined) {
+
+    const {data} = this.props.dataFromParent ===undefined ? [] : this.props.dataFromParent  ; // get info from product frontend about products added to cart   (/sendToCart can send to cart)
+    if(data !== undefined && data !== []) {
       this.getProductsExtendedIfon(data);
     }
 
     let productData = this.state.loadingProducts ?  <p><em>Empty Cart...</em></p> : Cart.renderProductsTable(this.state.products)
 
-    //let  dataFromCart = this.props.location ? <p><em>Empty cart</em></p> : Cart.getProductsInfo(this.props.location);
     return (
       <div>
         {title}
         {productData}
-        {/*this.renderProductsTable(this.state.products)      saved for testing purposes  */}
 
       </div>
     );
@@ -84,12 +83,18 @@ export class Cart extends Component {
   }
 
   async getProductsExtendedIfon(data) { 
-
-    //TODO: Send data to backend to load extended product info
-    fetch('') 
+    if(data === null) {
+      return
+    }
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: data.ProductId })
+      };
+    fetch('/api/product/findproduct', requestOptions) 
         .then(response => response.json())
-        .then(dataNew => this.setState({ products: dataNew.total, loadingProducts:false })); //save extended products in products
-    console.log('updated Products');
+        .then(dataNew => this.setState({ products: dataNew.total, loadingProducts:false })); //save extended products in products TODO: add to list instead of replacing?
+    console.log('updated Product info!');
    }
 
 
